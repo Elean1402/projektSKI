@@ -71,7 +71,7 @@ def print_board(board:np.uint64):
 
 
 #print_board(testboard)
-print('knights start position')
+print('knight start position')
 print_board(blue_knight)
 print('knights middle position')
 print_board(blue_knight_middle)
