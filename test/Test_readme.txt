@@ -11,7 +11,6 @@ $ pip install --user pytest
 
 
 
-
 Anleitung für Testerstellung:
 
 ..nicht vergessen die zu testende Python-Datei zu importieren..
@@ -21,6 +20,3 @@ Präfix für den Dateinamen "test_"
 Präfix für die Funktion "test_"
 
 sonst führt unittest die tests nicht aus..
-
-
-

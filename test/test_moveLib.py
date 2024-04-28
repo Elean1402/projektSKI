@@ -36,6 +36,5 @@ class MoveLib(unittest.TestCase):
         self.assertEqual(mapRowToPowValue('A'),None)
         self.assertEqual(mapRowToPowValue('a'),None)
         
-
 if __name__ == '__main__':
     unittest.main()

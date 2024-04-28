@@ -3,7 +3,6 @@ from src.zuggenerator import*
 
 class TestZuggenerator(unittest.TestCase):
     
-
     def setUp(self):
         """Set up test fixtures, if any."""
 

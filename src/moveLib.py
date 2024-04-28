@@ -22,7 +22,6 @@ def move(start: str, target: str, mode = 0):
         #Todo convert string to bits
         return extractValueFromString(start) | BITBOARD, extractValueFromString(target) | BITBOARD
 
-
 def extractValueFromString(pos: str):
     """
     This function is used to convert a string to a bit value.
@@ -83,7 +82,6 @@ def mapRowToPowValue(rowNumber: str):
         case "7": return 47
         case "8": return 55
         case _: return None
-
 
 def mapLetterToNumber(letter:str):
     """
