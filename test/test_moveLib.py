@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 from src.moveLib import*
+import time
 
 class MoveLib(unittest.TestCase):
     
@@ -8,8 +9,8 @@ class MoveLib(unittest.TestCase):
         """Tests for movement representation"""
         self.assertEqual(move("A2", "A3"), ("A2","A3"))
         self.assertEqual(move("A2","A3", 1), (2**15,2**23))
-        self.assertEqual(type(move("A2","A3", 1)[0]), type(np.int64()))
-        self.assertEqual(type(move("A2","A3", 1)[1]), type(np.int64()))
+        self.assertEqual(type(move("A2","A3", 1)[0]), type(np.uint64()))
+        self.assertEqual(type(move("A2","A3", 1)[1]), type(np.uint64()))
     
     def test_extractValueFromString(self):
         """Tests for computing the integer value of a Position"""
@@ -34,6 +35,37 @@ class MoveLib(unittest.TestCase):
         self.assertEqual(mapRowToPowValue('9'),None)
         self.assertEqual(mapRowToPowValue('A'),None)
         self.assertEqual(mapRowToPowValue('a'),None)
+
+   
+    
+    def test_runtime_shift_vs_pow(self):
+        it = 1000000
+        self.assertLess(execShift(it)[1],execPow(it)[1])
         
+        
+    
+
+def execPow(it:int):
+    val = 0
+    start = time.time()
+    
+    for i in range(it):
+        val = pow(2, 63)
+    
+    end = time.time()
+    delta = (end - start) * 1000
+    return val,delta
+
+def execShift(it:int):
+    val = 0
+    start = time.time()
+    
+    for i in range(it):
+        val = 2 << 63
+    
+    end = time.time()
+    delta = (end - start) * 1000
+    return val, delta
+    
 if __name__ == '__main__':
     unittest.main()

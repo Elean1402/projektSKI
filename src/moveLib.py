@@ -1,6 +1,6 @@
 import numpy as np
 #Constants
-BITBOARD = np.int64(0)
+BITBOARD = np.uint64(0)
 
 def move(start: str, target: str, mode = 0):
     """
@@ -14,7 +14,7 @@ def move(start: str, target: str, mode = 0):
 
     Returns:
         mode=0: (str,str): string tupel of start and target
-        mode=1: (int,int): Bitboard tupel of start and target
+        mode=1: (uint64,uint64): Bitboard tupel of start and target
     """
     if mode == 0:
         return start,target
@@ -31,18 +31,18 @@ def extractValueFromString(pos: str):
         pos (str): A Position from the Board
 
     Returns:
-        int: on failure 0, on success bit value
+        np.uint64: on failure 0, on success bit value
     """
     #todo
     emptyFields = {"A1", "H1" , "A8" , "H8"}
     if pos in emptyFields:
-        return 0
+        return np.uint64(0)
     
     powValue = mapRowToPowValue(pos[1])
     addX = mapLetterToNumber(pos[0])
     
     if powValue == None or addX == None:
-        return 0
+        return np.uint64(0)
     
     rowValue = 0
     
@@ -50,10 +50,10 @@ def extractValueFromString(pos: str):
         rowValue = 8-int(addX)
     else: 
         rowValue = 8-int(addX)+1
-    # pow function is faster than bit shifting
-    completeValue = pow(2, powValue+ rowValue)
-    
-    return completeValue 
+    # runtime of Pow is garbage
+    #completeValue = pow(2, powValue+ rowValue)
+    completeValue = 1 << (powValue+rowValue)
+    return np.uint64(completeValue) 
     
 def mapRowToPowValue(rowNumber: str):
     """
