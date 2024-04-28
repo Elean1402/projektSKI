@@ -4,14 +4,13 @@ from src.moveLib import*
 
 class MoveLib(unittest.TestCase):
     
-
     def test_move(self):
         """Tests for movement representation"""
         self.assertEqual(move("A2", "A3"), ("A2","A3"))
         self.assertEqual(move("A2","A3", 1), (2**15,2**23))
         self.assertEqual(type(move("A2","A3", 1)[0]), type(np.int64()))
         self.assertEqual(type(move("A2","A3", 1)[1]), type(np.int64()))
-    #@unittest.skip("unknown error")
+    
     def test_extractValueFromString(self):
         """Tests for computing the integer value of a Position"""
         self.assertEqual(extractValueFromString('A1'), 0)

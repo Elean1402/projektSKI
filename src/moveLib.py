@@ -102,4 +102,5 @@ def mapLetterToNumber(letter:str):
         case "F": return 6
         case "G": return 7
         case "H": return 8
-        case _: return None     
+        case _: return None 
+            
