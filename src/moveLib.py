@@ -2,7 +2,7 @@ import numpy as np
 #Constants
 BITBOARD = np.uint64(0)
 
-def move(start: str, target: str, mode = 0):
+def move(start: str, target: str, mode = 1):
     """
     defines a move from position xy to zv
 
@@ -13,14 +13,17 @@ def move(start: str, target: str, mode = 0):
             Defaults to 0.
 
     Returns:
-        mode=0: (str,str): string tupel of start and target
+        mode=0: (str,str): string tupel of start and target (for Tests & internal usage)
         mode=1: (uint64,uint64): Bitboard tupel of start and target
+        mode=3: str: for communication with game server
     """
     if mode == 0:
         return start,target
     if mode == 1:
         #Todo convert string to bits
         return extractValueFromString(start) | BITBOARD, extractValueFromString(target) | BITBOARD
+    if mode == 3:
+        return start + "-" + target
 
 def extractValueFromString(pos: str):
     """

@@ -7,7 +7,7 @@ class MoveLib(unittest.TestCase):
     
     def test_move(self):
         """Tests for movement representation"""
-        self.assertEqual(move("A2", "A3"), ("A2","A3"))
+        self.assertEqual(move("A2", "A3",0), ("A2","A3"))
         self.assertEqual(move("A2","A3", 1), (2**15,2**23))
         self.assertEqual(type(move("A2","A3", 1)[0]), type(np.uint64()))
         self.assertEqual(type(move("A2","A3", 1)[1]), type(np.uint64()))
