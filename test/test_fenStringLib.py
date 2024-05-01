@@ -6,19 +6,19 @@ class FenStringLib(unittest.TestCase):
     #@unittest.skip("hier gibts noch fehler")
     def test_fenToMatrix1(self):
         """Tests for FEN"""
-        fen1 = "2rr5/5r02/1rr1rr2r0r0/2rb3b01/2r0b04/5b0bb1/2bb2b02/3b04"
+        fen1 = "2rr3/5r02/1rr1rr2r0r0/2rb3b01/2r0b04/5b0bb1/2bb2b02/3b02"
         testMatrix = fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
-            [[0,0,2,0,0,0,0,0],
+            [[0,0,0,2,0,0,0,0],
              [0,0,0,0,0,1,0,0],
              [0,2,0,2,0,0,1,1],
              [0,0,5,0,0,0,4,0],
              [0,0,1,4,0,0,0,0],
              [0,0,0,0,0,4,8,0],
              [0,0,8,0,0,4,0,0],
-             [0,0,0,4,0,0,0,0]])
+             [0,0,0,0,4,0,0,0]])
         print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
         self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)
     
@@ -29,7 +29,7 @@ class FenStringLib(unittest.TestCase):
         
         
         targetMatrix = np.array(
-            [[0,0,2,0,0,0,0,0],
+            [[0,0,0,2,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
@@ -135,12 +135,12 @@ class FenStringLib(unittest.TestCase):
     
     def test_fenToMatrix8(self):
         """Tests for FEN"""
-        fen1 = "1b0b02rr2/8/8/8/8/8/5b02/8"
+        fen1 = "1b0b01rr1/8/8/8/8/8/5b02/8"
         testMatrix = fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
-            [[0,4,4,0,0,2,0,0],
+            [[0,0,4,4,0,2,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
@@ -153,40 +153,59 @@ class FenStringLib(unittest.TestCase):
     
     def test_fenToMatrix9(self):
         """Tests for FEN"""
-        fen1 = "1b0b02rr2/8/8/8/8/8/5b02/1b0b02rr2"
+        fen1 = "1b0b01rr1/8/8/8/8/8/5b02/1b0b01rr1"
         testMatrix = fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
-            [[0,4,4,0,0,2,0,0],
+            [[0,0,4,4,0,2,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,4,0,0],
-             [0,4,4,0,0,2,0,0]])
+             [0,0,4,4,0,2,0,0]])
         print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
         self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)     
         
     def test_fenToMatrix10(self):
         """Tests for FEN"""
-        fen1 = "1b0b02rr2/rrbbrbbr4/8/8/8/8/5b02/1b0b02rr2"
+        fen1 = "1b0b01rr1/rrbbrbbr4/8/8/8/8/5b02/1b0b01rr1"
         testMatrix = fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
-            [[0,4,4,0,0,2,0,0],
+            [[0,0,4,4,0,2,0,0],
              [2,8,5,3,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,4,0,0],
-             [0,4,4,0,0,2,0,0]])
+             [0,0,4,4,0,2,0,0]])
         print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
         self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)     
         
+    
+    
+    def test_fenToMatrix10(self):
+        """Tests for FEN"""
+        fen1 = "r0r0r0r0r0r0/1r0r0r0r0r0r01/8/8/8/8/1b0b0b0b0b0b01/b0b0b0b0b0b0"
+        testMatrix = fenToMatrix(fen1)
+        
+        
+        targetMatrix = np.array(
+            [[0,1,1,1,1,1,1,0],
+             [0,1,1,1,1,1,1,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,4,4,4,4,4,4,0],
+             [0,4,4,4,4,4,4,0]])
+        print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
+        self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)     
     
 if __name__ == '__main__':
     

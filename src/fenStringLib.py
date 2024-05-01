@@ -1,7 +1,15 @@
-FEN = "2rr3/5r02/1rr1rr2r0r0/2rb3b01/2r0b04/5b0bb1/2bb2b02/3b02"
 import numpy as np
 
+
 NO_FIELD = {(8,1),(1,8),(1,1),(8,8)}
+# Farben definieren
+WEISS = (255, 255, 255)
+SCHWARZ = (50, 50, 50 )
+ROT = (255,0,0)
+DARKRED= (127,0,0)
+BLAU = (0, 102, 255)
+DARKBLUE = (0,0,255)
+BACKGROUND = (0,0,0)
 
 def checkFen(fen: str):
     """
@@ -40,8 +48,7 @@ def fenToMatrix(fen:str):
         for i in range(len(tmpRow)):
             try:
                 value = int(tmpRow[i])
-                print("zeichen:",value)
-                if (zeile == 0 or zeile == 7) and spalte ==0: spalte += value if value != 0 else 1
+                if (zeile == 0 or zeile == 7) and spalte ==0: spalte += value+1 if value != 0 else 1
                 else:
                     #mögliche Fälle im FEN String:
                     # x{r,b}0 | {r,b}0y | {r,b}{r,b} |  
@@ -50,12 +57,12 @@ def fenToMatrix(fen:str):
                     elif value == 0 and counter ==1 : counter=0;spalte+=1
             except ValueError:
                 figure = mapColorToValue(tmpRow[i])
-                print("figure",figure)
                 if figure == 0:
                     raise Exception("FEN String contains unknown character!")
                 if counter ==2 :spalte +=1; counter=1
                 elif counter ==1 or counter ==0: counter +=1
                 
+                if (zeile == 0 or zeile == 7) and spalte ==0: spalte += 1
                 # mögliche Fälle: rr=2, rb=5, br=3, bb=8
                 tmpVal = board[zeile][spalte]
                 match tmpVal:
@@ -80,4 +87,22 @@ def mapColorToValue(c:str):
         case "b": return 4
         case _: return 0
 
-#def setValueInMatrix(matrix: np.ndarray,zeile:int,spalte:int,figure:int,FigureOnTop:bool):
+
+def mapValueToColor(value: int):
+    """Helper function for GUI
+    
+
+    Args:
+        value (int): _description_
+
+    Returns:
+        RGB COLOR 3-Tuple: (x,y,z)
+    """
+    match value:
+        case 1: return [ROT]
+        case 2: return [ROT,DARKRED]
+        case 3: return [ROT,BLAU]
+        case 4: return [BLAU]
+        case 5: return [BLAU,ROT]
+        case 8: return [BLAU,DARKBLUE]
+        case _: return []
