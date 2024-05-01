@@ -1,8 +1,9 @@
 import numpy as np
 
+#Konstanten
 
-NO_FIELD = {(8,1),(1,8),(1,1),(8,8)}
-# Farben definieren
+#NO_FIELD = {(8,1),(1,8),(1,1),(8,8)}
+#Farben
 WEISS = (255, 255, 255)
 SCHWARZ = (50, 50, 50 )
 ROT = (255,0,0)
@@ -21,6 +22,7 @@ def checkFen(fen: str):
     Returns:
         boolean: if correct true
     """
+    #TODO
     return True
 
 def fenToMatrix(fen:str):

@@ -9,9 +9,7 @@ gui.updateGUI("FENSTRING2")
 """
 
 class GUI:
-    
-    
-    
+
     def __init__(self,fen):
         self.BREITE =800
         self.HÖHE = 800
@@ -23,7 +21,7 @@ class GUI:
         
         # Spielfeld erstellen
         self.screen = pygame.display.set_mode((self.BREITE+200, self.HÖHE+200))
-        pygame.display.set_caption("Projekt: Symbolische KI: Jumps Sturdy")
+        pygame.display.set_caption("GUI: Jumps Sturdy by shin-young")
         
     def zeichne_feld(self,x, y, farbe):
         pygame.draw.rect(self.screen, farbe, (x * self.BREITE / self.FELDER, y * self.HÖHE / self.FELDER, self.BREITE / self.FELDER, self.HÖHE / self.FELDER))
@@ -40,8 +38,7 @@ class GUI:
     
     def updateGUI(self, FEN):
         self.fen = FEN
-        #pygame.event.post(pygame.event.Event(pygame.USEREVENT, customdata={"fen":self.FEN}))
-        #self.start()
+     
     def start(self):
         running = True
         while running:
@@ -86,6 +83,6 @@ class GUI:
             
             # Aktualisieren des Bildschirms
             pygame.display.flip()
-            print(self.fen)
+            
             # Taktrate begrenzen
             pygame.time.Clock().tick(60)

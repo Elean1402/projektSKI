@@ -1,6 +1,7 @@
 import numpy as np
 #Constants
 BITBOARD = np.uint64(0)
+BITBOARD_MASKE = np.uint64(0b_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000)
 
 def move(start: str, target: str, mode = 1):
     """
