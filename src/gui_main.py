@@ -1,5 +1,5 @@
-from JumpSturdyGUI import *
-import threading
+from gui import *
+
 
 gui = GUI("2rr3/5r02/1rr1rr2r0r0/2rb3b01/2r0b04/5b0bb1/2bb2b02/3b02")
 gui.start()
