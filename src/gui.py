@@ -9,13 +9,13 @@ gui.updateGUI("FENSTRING2")
 """
 
 class GUI:
-  WEISS = (255, 255, 255)
-  SCHWARZ = (50, 50, 50 )
-  ROT = (255,0,0)
-  DARKRED= (127,0,0)
-  BLAU = (0, 102, 255)
-  DARKBLUE = (0,0,255)
-  BACKGROUND = (0,0,0)
+  __WEISS = (255, 255, 255)
+  __SCHWARZ = (50, 50, 50 )
+  __ROT = (255,0,0)
+  __DARKRED= (127,0,0)
+  __BLAU = (0, 102, 255)
+  __DARKBLUE = (0,0,255)
+  __BACKGROUND = (0,0,0)
 
   def checkFen(fen: str):
       """
@@ -106,12 +106,12 @@ class GUI:
           RGB COLOR 3-Tuple: (x,y,z)
       """
       match value:
-          case 1: return [self.ROT]
-          case 2: return [self.ROT,self.DARKRED]
-          case 3: return [self.ROT,self.BLAU]
-          case 4: return [self.BLAU]
-          case 5: return [self.BLAU,self.ROT]
-          case 8: return [self.BLAU,self.DARKBLUE]
+          case 1: return [self.__ROT]
+          case 2: return [self.__ROT,self.__DARKRED]
+          case 3: return [self.__ROT,self.__BLAU]
+          case 4: return [self.__BLAU]
+          case 5: return [self.__BLAU,self.__ROT]
+          case 8: return [self.__BLAU,self.__DARKBLUE]
           case _: return []
   
     
@@ -159,21 +159,21 @@ class GUI:
           no_field = {(1,1),(1,8),(8,8),(8,1)}
           for x in range(1,self.FELDER+1):
             for y in range(1,self.FELDER+1):
-              farbe = self.WEISS if (x + y) % 2 == 0 else self.SCHWARZ
+              farbe = self.__WEISS if (x + y) % 2 == 0 else self.__SCHWARZ
               pos = (x,y)
               if pos in no_field:
-                self.zeichne_feld(x,y,self.BACKGROUND)
+                self.zeichne_feld(x,y,self.__BACKGROUND)
               else:
                 self.zeichne_feld(x, y, farbe)
           
           # Spaltenbeschriftungen zeichnen
           for x in range(0,self.FELDER):
-            self.zeichne_text(chr(x + 65), x * self.BREITE / self.FELDER + self.BREITE / self.FELDER / 2, self.HÖHE + 20, self.SCHWARZ)
+            self.zeichne_text(chr(x + 65), x * self.BREITE / self.FELDER + self.BREITE / self.FELDER / 2, self.HÖHE + 20, self.__SCHWARZ)
           
-          self.zeichne_text("Zum Aktualisieren oder Beenden Enter drücken", 200, self.HÖHE + 80, self.DARKRED)
+          self.zeichne_text("Zum Aktualisieren oder Beenden Enter drücken", 200, self.HÖHE + 80, self.__DARKRED)
           # Zeilenbeschriftungen zeichnen
           for y in range(1, self.FELDER + 1):
-            self.zeichne_text(str(9-y), -10, (y-1) * self.HÖHE / self.FELDER + self.HÖHE / self.FELDER / 2, self.SCHWARZ)
+            self.zeichne_text(str(9-y), -10, (y-1) * self.HÖHE / self.FELDER + self.HÖHE / self.FELDER / 2, self.__SCHWARZ)
           GameStateMatrix = self.fenToMatrix(self.fen)
           for x in range(GameStateMatrix.shape[1]):
             for y in range(GameStateMatrix.shape[0]):

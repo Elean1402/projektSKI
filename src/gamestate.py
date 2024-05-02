@@ -5,16 +5,16 @@ import itertools
 class GameState:
     #Constants
     #TODO: Die Werte müssen noch geändert werden, bitte Arthur fragen
-    VAL_R = 0
-    VAL_B = 1
-    VAL_RR = 2
-    VAL_BB = 3
-    VAL_RB = 4
-    VAL_BR = 5
+    _ARR_INDEX_R = 0
+    _ARR_INDEX_B = 1
+    _ARR_INDEX_RR = 2
+    _ARR_INDEX_BB = 3
+    _ARR_INDEX_RB = 4
+    _ARR_INDEX_BR = 5
     BITBOARD = np.uint64(0)
     
     
-    figureStack = {VAL_R:1, VAL_B:4, VAL_RR:2, VAL_RB:5, VAL_BB:8, VAL_BR:3}
+    figureStack = {_ARR_INDEX_R:1, _ARR_INDEX_B:4, _ARR_INDEX_RR:2, _ARR_INDEX_RB:5, _ARR_INDEX_BB:8, _ARR_INDEX_BR:3}
     
     @classmethod
     def createBitBoardFrom(self,matrix:np.ndarray):
@@ -25,7 +25,7 @@ class GameState:
         return:
             List[np.uint64]: game state transformed in Bitboard representation
         """
-        revMat = np.fliplr(matrix)
+        #revMat = np.fliplr(matrix)
         # Reihenfolge noch nicht klar..
         bitboardArray = [self.BITBOARD,self.BITBOARD,self.BITBOARD,self.BITBOARD,self.BITBOARD,self.BITBOARD]
         # the helperMatrix contains the exponents..
@@ -46,12 +46,12 @@ class GameState:
         for row in range(matrix.shape[0]):
             for col in range(matrix.shape[1]):
                 match matrix[row][col]:
-                    case 1: bitboardArray[self.VAL_R] = bitboardArray[self.VAL_R] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
-                    case 2: bitboardArray[self.VAL_RR] = bitboardArray[self.VAL_RR] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
-                    case 3: bitboardArray[self.VAL_BR] = bitboardArray[self.VAL_BR] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
-                    case 4: bitboardArray[self.VAL_B] = bitboardArray[self.VAL_B] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
-                    case 5: bitboardArray[self.VAL_RB] = bitboardArray[self.VAL_RB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
-                    case 8: bitboardArray[self.VAL_BB] = bitboardArray[self.VAL_BB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 1: bitboardArray[self._ARR_INDEX_R] = bitboardArray[self._ARR_INDEX_R] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 2: bitboardArray[self._ARR_INDEX_RR] = bitboardArray[self._ARR_INDEX_RR] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 3: bitboardArray[self._ARR_INDEX_BR] = bitboardArray[self._ARR_INDEX_BR] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 4: bitboardArray[self._ARR_INDEX_B] = bitboardArray[self._ARR_INDEX_B] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 5: bitboardArray[self._ARR_INDEX_RB] = bitboardArray[self._ARR_INDEX_RB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
+                    case 8: bitboardArray[self._ARR_INDEX_BB] = bitboardArray[self._ARR_INDEX_BB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
                     case _: continue
 
         return bitboardArray
@@ -69,7 +69,7 @@ class GameState:
         M = np.zeros((8,8))
 
         #TODO
-        figures = [self.VAL_B,self.VAL_BR,self.VAL_BB,self.VAL_R,self.VAL_RB,self.VAL_RR]
+        figures = [self._ARR_INDEX_B,self._ARR_INDEX_BR,self._ARR_INDEX_BB,self._ARR_INDEX_R,self._ARR_INDEX_RB,self._ARR_INDEX_RR]
         figures.sort()
         
         for figure in figures:

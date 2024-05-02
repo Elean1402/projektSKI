@@ -1,40 +1,40 @@
 import numpy as np
 import unittest
-from src.moveLib import*
+from src.movelib import*
 import time
 
-class MoveLib(unittest.TestCase):
+class TestMoveLib(unittest.TestCase):
     
     def test_move(self):
         """Tests for movement representation"""
-        self.assertEqual(move("A2", "A3",0), ("A2","A3"))
-        self.assertEqual(move("A2","A3", 1), (2**15,2**23))
-        self.assertEqual(type(move("A2","A3", 1)[0]), type(np.uint64()))
-        self.assertEqual(type(move("A2","A3", 1)[1]), type(np.uint64()))
+        self.assertEqual(MoveLib.move("A2", "A3",0), ("A2","A3"))
+        self.assertEqual(MoveLib.move("A2","A3", 1), (2**15,2**23))
+        self.assertEqual(type(MoveLib.move("A2","A3", 1)[0]), type(np.uint64()))
+        self.assertEqual(type(MoveLib.move("A2","A3", 1)[1]), type(np.uint64()))
     
     def test_extractValueFromString(self):
         """Tests for computing the integer value of a Position"""
-        self.assertEqual(extractValueFromString('A1'), 0)
-        self.assertEqual(extractValueFromString("A2"), 2**15)
-        self.assertEqual(extractValueFromString('D1'),2**4)
-        self.assertEqual(extractValueFromString('B1'),2**6)
-        self.assertEqual(extractValueFromString('C8'),2**61)
-        self.assertEqual(extractValueFromString('G1'),2**1)
-        self.assertEqual(extractValueFromString('G8'),2**57)
-        self.assertEqual(extractValueFromString("A8"),0)
-        self.assertEqual(extractValueFromString('H8'),0)
-        self.assertEqual(extractValueFromString('H1'),0)
-        self.assertEqual(extractValueFromString('E5'),2**35)
+        self.assertEqual(MoveLib.extractValueFromString('A1'), 0)
+        self.assertEqual(MoveLib.extractValueFromString("A2"), 2**15)
+        self.assertEqual(MoveLib.extractValueFromString('D1'),2**4)
+        self.assertEqual(MoveLib.extractValueFromString('B1'),2**6)
+        self.assertEqual(MoveLib.extractValueFromString('C8'),2**61)
+        self.assertEqual(MoveLib.extractValueFromString('G1'),2**1)
+        self.assertEqual(MoveLib.extractValueFromString('G8'),2**57)
+        self.assertEqual(MoveLib.extractValueFromString("A8"),0)
+        self.assertEqual(MoveLib.extractValueFromString('H8'),0)
+        self.assertEqual(MoveLib.extractValueFromString('H1'),0)
+        self.assertEqual(MoveLib.extractValueFromString('E5'),2**35)
 
     def test_mapRowToPowValue(self):
         """Test"""
-        self.assertEqual(mapRowToPowValue('1'),0)
-        self.assertEqual(mapRowToPowValue('2'),7)
-        self.assertEqual(mapRowToPowValue('3'),15)
-        self.assertEqual(mapRowToPowValue('8'),55)
-        self.assertEqual(mapRowToPowValue('9'),None)
-        self.assertEqual(mapRowToPowValue('A'),None)
-        self.assertEqual(mapRowToPowValue('a'),None)
+        self.assertEqual(MoveLib.mapRowToPowValue('1'),0)
+        self.assertEqual(MoveLib.mapRowToPowValue('2'),7)
+        self.assertEqual(MoveLib.mapRowToPowValue('3'),15)
+        self.assertEqual(MoveLib.mapRowToPowValue('8'),55)
+        self.assertEqual(MoveLib.mapRowToPowValue('9'),None)
+        self.assertEqual(MoveLib.mapRowToPowValue('A'),None)
+        self.assertEqual(MoveLib.mapRowToPowValue('a'),None)
 
    
     
