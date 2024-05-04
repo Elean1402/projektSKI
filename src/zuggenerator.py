@@ -2,9 +2,11 @@ import numpy as np
 
 # Red/Alpha pawns
 alpha_p = np.uint64(0b0111111001111110) #panws start position
+l_alpha_p = []
 
 # Red/Alpha knights
 alpha_k =np.uint64(0) #knights start position
+l_alpha_k = []
 
 # Alpha
 alpha = alpha_p & alpha_k
@@ -29,12 +31,14 @@ alpha_k_left = np.uint64(0b00000000000111110011111100111111001111110011111100111
 
 
 # Blue/Beta pawns
-beta_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000) #panws start position
+beta_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000) #pawns start position
+l_beta_p = []
 
 #Beta knights
 beta_k =np.uint64(0) #knights start position
+l_beta_k = []
 
-# Alpha
+# Beta
 beta = beta_p & beta_k
 
 # Blue/Beta pawns move
@@ -61,57 +65,200 @@ def print_board(board:np.uint64):
 	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
 
 
-
-
-def alpha_moves():
+def alpha_p_move_execution(index, source, dest):
+	# delete source Position (bitboard)
+	alpha_p = alpha_p ^ source
 	
+	# on alpha_p -> knight
+	if dest & alpha_p:
+		alpha_k = alpha_k & dest
+		del l_alpha_p[index]
+		l_alpha_k.append(dest)
+	
+	# on beta_k -> hit & knight
+	elif dest & beta_k:
+		beta_k = beta_k ^ dest
+		alpha_k = alpha_k & dest
+		l_beta_k.remove(dest)
+		l_alpha_k.append(dest)
+		beta = beta_p & beta_k
+
+
+	# on beta_p -> hit
+	elif dest & beta_p:
+		beta_p = beta_p ^ dest
+		alpha_p = alpha_p & dest
+		l_beta_p.remove(dest)
+		l_alpha_p[index] = dest
+		beta = beta_p & beta_k
+
+
+	# simple move
+	else: 
+		alpha_p = alpha_p & dest
+		l_alpha_p[index] = dest
+	
+	alpha = alpha_p & alpha_k
+
+def alpha_k_move_execution(index, source, dest):
+	# delete source Position (bitboard)
+	alpha_k = alpha_k ^ source
+	
+	# on alpha_p -> knight
+	if dest & alpha_p:
+		alpha_k = alpha_k & dest
+		l_alpha_k[index] = dest
+	
+	# on beta_k -> hit & knight
+	elif dest & beta_k:
+		beta_k = beta_k ^ dest
+		alpha_k = alpha_k & dest
+		l_beta_k.remove(dest)
+		l_alpha_k[index] = dest
+		beta = beta_p & beta_k
+
+
+	# on beta_p -> hit & pawn
+	elif dest & beta_p:
+		beta_p = beta_p ^ dest
+		alpha_p = alpha_p & dest
+		l_beta_p.remove(dest)
+		del l_alpha_k[index] 
+		l_alpha_p.append(dest)
+		beta = beta_p & beta_k
+
+
+	# simple move -> pawn
+	else: 
+		alpha_p = alpha_p & dest
+		del l_alpha_k[index]
+		l_alpha_p.append(dest)
+	
+	alpha = alpha_p & alpha_k
+
+def beta_move_execution(source, dest): # not for alpha beta search but enemy move
+	if source & beta_k:
+		# delete source Position (bitboard)
+		beta_k = beta_k ^ source
+		
+		# on beta_p -> knight
+		if dest & beta_p:
+			beta_k = beta_k & dest
+			l_beta_k[l_beta_k.index(source)] = dest
+		
+		# on alpha_k -> hit & knight
+		elif dest & alpha_k:
+			alpha_k = alpha_k ^ dest
+			beta_k = beta_k & dest
+			l_alpha_k.remove(dest)
+			l_beta_k[l_beta_k.index(source)] = dest
+			alpha = alpha_p & alpha_k
+
+
+		# on alpha_p -> hit & pawn
+		elif dest & alpha_p:
+			alpha_p = alpha_p ^ dest
+			beta_p = beta_p & dest
+			l_alpha_p.remove(dest)
+			del l_beta_k[l_beta_k.index(source)] 
+			l_beta_p.append(dest)
+			alpha = alpha_p & alpha_k
+
+
+		# simple move -> pawn
+		else: 
+			beta_p = beta_p & dest
+			del l_beta_k[l_beta_k.index(source)]
+			l_beta_p.append(dest)
+		
+		beta = beta_p & beta_k
+	else:
+		# delete source Position (bitboard)
+		beta_p = beta_p ^ source
+		
+		# on beta_p -> knight
+		if dest & beta_p:
+			beta_k = beta_k & dest
+			del l_beta_p[l_beta_p.index(source)]
+			l_beta_k.append(dest)
+		
+		# on alpha_k -> hit & knight
+		elif dest & beta_k:
+			alpha_k = alpha_k ^ dest
+			beta_k = beta_k & dest
+			l_alpha_k.remove(dest)
+			l_beta_k.append(dest)
+			alpha = alpha_p & alpha_k
+
+
+		# on alpha_p -> hit 
+		elif dest & beta_p:
+			alpha_p = alpha_p ^ dest
+			beta_p = beta_p & dest
+			l_alpha_p.remove(dest)
+			l_beta_p[l_beta_p.index(source)] = dest
+			alpha = alpha_p & alpha_k
+
+
+		# simple move
+		else: 
+			beta_p = beta_p & dest
+			l_beta_p[l_beta_p.index(source)] = dest
+		
+		beta = beta_p & beta_k
+	
+def alpha_p_move_generation(source):	# after pre-validation wheather source can move (being below knight)
+	dests = []
     # Pwans
+	# Movable Pawns (not under a knight)
+	p_movable = alpha_p & ~(alpha_k & beta_k)
+
+	# Pawns unmovable squares
+	blocked_p_squares = beta & alpha_k
+
 	# forward
-	moves = (alpha_p & alpha_p_forward) << 8
-	p_forward = moves & (moves ^ (beta & alpha_k))
+	if (source & alpha_p_forward) << 8 & ~blocked_p_squares:
+		dests.append(source << 8) 
 
 	# left
-	moves = (alpha_p & alpha_p_left) << 1
-	p_left = moves & (moves ^ (beta & alpha_k))
+	if (p_movable & alpha_p_left) << 1 & ~blocked_p_squares:
+		dests.append(source << 1) 
 
 	# right
-	moves = (alpha_p & alpha_p_right) >> 1
-	p_right = moves & (moves ^ (beta & alpha_k))
+	if (p_movable & alpha_p_right) >> 1 & ~blocked_p_squares:
+		dests.append(source >> 1) 
 
 	# hit left
-	moves = (alpha_p & alpha_p_hit_left) >> 1
-	p_hit_left = moves & beta
+	if (p_movable & alpha_p_hit_left) << 9 & beta:
+		dests.append(source << 9) 
 
 	# hit right
-	moves = (alpha_p & alpha_p_hit_right) >> 1
-	p_hit_right = moves & beta
+	if (p_movable & alpha_p_hit_right) << 7 & beta:
+		dests.append(source << 7) 
 	
-    #Knights
-	#forward left
-
+	return dests
 	
-def beta_moves():
-	# forward
-	moves = (beta_p & beta_p_forward) << 8
-	forward = moves & (moves ^ (alpha & beta_k))
+def alpha_k_move_generation(source): # no pre-validation needed
+	dests = []
 
 	# left
-	moves = (beta_p & beta_p_left) << 1
-	left = moves & (moves ^ (alpha & beta_k))
+	if (alpha_k & alpha_k_left) << 10 & ~alpha_k:
+		dests.append(source << 10) 
+
+	# forward_left
+	if (alpha_k & alpha_k_forward_left) << 17 & ~alpha_k:
+		dests.append(source << 17) 
 
 	# right
-	moves = (beta_p & beta_p_right) >> 1
-	right = moves & (moves ^ (alpha & beta_k))
+	if (alpha_k & alpha_k_right) << 6 & ~alpha_k:
+		dests.append(source << 6) 
 
-	# hit left
-	moves = (beta_p & beta_p_hit_left) >> 1
-	hit_left = moves & beta
+	# forward_left
+	if (alpha_k & alpha_k_forward_right) << 15 & ~alpha_k:
+		dests.append(source << 15) 
 
-	# hit right
-	moves = (beta_p & beta_p_hit_right) >> 1
-	hit_right = moves & beta
-	
-#print_board(testboard)
+	return dests
+
 
 #alphaboardtests
 '''#Pawns
