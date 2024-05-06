@@ -102,7 +102,98 @@ class BitBoardLib(unittest.TestCase):
         M=GameState.fromBitBoardToMatrix(BB)
         print("computed Matrix:\n",M)
         self.assertEqual(np.allclose(M,targetMatrix),True)
-
+    
+    
+    def test_createBitBoardFromMatrix_Zuggenerator1(self):
+        """Pawn Test"""
+        M = GUI.fenToMatrix("r5/8/8/8/8/8/8/8")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+    
+    def test_createBitBoardFromMatrix_Zuggenerator2(self):
+        """Pawn Test"""
+        M = GUI.fenToMatrix("5r/8/8/8/8/8/8/8")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+    
+    def test_createBitBoardFromMatrix_Zuggenerator3(self):
+        """Pawn Test"""
+        M = GUI.fenToMatrix("b5/8/8/8/8/8/8/5r")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
+    def test_createBitBoardFromMatrix_Zuggenerator4(self):
+        """rr Test"""
+        M = GUI.fenToMatrix("rr5/8/8/8/8/8/8/6")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+    
+    def test_createBitBoardFromMatrix_Zuggenerator5(self):
+        """rr Test"""
+        M = GUI.fenToMatrix("rr4rr/8/8/8/8/8/8/rr1rr3")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+    
+    def test_createBitBoardFromMatrix_Zuggenerator6(self):
+        """bb Test"""
+        M = GUI.fenToMatrix("rr4rr/8/8/bb3bb3/8/8/8/rr1rr3")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
+    def test_createBitBoardFromMatrix_Zuggenerator7(self):
+        """rb Test"""
+        M = GUI.fenToMatrix("rb5/8/8/8/8/8/8/6")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
+    def test_createBitBoardFromMatrix_Zuggenerator8(self):
+        """rb Test"""
+        M = GUI.fenToMatrix("rb1rb/1rbrb5/8/8/8/8/8/rbrbrb5")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
+    def test_createBitBoardFromMatrix_Zuggenerator9(self):
+        """br Test"""
+        M = GUI.fenToMatrix("br5/8/8/8/8/8/8/6")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
+    def test_createBitBoardFromMatrix_Zuggenerator10(self):
+        """br Test"""
+        M = GUI.fenToMatrix("5br/br5brbr/1br1brbr2br/8/8/8/8/6")
+        BB = GameState.createBitBoardFrom(M,True)
+        M2 = GameState.fromBitBoardToMatrix(BB,True)
+        print("M:\n",M)
+        print("M2:\n",M2)
+        self.assertEqual(np.allclose(M,M2),True)
+        
 
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from src.movelib import*
+from src.moveLib import*
 import time
 
 class TestMoveLib(unittest.TestCase):

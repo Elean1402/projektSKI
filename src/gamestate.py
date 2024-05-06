@@ -10,23 +10,33 @@ if sys.version_info < minimum_version:
 class GameState:
     #Constants
     #TODO: Die Werte müssen noch geändert werden, bitte Arthur fragen
+    #wenn die Werte geändert werden, muss die fromBitBoardToMatrix() angepasst werden
     _ARR_INDEX_R = 0
-    _ARR_INDEX_B = 1
-    _ARR_INDEX_RR = 2
-    _ARR_INDEX_BB = 3
-    _ARR_INDEX_RB = 4
-    _ARR_INDEX_BR = 5
+    _ARR_INDEX_RR = 1
+    _ARR_INDEX_BR = 2
+    _ARR_INDEX_B = 3
+    _ARR_INDEX_BB = 4
+    _ARR_INDEX_RB = 5
+    
+    # for Zuggenerator, these indices will be used in an Array. Attention the indices must be consecutively e.g. 0,1,2,3,4 and starting from 0
+    _ZARR_INDEX_R_PAWNS = 0
+    _ZARR_INDEX_R_KNIGHTS = 1
+    _ZARR_INDEX_B_PAWNS = 2
+    _ZARR_INDEX_B_KNIGHTS = 3
+    
     BITBOARD = np.uint64(0)
     
     
     figureStack = {_ARR_INDEX_R:1, _ARR_INDEX_B:4, _ARR_INDEX_RR:2, _ARR_INDEX_RB:5, _ARR_INDEX_BB:8, _ARR_INDEX_BR:3}
     
     @classmethod
-    def createBitBoardFrom(self,matrix:np.ndarray):
+    def createBitBoardFrom(self,matrix:np.ndarray,mode=False):
         """Creates Bitboard representation from given Matrix returned by function fenToMatrix 
 
         Args:
             matrix (np.array): holds the game state
+            mode: boolean: False for constructing GUI
+                           True for Zuggenerator
         return:
             List[np.uint64]: game state transformed in Bitboard representation
         """
@@ -58,15 +68,35 @@ class GameState:
                     case 5: bitboardArray[self._ARR_INDEX_RB] = bitboardArray[self._ARR_INDEX_RB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
                     case 8: bitboardArray[self._ARR_INDEX_BB] = bitboardArray[self._ARR_INDEX_BB] | (np.uint64(1) << np.uint64(helperMatrix[row][col]))
                     case _: continue
-
+        
+        if( mode == True):
+            #Bitboard adjustments for Zuggenerator
+            # rr : set at pos x pawn and knight
+            bitboardArray[self._ARR_INDEX_R] = bitboardArray[self._ARR_INDEX_RR] | bitboardArray[self._ARR_INDEX_R]
+            # bb : analogous to rr 
+            bitboardArray[self._ARR_INDEX_B] = bitboardArray[self._ARR_INDEX_BB] | bitboardArray[self._ARR_INDEX_B]
+            # rb : set at pos x pawn (red) and knight (top, blue)
+            bitboardArray[self._ARR_INDEX_R] = bitboardArray[self._ARR_INDEX_RB] | bitboardArray[self._ARR_INDEX_R]
+            # br : set at pos x pawn (blue) and knight (top,red)
+            bitboardArray[self._ARR_INDEX_B] = bitboardArray[self._ARR_INDEX_BR] | bitboardArray[self._ARR_INDEX_B]
+            
+            bBoardZuggen = np.array([self.BITBOARD,self.BITBOARD,self.BITBOARD,self.BITBOARD])
+            bBoardZuggen[self._ZARR_INDEX_R_PAWNS] = bitboardArray[self._ARR_INDEX_R]
+            bBoardZuggen[self._ZARR_INDEX_R_KNIGHTS] = bitboardArray[self._ARR_INDEX_RR] | bitboardArray[self._ARR_INDEX_BR]
+            bBoardZuggen[self._ZARR_INDEX_B_PAWNS] = bitboardArray[self._ARR_INDEX_B]
+            bBoardZuggen[self._ZARR_INDEX_B_KNIGHTS] = bitboardArray[self._ARR_INDEX_BB] | bitboardArray[self._ARR_INDEX_RB]
+            return bBoardZuggen
+            
         return bitboardArray
     
     @classmethod
-    def fromBitBoardToMatrix(self,BB:list):
+    def fromBitBoardToMatrix(self,BB:list, mode=False):
         """Creates Matrix for Game state
 
         Args:
             BB (list[np.uint64]): Bitboards
+            mode : False: for GUI usage
+                   True: BB is output from Zuggenerator
 
         Returns:
             np.ndarray: Matrix as a game state
@@ -74,14 +104,41 @@ class GameState:
         M = np.zeros((8,8))
 
         #TODO
-        figures = [self._ARR_INDEX_B,self._ARR_INDEX_BR,self._ARR_INDEX_BB,self._ARR_INDEX_R,self._ARR_INDEX_RB,self._ARR_INDEX_RR]
-        figures.sort()
+        if(mode == False):
+            figures = [self._ARR_INDEX_B,self._ARR_INDEX_BR,self._ARR_INDEX_BB,self._ARR_INDEX_R,self._ARR_INDEX_RB,self._ARR_INDEX_RR]
+            figures.sort()
         
-        for figure in figures:
-            binStringRepr = format(BB[figure],'064b')
-            binMatrix = np.array(list(itertools.batched(binStringRepr,8)))
-            tmp = np.zeros((8,8))
-            for index,row in enumerate(binMatrix):
-                tmp[index] = np.array(list(map(int,row)))
-            M += tmp*self.figureStack[figure]
+            for figure in figures:
+                binStringRepr = format(BB[figure],'064b')
+                binMatrix = np.array(list(itertools.batched(binStringRepr,8)))
+                tmp = np.zeros((8,8))
+                for index,row in enumerate(binMatrix):
+                    tmp[index] = np.array(list(map(int,row)))
+                M += tmp*self.figureStack[figure]
+        
+        else:
+            if(BB.shape[0] != 4):
+                raise ValueError(self, "Bitboardarray lengths not equal 4, check output of Zuggenerator")
+            
+            r = BB[self._ZARR_INDEX_R_PAWNS] & ~BB[self._ZARR_INDEX_R_KNIGHTS] & ~BB[self._ZARR_INDEX_B_KNIGHTS]
+            rr =  BB[self._ZARR_INDEX_R_PAWNS] & BB[self._ZARR_INDEX_R_KNIGHTS]
+            br = BB[self._ZARR_INDEX_B_PAWNS] & BB[self._ZARR_INDEX_R_KNIGHTS]
+            
+            b = BB[self._ZARR_INDEX_B_PAWNS] & ~ BB[self._ZARR_INDEX_B_KNIGHTS] & ~BB[self._ZARR_INDEX_R_KNIGHTS]
+            bb =BB[self._ZARR_INDEX_B_PAWNS] & BB[self._ZARR_INDEX_B_KNIGHTS]
+            rb = BB[self._ZARR_INDEX_R_PAWNS] & BB[self._ZARR_INDEX_B_KNIGHTS]
+            
+            figures = [r,rr,br,b,bb,rb]
+            
+            for index,figure in enumerate(figures):
+                binStringRepr = format(figure, '064b')
+                binMatrix = np.array(list(itertools.batched(binStringRepr,8)))
+                tmp = np.zeros((8,8))
+                for i,row in enumerate(binMatrix):
+                    tmp[i] = np.array(list(map(int,row)))
+                print("Mtemp:\n",M)    
+                print(figure,"tmp\n",tmp,"\nfigVal\n",self.figureStack[index])
+                M += tmp*self.figureStack[index]
+        
         return M
+                
