@@ -236,9 +236,7 @@ class TestZuggenerator(unittest.TestCase):
             else:
                 assert 1 == 1
 
-    def benchmark(self):
-        zug_time: float = min(repeat("test_generate_zug()", repeat=5, number=1000))
-        print(zug_time)
+
 
 
 if __name__ == '__main__':
