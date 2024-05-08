@@ -1,8 +1,11 @@
 import unittest
-
+from timeit import repeat
 from src.gamestate import *
 from src.gui import *
 from src.zuggenerator import *
+
+
+
 
 
 class TestZuggenerator(unittest.TestCase):
@@ -224,7 +227,7 @@ class TestZuggenerator(unittest.TestCase):
     def test_generate_zug(self):
         M = GUI.fenToMatrix("br5/8/8/8/8/8/8/6")
         BB = GameState.createBitBoardFrom(M, True)
-        print_board(BB)
+
         FEN_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
                          "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b"]
         poss_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3"]
@@ -232,10 +235,13 @@ class TestZuggenerator(unittest.TestCase):
         poss = poss_pawns_hit
         for i in range(len(FEN)):
             if FEN[i].endswith("r"):
-                assert 1==1
+                assert 1 == 1
             else:
-                assert 1==1
+                assert 1 == 1
 
-
+    def benchmark(self):
+        zug_time: float = min(repeat("test_generate_zug()", repeat=5, number=1000))
+        print(zug_time)
 if __name__ == '__main__':
     unittest.main()
+
