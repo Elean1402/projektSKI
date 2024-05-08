@@ -8,6 +8,13 @@ def print_board(board:np.uint64):
 	#str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
 	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
 
+def print_alpha_p_state():
+	print("alpha_p")
+	print_board(alpha_p)
+	print("All Pawns")
+	for p in l_alpha_p:
+		print_board(p)
+
 
 ######################################################################################################
 # Initialisation
@@ -51,6 +58,7 @@ def init_position(alpha_p, alpha_k, beta_p, beta_k):
 	beta_k = beta_k
 	beta = beta_p & beta_k
 	extract_figs()
+	return alpha_p, l_alpha_p, alpha_k, l_alpha_k, alpha, beta_p, l_beta_p, beta_k,l_beta_k, beta
 	
 
 ######################################################################################################
@@ -388,7 +396,9 @@ def beta_k_move_execution(index, source:np.uint64, dest:np.uint64):
 	
 	beta = beta_p & beta_k
 
-def beta_move_execution(source:np.uint64, dest:np.uint64): # missing validation
+def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
+	if dest not in [tup[2] for tup in beta_p_move_generation(source)+beta_k_move_generation(source)]:
+		print("invalid move")
 	if source & beta_k:
 		#if source beta_k_move_generation
 		# delete source Position (bitboard)
@@ -464,62 +474,6 @@ def beta_move_execution(source:np.uint64, dest:np.uint64): # missing validation
 		print("no figure on source position")
 
 #alphaboardtests
-'''#Pawns
-print("alpha_p_forward")
-print_board(alpha_p_forward)
 
-print("alpha_p_right")
-print_board(alpha_p_right)
-
-print("alpha_p_hit_right")
-print_board(alpha_p_hit_right)
-
-print("alpha_p_left")
-print_board(alpha_p_left)
-
-print("alpha_p_hit_left")
-print_board(alpha_p_hit_left)'''
-
-#Knights
-'''print("alpha_k_forwar_right")
-print_board(alpha_k_forward_right)
-
-print("alpha_k_right")
-print_board(alpha_k_right)
-
-print("alpha_k_forward_left")
-print_board(alpha_k_forward_left)
-
-print("alpha_k_left")
-print_board(alpha_k_left)
-
-#betatest
-#Pawns
-print("beta_p_forward")
-print_board(beta_p_forward)
-
-print("beta_p_right")
-print_board(beta_p_right)
-
-print("beta_p_hit_right")
-print_board(beta_p_hit_right)
-
-print("beta_p_left")
-print_board(beta_p_left)
-
-print("beta_p_hit_left")
-print_board(beta_p_hit_left)
-
-
-#Knights
-print("beta_k_forwar_right")
-print_board(beta_k_forward_right)
-
-print("beta_k_right")
-print_board(beta_k_right)
-
-print("beta_k_forward_left")
-print_board(beta_k_forward_left)
-
-print("beta_k_left")
-print_board(beta_k_left)'''
+init_position(alpha_p, alpha_k, beta_p, beta_k)
+print(l_alpha_p)
