@@ -5,9 +5,6 @@ from src.gui import *
 from src.zuggenerator import *
 
 
-
-
-
 class TestZuggenerator(unittest.TestCase):
 
     def setUp(self):
@@ -242,6 +239,7 @@ class TestZuggenerator(unittest.TestCase):
     def benchmark(self):
         zug_time: float = min(repeat("test_generate_zug()", repeat=5, number=1000))
         print(zug_time)
+
+
 if __name__ == '__main__':
     unittest.main()
-
