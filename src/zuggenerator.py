@@ -481,7 +481,7 @@ print("alpha_p_hit_left")
 print_board(alpha_p_hit_left)'''
 
 #Knights
-print("alpha_k_forwar_right")
+'''print("alpha_k_forwar_right")
 print_board(alpha_k_forward_right)
 
 print("alpha_k_right")
@@ -493,7 +493,7 @@ print_board(alpha_k_forward_left)
 print("alpha_k_left")
 print_board(alpha_k_left)
 
-'''#betatest
+#betatest
 #Pawns
 print("beta_p_forward")
 print_board(beta_p_forward)
@@ -508,7 +508,7 @@ print("beta_p_left")
 print_board(beta_p_left)
 
 print("beta_p_hit_left")
-print_board(beta_p_hit_left)'''
+print_board(beta_p_hit_left)
 
 
 #Knights
@@ -522,4 +522,4 @@ print("beta_k_forward_left")
 print_board(beta_k_forward_left)
 
 print("beta_k_left")
-print_board(beta_k_left)
+print_board(beta_k_left)'''
