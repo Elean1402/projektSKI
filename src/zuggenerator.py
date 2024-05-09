@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from benchmark import benchmark
+
 
 
 def print_board(board:np.uint64):

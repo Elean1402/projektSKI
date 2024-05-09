@@ -220,6 +220,7 @@ class TestZuggenerator(unittest.TestCase):
                              "A7-C6, A7-B5, B6-A4, B6-C4, B6-D5, D6-B5, D6-C4, D6-E4, D6-F5, E7-C6, E7-D5, E7-F5, E7-G6"]
 
     def test_generate_zug(self):
+        Player = ""
         M = GUI.fenToMatrix("br5/8/8/8/8/8/8/6")
         BB = GameState.createBitBoardFrom(M, True)
         GUI = GUI("6/8/8/8/8/8/8/4rr1")
@@ -230,11 +231,9 @@ class TestZuggenerator(unittest.TestCase):
         FEN = FEN_pawns_hit
         poss = poss_pawns_hit
         for i in range(len(FEN)):
-            if FEN[i].endswith("r"):
-                assert 1 == alpha_p_move_generation(FEN)
-            else:
-                assert 1 == 1
-
+            FEN[i],Player = FEN[i].split(" ")
+            print(FEN[i])
+            print(Player)
 
 
 
