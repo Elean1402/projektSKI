@@ -19,3 +19,6 @@ Zustandsrepräsentation: Bitboard
 <function beta_generation at 0x103a60c20>0.028301833001023624
 <built-in function print>0.000498707995575387
 <built-in function print>0.0005097920002299361
+<built-in function print>0.0004973750037606806
+function0.0004990419984096661
+function : 0.0005146250041434541

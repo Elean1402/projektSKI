@@ -2,7 +2,7 @@ import unittest
 from src.gamestate import *
 from src.zuggenerator import *
 from src.gui import *
-
+from src.benchmark import *
 class TestZuggenerator(unittest.TestCase):
 
     def setUp(self):
@@ -234,6 +234,7 @@ class TestZuggenerator(unittest.TestCase):
         for i in range(1):
             fen_string,Player = FEN[i].split(" ")
             moves = poss[i]
+
             print(fen_string)
             GUI = Gui(fen_string)
             GUI.start()
@@ -241,6 +242,7 @@ class TestZuggenerator(unittest.TestCase):
             if(Player == "b"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 a = GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
+                benchmark(fen_string, alpha_generation)
                 #print_state()
                 a_moves = alpha_generation()
                 # for i,s,dests in a_moves:
@@ -258,7 +260,8 @@ class TestZuggenerator(unittest.TestCase):
                 #print(list_Alpha)
                 assert list_Alpha == moves
             elif(Player == "r"):
-                init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))  
+                init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
+                benchmark(fen_string, beta_generation)
                 list_Beta = moves_to_string(beta_generation())
                 print(list_Beta)
                 assert list_Beta == moves
