@@ -45,7 +45,7 @@ class Gui:
       if not self.checkFen(fen):
           return None
       
-      fenArray = fen.split("/")[::-1]
+      fenArray = fen.split("/")#[::-1]
       zeile = 0
       while zeile < 8:
           tmpRow = fenArray.pop()
