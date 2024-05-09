@@ -1,0 +1,5 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+"src.gamestate.GameState" [color="black", fontcolor="black", label=<{GameState|BITBOARD : uint64<br ALIGN="LEFT"/>figureStack : dict<br ALIGN="LEFT"/>|createBitBoardFrom(matrix: np.ndarray, mode)<br ALIGN="LEFT"/>fromBitBoardToMatrix(BB: list, mode)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+}
