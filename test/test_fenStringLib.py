@@ -7,7 +7,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix1(self):
         """Tests for FEN"""
         fen1 = "2rr3/5r02/1rr1rr2r0r0/2rb3b01/2r0b04/5b0bb1/2bb2b02/3b02"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -25,7 +25,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix2(self):
         """Tests for FEN"""
         fen1 = "2rr3/8/8/8/8/8/8/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -43,7 +43,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix3(self):
         """Tests for FEN"""
         fen1 = "8/8/1rr1rr2r0r0/8/8/8/8/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -62,7 +62,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix5(self):
         """Tests for FEN"""
         fen1 = "8/8/8/2r05/8/8/8/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -82,7 +82,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix4(self):
         """Tests for FEN"""
         fen1 = "8/8/8/2rb5/8/8/8/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -100,7 +100,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix6(self):
         """Tests for FEN"""
         fen1 = "8/8/8/8/2r0b04/8/8/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -118,7 +118,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix7(self):
         """Tests for FEN"""
         fen1 = "8/8/8/8/8/8/5b02/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -136,7 +136,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix8(self):
         """Tests for FEN"""
         fen1 = "1b0b01rr1/8/8/8/8/8/5b02/8"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -154,7 +154,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix9(self):
         """Tests for FEN"""
         fen1 = "1b0b01rr1/8/8/8/8/8/5b02/1b0b01rr1"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -172,7 +172,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix10(self):
         """Tests for FEN"""
         fen1 = "1b0b01rr1/rrbbrbbr4/8/8/8/8/5b02/1b0b01rr1"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(
@@ -192,7 +192,7 @@ class FenStringLib(unittest.TestCase):
     def test_fenToMatrix10(self):
         """Tests for FEN"""
         fen1 = "r0r0r0r0r0r0/1r0r0r0r0r0r01/8/8/8/8/1b0b0b0b0b0b01/b0b0b0b0b0b0"
-        testMatrix =GUI.fenToMatrix(fen1)
+        testMatrix =Gui.fenToMatrix(fen1)
         
         
         targetMatrix = np.array(

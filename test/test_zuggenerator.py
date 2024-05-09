@@ -221,9 +221,10 @@ class TestZuggenerator(unittest.TestCase):
 
     def test_generate_zug(self):
         Player = ""
-        M = GUI.fenToMatrix("br5/8/8/8/8/8/8/6")
+        M = Gui.fenToMatrix("br5/8/8/8/8/8/8/6")
+        
         BB = GameState.createBitBoardFrom(M, True)
-        GUI = GUI("6/8/8/8/8/8/8/4rr1")
+        GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
         FEN_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
                          "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b"]
