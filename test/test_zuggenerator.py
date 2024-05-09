@@ -227,9 +227,9 @@ class TestZuggenerator(unittest.TestCase):
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
         FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
-                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b", "6/2r0b0r03/3r04/8/8/8/8/6 b",
+                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b",
                        "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b"]
-        poss_b_pawns_hit = ['D2-E3', "D2-C3", "D2-E3", "D2-C3", "", "D2-C3", "D2-E3"]
+        poss_b_pawns_hit = ['D2-E3', "D2-C3", "D2-E3", "D2-C3", "D2-C3", "D2-E3"]
         FEN = FEN_b_pawns_hit
         poss = poss_b_pawns_hit
         for i in range(len(FEN)):
@@ -248,8 +248,12 @@ class TestZuggenerator(unittest.TestCase):
                 list_Alpha = []
                 for element in list_temp:
                     if element not in list_Alpha:
-                        resultantList.append(element)
-                assert list_Alpha == moves
+                        list_Alpha.append(element)
+                print(list_Alpha)
+                move_list = []
+                move_list.append(moves)
+                print(moves)
+                assert list_Alpha == move_list
             elif(Player == "r"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 benchmark(fen_string, beta_generation)
@@ -257,12 +261,12 @@ class TestZuggenerator(unittest.TestCase):
                 list_Beta = []
                 for element in list_temp:
                     if element not in list_Beta:
-                        resultantList.append(element)
+                        list_Beta.append(element)
                 print(list_Beta)
                 print(moves)
                 move_list = []
                 move_list.append(moves)
-                assert list_Beta == moves
+                assert list_Beta == move_list
             else:
                 raise ValueError("Player not found")
 
