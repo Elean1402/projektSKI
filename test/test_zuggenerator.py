@@ -226,11 +226,12 @@ class TestZuggenerator(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M, True)
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
-        FEN_pawns_hit =  ["6/2r0b0b0r02/3r04/8/8/8/8/6 b", "6/2r0b0r03/3b04/3r04/8/8/8/6 b",
-                         "6/1r0b0b0r03/3r04/8/8/8/8/6 b"]
-        poss_b_pawns_build = ["D2-E2, E2-E3, E2-D2", "D2-D3, D3-C3, D3-E3", "D2-C2, C2-C3"]
-        FEN = FEN_pawns_hit
-        poss = poss_b_pawns_build
+        FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
+                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b", "6/2r0b0r03/3r04/8/8/8/8/6 b",
+                       "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b"]
+        poss_b_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3", "", "D2-C3", "D2-E3"]
+        FEN = FEN_b_pawns_hit
+        poss = poss_b_pawns_hit
         for i in range(1):
             fen_string,Player = FEN[i].split(" ")
             moves = poss[i]
