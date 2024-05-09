@@ -1,7 +1,9 @@
 import numpy as np
 import random
 from src.moveLib import MoveLib
-from src.benchmark import *
+from src.gamestate import GameState
+from src.gui import Gui
+
 
 
 
@@ -9,6 +11,7 @@ from src.benchmark import *
 # Initialisation
 ######################################################################################################
 
+alpha_turn = True
 
 
 # Alpha pawns
@@ -70,17 +73,35 @@ beta_on_ground_row = np.uint64(0b00000000000000000000000000000000000000000000000
 
 def isOver():
 	if alpha & alpha_on_ground_row:
+		# print_board(alpha)
+		# print_board(alpha_on_ground_row)
+		# print_board(alpha & alpha_on_ground_row)
 		return "rw"	# alpha won
 	elif beta & beta_on_ground_row:
 		return "bw" # beta won
-	return "continue"
-
-
+	return "c"	# continue
 
 def moves_to_string(moves):
 	return [MoveLib.move(source,dest,mode=3) for index,source,dests in moves for dest in dests]
 
 	
+def play(FEN_board=False):
+	global alpha_turn
+	if FEN_board:
+		init_position(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
+	else:
+		init_position(beta_p, beta_k, alpha_p, alpha_k)
+	game = []
+	while isOver() == "c":
+		if alpha_turn:
+			source, dest = alpha_random_move_execution(alpha_generation())
+		else:
+			source, dest = beta_random_move_execution(beta_generation())
+
+		game.append(MoveLib.move(source,dest,mode=3))
+		alpha_turn = not alpha_turn
+	return isOver(), game
+
 
 ######################################################################################################
 # ALPHA
@@ -207,6 +228,10 @@ def alpha_k_move_execution(index, source:np.uint64, dest:np.uint64):
 	# delete source Position (bitboard)
 	alpha_k = alpha_k ^ source
 	
+	print(dest)
+	print(l_beta_p)
+	print()
+
 	# on alpha_p -> knight
 	if dest & alpha_p:
 		alpha_k = alpha_k ^ dest
@@ -241,21 +266,26 @@ def alpha_k_move_execution(index, source:np.uint64, dest:np.uint64):
 
 def alpha_generation():
 	moves = []
-	knights =  alpha_k & beta_k
+	knights =  alpha_k | beta_k
 	for index,source in enumerate(filter(lambda x: x & ~knights, l_alpha_p)):	#pre-validation (pawn under knight)
-		moves.append((index, source, alpha_p_move_generation(source)))
+		fig_moves = alpha_p_move_generation(source)
+		if len(moves):
+			moves.append((index, source, fig_moves))
 	
 	for index,source in enumerate(l_alpha_k):
-		moves.append((index, source, alpha_k_move_generation(source)))
+		fig_moves = alpha_k_move_generation(source)
+		if len(moves):
+			moves.append((index, source, fig_moves))
 	return moves
 
-def alpha_random_move_execution(moves):
+def alpha_random_move_execution(moves): #  (index, source,[dest,dest,dest])
 	fig = random.choice(moves)
 	move = random.choice(fig[2])
 	if fig[1] & alpha_k:
 		alpha_k_move_execution(fig[0],fig[1],move)
 	else:
 		alpha_p_move_execution(fig[0],fig[1],move)
+	return fig[1], move
 
 
 
@@ -500,12 +530,16 @@ def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
 
 def beta_generation():
 	moves = []
-	knights =  alpha_k & beta_k
+	knights =  alpha_k | beta_k
 	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):	#pre-validation (pawn under knight)
-		moves.append((index, source, beta_p_move_generation(source)))
+		fig_moves = beta_p_move_generation(source)
+		if len(moves):
+			moves.append((index, source, fig_moves))
 	
 	for index,source in enumerate(l_beta_k):
-		moves.append((index, source, beta_k_move_generation(source)))
+		fig_moves = beta_k_move_generation(source)
+		if len(moves):
+			moves.append((index, source, fig_moves))
 	return moves
 
 def beta_random_move_execution(moves):
@@ -515,6 +549,8 @@ def beta_random_move_execution(moves):
 		beta_k_move_execution(fig[0],fig[1],move)
 	else:
 		beta_p_move_execution(fig[0],fig[1],move)
+	return fig[1], move
+	
 
 
 
@@ -560,5 +596,8 @@ def print_state():
 #beta_random_move_execution(beta_generation())
 #alpha_random_move_execution(alpha_generation())
 #print_state()
-#init_position(alpha_p, alpha_k, beta_p, beta_k)
+#init_position(beta_p, beta_k, alpha_p, alpha_k)
 #print(moves_to_string(alpha_generation()))
+
+if __name__ == "__main__":
+	print(play())
