@@ -229,10 +229,10 @@ class TestZuggenerator(unittest.TestCase):
         FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
                        "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b", "6/2r0b0r03/3r04/8/8/8/8/6 b",
                        "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b"]
-        poss_b_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3", "", "D2-C3", "D2-E3"]
+        poss_b_pawns_hit = ['D2-E3', "D2-C3", "D2-E3", "D2-C3", "", "D2-C3", "D2-E3"]
         FEN = FEN_b_pawns_hit
         poss = poss_b_pawns_hit
-        for i in range(1):
+        for i in range(len(FEN)):
             fen_string,Player = FEN[i].split(" ")
             moves = poss[i]
 
@@ -244,27 +244,23 @@ class TestZuggenerator(unittest.TestCase):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 a = GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
                 benchmark(fen_string, alpha_generation)
-                #print_state()
                 a_moves = alpha_generation()
-                # for i,s,dests in a_moves:
-                #     for d in dests:
-                #         print("move")
-                #         print_board(s)
-                #         print()
-                #         print_board(d)
-                #         print()
-               
-                # print()
                 print(a_moves)
                 list_Alpha = moves_to_string(a_moves)
-                
-                #print(list_Alpha)
-                assert list_Alpha == moves
+                print(list_Alpha)
+                print(moves)
+                move_list = []
+                move_list.append(moves)
+                assert list_Alpha == move_list
             elif(Player == "r"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 benchmark(fen_string, beta_generation)
-                list_Beta = moves_to_string(beta_generation())
+                b_moves = beta_generation()
+                list_Beta = moves_to_string(b_moves)
                 print(list_Beta)
+                print(moves)
+                move_list = []
+                move_list.append(moves)
                 assert list_Beta == moves
             else:
                 raise ValueError("Player not found")
