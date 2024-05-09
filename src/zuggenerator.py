@@ -20,7 +20,7 @@ alpha_k =np.uint64(0) #knights start position
 l_alpha_k = []
 
 # Alpha
-alpha = alpha_p & alpha_k
+alpha = alpha_p | alpha_k
 
 
 # Beta pawns
@@ -32,7 +32,7 @@ beta_k =np.uint64(0) #knights start position
 l_beta_k = []
 
 # Beta
-beta = beta_p & beta_k
+beta = beta_p | beta_k
 
 
 def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
@@ -121,7 +121,6 @@ def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather s
 	# Pawns unmovable squares
 	blocked_p_squares = beta | alpha_k
 
-	print_bitboards()
 	# forward
 	if (source & alpha_p_forward) << ampf & ~blocked_p_squares:
 		dests.append(source << ampf) 
