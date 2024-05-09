@@ -1,5 +1,5 @@
 import numpy as np
-from gamestate import GameState
+from src.gamestate import GameState
 
 
 class MoveLib:
