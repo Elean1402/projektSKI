@@ -42,6 +42,9 @@ class TestMoveLib(unittest.TestCase):
         it = 1000000
         self.assertLess(execShift(it)[1],execPow(it)[1])
         
+    def test_BitsToPosition(self):
+        val = MoveLib.BitsToPosition(np.uint64(2**7))
+        self.assertEqual(val, "A1")
         
     
 
