@@ -140,11 +140,11 @@ class TestZuggenerator(unittest.TestCase):
     # Check if pawns go on to other pawns
     FEN_b_pawns_build = ["6/2r0b0b0r02/3r04/8/8/8/8/6 b", "6/2r0b0r03/3b04/3r04/8/8/8/6 b",
                          "6/1r0b0b0r03/3r04/8/8/8/8/6 b"]
-    poss_b_pawns_build = ["D2-E2, E2-E3", "D2-D3, D3-C3, D3-E3", "D2-C2, C2-C3"]
+    poss_b_pawns_build = ["D2-E2, E2-E3, E2-D2, E2-E3", "D2-D3, D3-C3, D3-E3", "D2-C2, C2-C3, C2-D2, C2-D3"]
 
     # Check if pawns move and walls
     FEN_b_pawns_move = ["6/2r0b04/3r04/8/8/8/8/6 b", "6/2r0b0r03/8/8/8/8/8/6 b", "6/3b0r03/3r04/8/8/8/8/6 b",
-                        "6/b0r06/8/8/8/8/8/6 b", "6/6r0b0/8/8/8/8/8/6 b", "6/6r0b0/7/r0/8/8/8/8/6 b"]
+                        "6/b0r06/8/8/8/8/8/6 b", "6/6r0b0/8/8/8/8/8/6 b", "6/6r0b0/7r0/8/8/8/8/6 b"]
     poss_b_pawns_move = ["D2-E2", "D2-D3", "D2-C2", "A2-A3", "H2-H3", ""]
 
     # Check pawns and corner and does not move on to knight
@@ -155,7 +155,7 @@ class TestZuggenerator(unittest.TestCase):
     # Check knights hit for knights and pawns(+mix)
     FEN_b_knights_hit = ["6/3bb4/1r03r02/2r01r03/8/8/8/6 b", "6/3bb4/1rr3rr2/2rr1rr3/8/8/8/6 b",
                          "6/3bb4/1br3br2/2br1br3/8/8/8/6 b"]
-    poss_b_knight_hit = ["D2-E3, D2-C4, D2-E4, D2-F3", "D2-E3, D2-C4, D2-E4, D2-F3", "D2-E3, D2-C4, D2-E4, D2-F3"]
+    poss_b_knight_hit = ["D2-B3, D2-C4, D2-E4, D2-F3", "D2-B3, D2-C4, D2-E4, D2-F3", "D2-B3, D2-C4, D2-E4, D2-F3"]
 
     # Check if knights go on to other pawns
     FEN_b_knights_build = ["1bb4/b0r01r0b0r02/r0b0r0b0r03/1r01r04/8/8/8/6 b"]
