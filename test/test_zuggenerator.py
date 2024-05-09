@@ -226,14 +226,12 @@ class TestZuggenerator(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M, True)
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
-        FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
-                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b",
-                       "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b","6/8/8/8/8/3b0b03/3b0r0b02/6 r", "6/8/8/8/8/4b0b02/3b0r0b02/6 r",
-                       "6/8/8/8/8/3bbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0bb2/3b0r0b02/6 r",
-                       "6/8/8/8/8/3rbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0rb2/3b0r0b02/6 r"]
-        poss_b_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3", "D2-C3", "D2-E3","E7-D6", "E7-F6", "E7-D6", "E7-F6", "E7-D6", "E7-F6"]
-        FEN = FEN_b_pawns_hit
-        poss = poss_b_pawns_hit
+        FEN_r_knights_hit = ["6/8/8/8/3b01b02/2b03b01/4rr3/6 r", "6/8/8/8/3bb1bb2/2bb3bb1/4rr3/6 r",
+                             "6/8/8/8/3rb1rb2/2rb3rb1/4rr3/6 r"]
+        poss_r_knight_hit = ["E7-C6, E7-D5, E7-F5, E7-G6", "E7-C6, E7-D5, E7-F5, E7-G6", "E7-C6, E7-D5, E7-F5, E7-G6"]
+
+        FEN = FEN_r_knights_hit
+        poss = poss_r_knight_hit
         for i in range(len(FEN)):
             fen_string,Player = FEN[i].split(" ")
             moves = poss[i]
@@ -254,11 +252,12 @@ class TestZuggenerator(unittest.TestCase):
                 for element in list_temp:
                     if element not in list_Alpha:
                         list_Alpha.append(element)
-                print(list_Alpha)
-                move_list = []
-                move_list.append(moves)
-                print(move_list)
-                assert list_Alpha == move_list
+                move_list = moves.split(", ")
+                for element in move_list:
+                    if element in list_Alpha:
+                        list_Alpha.remove(element)
+                        move_list.remove(element)
+                assert len(list_Alpha) == 0 and len(move_list) == 0
 
             # Beta
             elif(Player == "r"):
@@ -266,14 +265,20 @@ class TestZuggenerator(unittest.TestCase):
                 benchmark(fen_string, beta_generation)
                 list_temp = moves_to_string(beta_generation())
                 list_Beta = []
-                for element in list_temp:
+                for element in list_Beta:
                     if element not in list_Beta:
                         list_Beta.append(element)
-                print(list_Beta)
-                print(moves)
-                move_list = []
-                move_list.append(moves)
-                assert list_Beta == move_list
+                print(list_temp)
+                move_list = moves.split(", ")
+
+
+                for element in move_list:
+                    if element in list_Beta:
+                        list_Beta.remove(element)
+                        move_list.remove(element)
+                assert len(list_Beta) == 0 and len(move_list) == 0
+
+
             else:
                 raise ValueError("Player not found")
 
