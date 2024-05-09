@@ -560,6 +560,5 @@ def print_state():
 #beta_random_move_execution(beta_generation())
 #alpha_random_move_execution(alpha_generation())
 #print_state()
-init_position(alpha_p, alpha_k, beta_p, beta_k)
+#init_position(alpha_p, alpha_k, beta_p, beta_k)
 #print(moves_to_string(alpha_generation()))
-benchmark(print("eric"))

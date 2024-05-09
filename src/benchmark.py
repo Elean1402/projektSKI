@@ -1,10 +1,9 @@
 from timeit import repeat
-import platform
 
 
 def benchmark(func):
     txt = open("benchmark.txt", "a")
+    print(str(func))
     zug_time = min(repeat(func, repeat=100, number=1000))
-    #txt.write("PC Specs"+platform.machine()+platform.system()+platform.processor() + "\n")
+    print(str(zug_time))
     txt.write(str(func) + str(zug_time) + "\n")
-

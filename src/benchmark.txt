@@ -1,3 +1,8 @@
+Platform: Mac(ARM)
+CPU: Apple M1 Pro
+RAM: 16GB
+Programmiersprache: Python
+Zustandsrepräsentation: Bitboard
 <function alpha_generation at 0x105ca47c0>0.03726987499976531
 <function alpha_generation at 0x128afc7c0>0.029268749996845145
 <function beta_generation at 0x11723cc20>0.029726082997513004
@@ -12,3 +17,5 @@
 <function beta_generation at 0x10370cc20>[0.03757770800439175]
 <function beta_generation at 0x117874c20>[0.039584915997693315]
 <function beta_generation at 0x103a60c20>0.028301833001023624
+<built-in function print>0.000498707995575387
+<built-in function print>0.0005097920002299361
