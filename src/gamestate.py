@@ -52,8 +52,8 @@ class GameState:
                 helperMatrix[x][y] = val 
         
         helperMatrix = np.fliplr(np.fliplr(helperMatrix.transpose()).transpose())
-        print(helperMatrix)
-        print("hmatrix val:",helperMatrix[0][1])
+        #print(helperMatrix)
+        #print("hmatrix val:",helperMatrix[0][1])
         if matrix.shape != helperMatrix.shape:
             raise Exception("shapes of Matrix and Helpermatrix incompatible")
         
@@ -136,8 +136,8 @@ class GameState:
                 tmp = np.zeros((8,8))
                 for i,row in enumerate(binMatrix):
                     tmp[i] = np.array(list(map(int,row)))
-                print("Mtemp:\n",M)    
-                print(figure,"tmp\n",tmp,"\nfigVal\n",self.figureStack[index])
+                #print("Mtemp:\n",M)    
+                #print(figure,"tmp\n",tmp,"\nfigVal\n",self.figureStack[index])
                 M += tmp*self.figureStack[index]
         
         return M

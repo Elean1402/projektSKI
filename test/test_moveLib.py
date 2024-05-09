@@ -45,8 +45,22 @@ class TestMoveLib(unittest.TestCase):
     def test_BitsToPosition(self):
         val = MoveLib.BitsToPosition(np.uint64(2**7))
         self.assertEqual(val, "A1")
-        
     
+    def test_BitsToPosition2(self):
+        val = MoveLib.BitsToPosition(np.uint64(2**11))
+        self.assertEqual(val, "E2")    
+    
+    def test_BitsToPosition3(self):
+        val = MoveLib.BitsToPosition(np.uint64(2**19))
+        self.assertEqual(val, "E3")
+        
+    def test_BitsToPosition4(self):
+        val = MoveLib.BitsToPosition(np.uint64(2**20))
+        self.assertEqual(val, "D3")  
+    
+    def test_BitsToPosition5(self):
+        val = MoveLib.BitsToPosition(np.uint64(2**12))
+        self.assertEqual(val, "D2") 
 
 def execPow(it:int):
     val = 0
