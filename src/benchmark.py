@@ -4,7 +4,7 @@ from timeit import repeat
 def benchmark(fen,func):
     txt = open("benchmark.txt", "a")
     print(str(func))
-    zug_time = min(repeat(func, repeat=100, number=1000))
+    zug_time = min(repeat(func, number=1000))
     print(str(zug_time))
     func = str(func).split(" ")
     name = func[1]
