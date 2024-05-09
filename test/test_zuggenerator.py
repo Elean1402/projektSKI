@@ -226,10 +226,12 @@ class TestZuggenerator(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M, True)
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
-        FEN_b_pawns_hit = ["6/8/8/8/8/3b0b03/3b0r0b02/6 r", "6/8/8/8/8/4b0b02/3b0r0b02/6 r",
+        FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
+                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b",
+                       "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b","6/8/8/8/8/3b0b03/3b0r0b02/6 r", "6/8/8/8/8/4b0b02/3b0r0b02/6 r",
                        "6/8/8/8/8/3bbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0bb2/3b0r0b02/6 r",
                        "6/8/8/8/8/3rbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0rb2/3b0r0b02/6 r"]
-        poss_b_pawns_hit = ["E7-D6", "E7-F6", "E7-D6", "E7-F6", "E7-D6", "E7-F6"]
+        poss_b_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3", "D2-C3", "D2-E3","E7-D6", "E7-F6", "E7-D6", "E7-F6", "E7-D6", "E7-F6"]
         FEN = FEN_b_pawns_hit
         poss = poss_b_pawns_hit
         for i in range(len(FEN)):
