@@ -8,7 +8,7 @@ gui.start()
 gui.updateGUI("FENSTRING2")
 """
 
-class GUI:
+class Gui:
   __WEISS = (255, 255, 255)
   __SCHWARZ = (50, 50, 50 )
   __ROT = (255,0,0)
