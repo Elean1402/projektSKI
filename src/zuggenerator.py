@@ -16,7 +16,7 @@ alpha_p = np.uint64(0b0111111001111110) #panws start position
 l_alpha_p = []
 
 # Alpha knights
-alpha_k =np.uint64(0) #knights start position
+alpha_k = np.uint64(0) #knights start position
 l_alpha_k = []
 
 # Alpha

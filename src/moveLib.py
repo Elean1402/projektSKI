@@ -1,10 +1,9 @@
-import numpy as np
 from src.gamestate import GameState
-
+import numpy as np
 
 class MoveLib:
     _coldict = {"A":1, "B":2, "C":3, "D":4,"E":5,"F":6, "G":7, "H":8 }
-    
+    _bitColDict = {7:"A", 6:"B", 5:"C", 4:"D", 3:"E", 2:"F", 1:"G",0:"H"}
     @classmethod
     def move(self,start, target, mode = 1):
         """
@@ -132,20 +131,21 @@ class MoveLib:
         return retVal
     @classmethod         
     def BitsToPosition(self,value:np.uint64):
-        row = 0
+        row = 1
         col = 0
         tmp = value
-        while(tmp >= 1):
+        while(tmp >=2):
             tmp = tmp >> np.uint64(1)
-            if(col == 7):
+            col+=1
+            if(col == 8):
                col = 0
                row +=1 
-            col+=1
             
-        colToLetter = dict(map(reversed, self._coldict.items()))
+            
+        
         retCol = ""
         try:
-            retCol =colToLetter[col]
+            retCol =self._bitColDict[col]
         except:
             print("Error at BitsToPosition")
         return retCol + str(row)
