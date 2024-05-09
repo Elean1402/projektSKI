@@ -8,7 +8,7 @@ gui.start()
 gui.updateGUI("FENSTRING2")
 """
 
-class GUI:
+class Gui:
   __WEISS = (255, 255, 255)
   __SCHWARZ = (50, 50, 50 )
   __ROT = (255,0,0)
@@ -45,7 +45,7 @@ class GUI:
       if not self.checkFen(fen):
           return None
       
-      fenArray = fen.split("/")[::-1]
+      fenArray = fen.split("/")#[::-1]
       zeile = 0
       while zeile < 8:
           tmpRow = fenArray.pop()
