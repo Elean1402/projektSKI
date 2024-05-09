@@ -1,6 +1,7 @@
 import numpy as np
 import random
-from src.benchmark import *
+from src.moveLib import MoveLib
+
 
 
 
@@ -74,11 +75,10 @@ def isOver():
 		return "bw" # beta won
 	return "continue"
 
-def move(*args,**kwargs):
-	pass
+
 
 def moves_to_string(moves):
-	return [moves(source,dest,mode=3) for index,source,dests in moves for dest in dests]
+	return [MoveLib.move(source,dest,mode=3) for index,source,dests in moves for dest in dests]
 
 	
 
@@ -550,8 +550,8 @@ def print_state():
 
 
 
-#init_position(alpha_p, alpha_k, beta_p, beta_k)
 #beta_random_move_execution(beta_generation())
 #alpha_random_move_execution(alpha_generation())
 #print_state()
-benchmark(beta_generation)
+#init_position(alpha_p, alpha_k, beta_p, beta_k)
+#print(moves_to_string(alpha_generation()))
