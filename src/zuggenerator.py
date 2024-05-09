@@ -141,18 +141,18 @@ def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather s
 	# p_movable = alpha_p & ~(alpha_k & beta_k) this in pre validation
 
 	# Pawns unmovable squares
-	blocked_p_squares = beta | alpha_k
+	blocked_p_squares = ~(beta | alpha_k)
 
 	# forward
-	if (source & alpha_p_forward) << ampf & ~blocked_p_squares:
+	if (source & alpha_p_forward) << ampf & blocked_p_squares:
 		dests.append(source << ampf) 
 
 	# left
-	if (source & alpha_p_left) << ampl & ~blocked_p_squares:
+	if (source & alpha_p_left) << ampl & blocked_p_squares:
 		dests.append(source << ampl) 
 
 	# right
-	if (source & alpha_p_right) >> ampr & ~blocked_p_squares:
+	if (source & alpha_p_right) >> ampr & blocked_p_squares:
 		dests.append(source >> ampr) 
 
 	# hit left
@@ -329,26 +329,26 @@ def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather so
 	#p_movable = beta_p & ~(alpha_k & beta_k)
 
 	# Pawns unmovable squares
-	blocked_p_squares = alpha | beta_k
+	blocked_p_squares = ~(alpha | beta_k)
 
 	# forward
-	if (source & beta_p_forward) >> bmpf & ~blocked_p_squares:
+	if (source & beta_p_forward) >> bmpf & blocked_p_squares:
 		dests.append(source >> bmpf) 
 
 	# left
-	if (source & beta_p_left) << bmpl & ~blocked_p_squares:
+	if (source & beta_p_left) << bmpl & blocked_p_squares:
 		dests.append(source << bmpl) 
 
 	# right
-	if (source & beta_p_right) >> bmpr & ~blocked_p_squares:
+	if (source & beta_p_right) >> bmpr & blocked_p_squares:
 		dests.append(source >> bmpr) 
 
 	# hit left
-	if (source & beta_p_hit_left) >> bmphl & beta:
+	if (source & beta_p_hit_left) >> bmphl & alpha:
 		dests.append(source >> bmphl) 
 
 	# hit right
-	if (source & alpha_p_hit_right) >> bmphr & beta:
+	if (source & alpha_p_hit_right) >> bmphr & alpha:
 		dests.append(source >> bmphr) 
 	
 	return dests
@@ -532,7 +532,9 @@ def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
 def beta_generation():
 	moves = []
 	knights =  alpha_k | beta_k
-	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):	#pre-validation (pawn under knight)
+
+	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):
+		print_board(source)	#pre-validation (pawn under knight)
 		fig_moves = beta_p_move_generation(source)
 		if len(fig_moves):
 			moves.append((index, source, fig_moves))
