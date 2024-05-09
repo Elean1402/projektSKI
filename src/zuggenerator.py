@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+from benchmark import *
 
 
 
@@ -526,9 +526,10 @@ def print_state():
 
 
 
-#init_position(alpha_p, alpha_k, beta_p, beta_k)
+init_position(alpha_p, alpha_k, beta_p, beta_k)
 #print(alpha_generation())
 #print(beta_generation())
 #print(alpha_p)
 #beta_random_move_execution(beta_generation())
 #print_state()
+benchmark(beta_generation)
