@@ -60,7 +60,7 @@ def init_position(alpha_pawns, alpha_knights, beta_pawns, beta_knights):
 	return alpha_p, l_alpha_p, alpha_k, l_alpha_k, alpha, beta_p, l_beta_p, beta_k,l_beta_k, beta
 
 ######################################################################################################
-# Check Game
+# Other
 ######################################################################################################
 
 
@@ -74,10 +74,12 @@ def isOver():
 		return "bw" # beta won
 	return "continue"
 
-def move(*args):
+def move(*args,**kwargs):
 	pass
+
 def moves_to_string(moves):
-	return [move(source, dest) for index,source,dests in moves for dest in dests]
+	return [moves(source,dest,mode=3) for index,source,dests in moves for dest in dests]
+
 	
 
 ######################################################################################################
@@ -100,6 +102,15 @@ alpha_k_forward_left = np.uint64(0b000000000000000000111111011111110111111101111
 alpha_k_left = np.uint64(0b0000000000011111001111110011111100111111001111110011111100111111)
 
 
+# Shifts for moves
+
+# Pawns
+# Forward, left, right, hit left, hit right
+ampf, ampl, ampr, amphl, amphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8(9), np.uint8(7)
+
+#Knights
+# left, forward left, right, forward right
+amkl, amkfl, amkr, amkfr = np.uint8(10), np.uint8(17), np.uint8(6), np.uint8(15)
 
 def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather source can move (being below knight)
 	dests = []
@@ -111,24 +122,24 @@ def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather s
 	blocked_p_squares = beta & alpha_k
 
 	# forward
-	if (source & alpha_p_forward) << np.uint8(8) & ~blocked_p_squares:
-		dests.append(source << np.uint8(8)) 
+	if (source & alpha_p_forward) << ampf & ~blocked_p_squares:
+		dests.append(source << ampf) 
 
 	# left
-	if (source & alpha_p_left) << np.uint8(1) & ~blocked_p_squares:
-		dests.append(source << np.uint8(1)) 
+	if (source & alpha_p_left) << ampl & ~blocked_p_squares:
+		dests.append(source << ampl) 
 
 	# right
-	if (source & alpha_p_right) >> np.uint8(1) & ~blocked_p_squares:
-		dests.append(source >> np.uint8(1)) 
+	if (source & alpha_p_right) >> ampr & ~blocked_p_squares:
+		dests.append(source >> ampr) 
 
 	# hit left
-	if (source & alpha_p_hit_left) << np.uint8(9) & beta:
-		dests.append(source << np.uint8(9)) 
+	if (source & alpha_p_hit_left) << amphl & beta:
+		dests.append(source << amphl) 
 
 	# hit right
-	if (source & alpha_p_hit_right) << np.uint8(7) & beta:
-		dests.append(source << np.uint8(7)) 
+	if (source & alpha_p_hit_right) << amphr & beta:
+		dests.append(source << amphr) 
 	
 	return dests
 	
@@ -136,20 +147,20 @@ def alpha_k_move_generation(source:np.uint64): # no pre-validation needed
 	dests = []
 
 	# left
-	if (source & alpha_k_left) << np.uint8(10) & ~alpha_k:
-		dests.append(source << np.uint8(10)) 
+	if (source & alpha_k_left) << amkl & ~alpha_k:
+		dests.append(source << amkl) 
 
 	# forward_left
-	if (source & alpha_k_forward_left) << np.uint8(17) & ~alpha_k:
-		dests.append(source << np.uint8(17)) 
+	if (source & alpha_k_forward_left) << amkfl & ~alpha_k:
+		dests.append(source << amkfl) 
 
 	# right
-	if (source & alpha_k_right) << np.uint8(6 )& ~alpha_k:
-		dests.append(source << np.uint8(6)) 
+	if (source & alpha_k_right) << amkr& ~alpha_k:
+		dests.append(source << amkr) 
 
-	# forward_left
-	if (source & alpha_k_forward_right) << np.uint8(15) & ~alpha_k:
-		dests.append(source << np.uint8(15)) 
+	# forward_right
+	if (source & alpha_k_forward_right) << amkfr & ~alpha_k:
+		dests.append(source << amkfr) 
 
 	return dests
 
@@ -269,7 +280,15 @@ beta_k_forward_left = np.uint64(0b0111111101111111011111110111111101111111001111
 beta_k_left = np.uint64(0b0011111100111111001111110011111100111111001111110001111100000000)
 
 
+# Shifts for moves
 
+# Pawns
+# Forward, left, right, hit left, hit right
+bmpf, bmpl, bmpr, bmphl, bmphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8(7), np.uint8(9)
+
+#Knights
+# left, forward left, right, forward right
+bmkl, bmkfl, bmkr, bmkfr = np.uint8(6), np.uint8(15), np.uint8(10), np.uint8(17)
 
 
 def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather source can move (being below knight)
@@ -282,24 +301,24 @@ def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather so
 	blocked_p_squares = alpha & beta_k
 
 	# forward
-	if (source & beta_p_forward) >> np.uint8(8) & ~blocked_p_squares:
-		dests.append(source >> np.uint8(8)) 
+	if (source & beta_p_forward) >> bmpf & ~blocked_p_squares:
+		dests.append(source >> bmpf) 
 
 	# left
-	if (source & beta_p_left) << np.uint8(1) & ~blocked_p_squares:
-		dests.append(source << np.uint8(1)) 
+	if (source & beta_p_left) << bmpl & ~blocked_p_squares:
+		dests.append(source << bmpl) 
 
 	# right
-	if (source & beta_p_right) >> np.uint8(1) & ~blocked_p_squares:
-		dests.append(source >> np.uint8(1)) 
+	if (source & beta_p_right) >> bmpr & ~blocked_p_squares:
+		dests.append(source >> bmpr) 
 
 	# hit left
-	if (source & beta_p_hit_left) >> np.uint8(7) & beta:
-		dests.append(source >> np.uint8(7)) 
+	if (source & beta_p_hit_left) >> bmphl & beta:
+		dests.append(source >> bmphl) 
 
 	# hit right
-	if (source & alpha_p_hit_right) >> np.uint8(9) & beta:
-		dests.append(source >> np.uint8(9)) 
+	if (source & alpha_p_hit_right) >> bmphr & beta:
+		dests.append(source >> bmphr) 
 	
 	return dests
 
@@ -308,20 +327,20 @@ def beta_k_move_generation(source:np.uint64): # no pre-validation needed
 	dests = []
 
 	# left
-	if (source & beta_k_left) >> np.uint8(6) & ~beta_k:
-		dests.append(source >> np.uint8(6)) 
+	if (source & beta_k_left) >> bmkl & ~beta_k:
+		dests.append(source >> bmkl) 
 
 	# forward_left
-	if (source & beta_k_forward_left) >> np.uint8(15) & ~beta_k:
-		dests.append(source >> np.uint8(15)) 
+	if (source & beta_k_forward_left) >> bmkfl & ~beta_k:
+		dests.append(source >> bmkfl) 
 
 	# right
-	if (source & beta_k_right) >> np.uint8(10) & ~beta_k:
-		dests.append(source >> np.uint8(10)) 
+	if (source & beta_k_right) >> bmkr & ~beta_k:
+		dests.append(source >> bmkr) 
 
 	# forward_left
-	if (source & beta_k_forward_right) >> np.uint8(17) & ~beta_k:
-		dests.append(source >> np.uint8(17)) 
+	if (source & beta_k_forward_right) >> bmkfr & ~beta_k:
+		dests.append(source >> bmkfr) 
 
 	return dests
 
@@ -515,26 +534,24 @@ def print_board(board:np.uint64):
 
 
 def print_state():
-	# print("Number of alpha Pawns");print(len(l_alpha_p));print();print("alpha_p");print_board(alpha_p);print()
+	print("Number of alpha Pawns");print(len(l_alpha_p));print();print("alpha_p");print_board(alpha_p);print()
 	# for p in l_alpha_p:print_board(p);print()
 
-	print("beta_p");print_board(beta_p);print();print("Number of beta Pawns");print(len(l_beta_p));print()
-	for p in l_beta_p:print_board(p);print()
+	# print("beta_p");print_board(beta_p);print();print("Number of beta Pawns");print(len(l_beta_p));print()
+	# for p in l_beta_p:print_board(p);print()
 
 
-	# print("alpha_k");print_board(alpha_k);print();print("Number of alpha Knights");print(len(l_alpha_k));print()
-	# for k in l_alpha_k:print_board(k);print()
+	print("alpha_k");print_board(alpha_k);print();print("Number of alpha Knights");print(len(l_alpha_k));print()
+	for k in l_alpha_k:print_board(k);print()
 
 
-	print("beta_k");print_board(beta_k);print();print("Number of beta Knights");print(len(l_beta_k));print()
-	for k in l_beta_k:print_board(k);print()
+	# print("beta_k");print_board(beta_k);print();print("Number of beta Knights");print(len(l_beta_k));print()
+	# for k in l_beta_k:print_board(k);print()
 
 
 
-init_position(alpha_p, alpha_k, beta_p, beta_k)
-#print(alpha_generation())
-#print(beta_generation())
-#print(alpha_p)
+#init_position(alpha_p, alpha_k, beta_p, beta_k)
 #beta_random_move_execution(beta_generation())
+#alpha_random_move_execution(alpha_generation())
 #print_state()
 benchmark(beta_generation)
