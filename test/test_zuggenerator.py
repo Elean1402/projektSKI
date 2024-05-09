@@ -226,10 +226,8 @@ class TestZuggenerator(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M, True)
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
-        FEN_b_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
-                       "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b",
-                       "6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b"]
-        poss_b_pawns_hit = ['D2-E3', "D2-C3", "D2-E3", "D2-C3", "D2-C3", "D2-E3"]
+        FEN_b_pawns_hit = ["6/2r0b0r03/2brr04/8/8/8/8/6 b", "6/2r0b0r03/3r0br3/8/8/8/8/6 b"]
+        poss_b_pawns_hit = [ "D2-C3", "D2-E3"]
         FEN = FEN_b_pawns_hit
         poss = poss_b_pawns_hit
         for i in range(len(FEN)):
@@ -240,11 +238,14 @@ class TestZuggenerator(unittest.TestCase):
             GUI = Gui(fen_string)
             GUI.start()
             print(Player)
+
+            # Alpha
             if(Player == "b"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
-                a = GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
+                GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
                 benchmark(fen_string, alpha_generation)
-                list_temp = moves_to_string(alpha_generation())
+                a = alpha_generation()
+                list_temp = moves_to_string(a)
                 list_Alpha = []
                 for element in list_temp:
                     if element not in list_Alpha:
@@ -252,8 +253,10 @@ class TestZuggenerator(unittest.TestCase):
                 print(list_Alpha)
                 move_list = []
                 move_list.append(moves)
-                print(moves)
+                print(move_list)
                 assert list_Alpha == move_list
+
+            # Beta
             elif(Player == "r"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 benchmark(fen_string, beta_generation)

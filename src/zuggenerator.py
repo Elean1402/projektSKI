@@ -269,12 +269,12 @@ def alpha_generation():
 	knights =  alpha_k | beta_k
 	for index,source in enumerate(filter(lambda x: x & ~knights, l_alpha_p)):	#pre-validation (pawn under knight)
 		fig_moves = alpha_p_move_generation(source)
-		if len(moves):
+		if len(fig_moves):
 			moves.append((index, source, fig_moves))
 	
 	for index,source in enumerate(l_alpha_k):
 		fig_moves = alpha_k_move_generation(source)
-		if len(moves):
+		if len(fig_moves):
 			moves.append((index, source, fig_moves))
 	return moves
 
@@ -533,12 +533,12 @@ def beta_generation():
 	knights =  alpha_k | beta_k
 	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):	#pre-validation (pawn under knight)
 		fig_moves = beta_p_move_generation(source)
-		if len(moves):
+		if len(fig_moves):
 			moves.append((index, source, fig_moves))
 	
 	for index,source in enumerate(l_beta_k):
 		fig_moves = beta_k_move_generation(source)
-		if len(moves):
+		if len(fig_moves):
 			moves.append((index, source, fig_moves))
 	return moves
 
