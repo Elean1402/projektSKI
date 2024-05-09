@@ -114,7 +114,7 @@ class MoveLib:
         """
         retVal = 0
         try:
-            retVal = self.__coldict[letter]
+            retVal = self._coldict[letter]
         except Exception as error:
             print("Error: ", type(error).__name__)
             return None

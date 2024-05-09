@@ -9,77 +9,77 @@ class BitBoardLib(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**62)
+        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**6)
     
     def test_createBitBoardFrom2(self):
         M = Gui.fenToMatrix("5r0/8/8/8/8/8/8/8")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**57)
+        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**1)
         
     def test_createBitBoardFrom3(self):
         M = Gui.fenToMatrix("6/8/8/8/8/8/8/5r0")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**1)
+        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**57)
     
-    def test_createBitBoardFrom3(self):
+    def test_createBitBoardFrom4(self):
         M = Gui.fenToMatrix("6/8/8/8/8/8/8/r05")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**6)
+        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**62)
         
-    def test_createBitBoardFrom4(self):
+    def test_createBitBoardFrom5(self):
         M = Gui.fenToMatrix("rr5/8/8/8/8/8/8/6")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**62)
+        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**6)
         
-    def test_createBitBoardFrom4(self):
+    def test_createBitBoardFrom6(self):
         M = Gui.fenToMatrix("6/6rr1/8/8/8/8/5rr2/6")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**49+2**10)
+        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**9+2**50)
     
-    def test_createBitBoardFrom5(self):
+    def test_createBitBoardFrom7(self):
         M = Gui.fenToMatrix("6/6rb1/8/8/8/8/5rb2/6")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_RB], 2**49+2**10)
+        self.assertEqual(BB[GameState._ARR_INDEX_RB], 2**9+2**50)
         
-    def test_createBitBoardFrom6(self):
+    def test_createBitBoardFrom8(self):
         M = Gui.fenToMatrix("6/6br1/8/8/8/8/5br2/6")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_BR], 2**49+2**10)
+        self.assertEqual(BB[GameState._ARR_INDEX_BR], 2**9+2**50)
         
-    def test_createBitBoardFrom7(self):
+    def test_createBitBoardFrom9(self):
         M = Gui.fenToMatrix("6/6bb1/8/8/8/8/5bb2/6")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_BB], 2**49+2**10)
+        self.assertEqual(BB[GameState._ARR_INDEX_BB], 2**9+2**50)
 
 
     
-    def test_createBitBoardFrom6(self):
+    def test_createBitBoardFrom10(self):
         M = Gui.fenToMatrix("1b0b01rr1/rrbbrbbr4/8/8/8/8/5b02/1b0b01rr1")
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**58+2**55+2**2)
+        self.assertEqual(BB[GameState._ARR_INDEX_RR], 2**2+2**15+2**58)
         self.assertEqual(BB[GameState._ARR_INDEX_R], 0)
-        self.assertEqual(BB[GameState._ARR_INDEX_B], 2**61+2**60+2**10+2**5+2**4)
-        self.assertEqual(BB[GameState._ARR_INDEX_RB], 2**53)
-        self.assertEqual(BB[GameState._ARR_INDEX_BR], 2**52)
-        self.assertEqual(BB[GameState._ARR_INDEX_BB], 2**54)
+        self.assertEqual(BB[GameState._ARR_INDEX_B], 2**5+2**4+2**50+2**61+2**60)
+        self.assertEqual(BB[GameState._ARR_INDEX_RB], 2**13)
+        self.assertEqual(BB[GameState._ARR_INDEX_BR], 2**12)
+        self.assertEqual(BB[GameState._ARR_INDEX_BB], 2**14)
 
     def test_fromBitBoardToMatrix1(self):
         BB = list([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
