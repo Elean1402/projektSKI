@@ -39,7 +39,8 @@ beta = beta_p | beta_k
 
 
 def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta, l_alpha_k, l_alpha_p, l_beta_k, l_beta_p
+	l_alpha_k, l_alpha_p, l_beta_k, l_beta_p = [],[],[],[]
 	alpha_p = alpha_pawns
 	alpha_k = alpha_knights
 	alpha = alpha_p | alpha_k
