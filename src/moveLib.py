@@ -37,7 +37,7 @@ class MoveLib:
         if mode == 3:
             if(type(start)==np.uint64 and type(target) == np.uint64):
                 #TODO convert uint64 position to str value
-                return self.BitsToPosition(start) + "-" + self.BitsToPosition(start)
+                return self.BitsToPosition(start) + "-" + self.BitsToPosition(target)
             else:
                 raise ValueError("start and target are not of type np.uint64")
     @classmethod
