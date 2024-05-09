@@ -186,7 +186,7 @@ class TestZuggenerator(unittest.TestCase):
     # Check if pawns go on to other pawns
     FEN_r_pawns_build = ["6/8/8/8/8/4b03/2b0r0r0b02/6 r", "6/8/8/8/8/4r03/3b0r0b02/6 r",
                          "6/8/8/8/8/4b03/3b0r0r0b01/6 r"]
-    poss_r_pawns_build = ["D7-D6, E7-D7", "E6-D6, E6-F6, E6-E5, E7-E6", "E7-F7, F7-F6"]
+    poss_r_pawns_build = ["D7-D6, D7-E6, D7-E7, E7-D7", "E6-D6, E6-F6, E6-E5, E7-E6", "E7-F7, F7-E7, F7-E6, F7-F6"]
 
     # Check if pawns move and walls
     FEN_r_pawns_move = ["6/8/8/8/8/4b03/4r0b02/6 r", "6/8/8/8/8/8/3b0r0b02/6 r", "6/8/8/8/8/4b03/3b0r03/6 r",
