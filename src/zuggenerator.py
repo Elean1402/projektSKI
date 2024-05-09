@@ -77,9 +77,9 @@ def isOver():
 		# print_board(alpha)
 		# print_board(alpha_on_ground_row)
 		# print_board(alpha & alpha_on_ground_row)
-		return "rw"	# alpha won
+		return "Alpha Won"	# alpha won
 	elif beta & beta_on_ground_row:
-		return "bw" # beta won
+		return "Beta Won" # beta won
 	return "c"	# continue
 
 def moves_to_string(moves):
@@ -98,10 +98,15 @@ def play(FEN_board=False):
 			source, dest = alpha_random_move_execution(alpha_generation())
 		else:
 			source, dest = beta_random_move_execution(beta_generation())
-
 		game.append(MoveLib.move(source,dest,mode=3))
+		if alpha_turn:
+			print_state("Alpha")
+		else:
+			print_state("Beta")
 		alpha_turn = not alpha_turn
-	return isOver(), game
+		input()
+	print(isOver())
+
 
 
 ######################################################################################################
@@ -228,10 +233,6 @@ def alpha_k_move_execution(index, source:np.uint64, dest:np.uint64):
 	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
 	# delete source Position (bitboard)
 	alpha_k = alpha_k ^ source
-	
-	print(dest)
-	print(l_beta_p)
-	print()
 
 	# on alpha_p -> knight
 	if dest & alpha_p:
@@ -453,6 +454,7 @@ def beta_k_move_execution(index, source:np.uint64, dest:np.uint64):
 	beta = beta_p ^ beta_k
 
 def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
+	global alpha, beta
 	if dest not in [tup[2] for tup in beta_p_move_generation(source)+beta_k_move_generation(source)]:
 		print("invalid move")
 	if source & beta_k:
@@ -534,7 +536,6 @@ def beta_generation():
 	knights =  alpha_k | beta_k
 
 	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):
-		print_board(source)	#pre-validation (pawn under knight)
 		fig_moves = beta_p_move_generation(source)
 		if len(fig_moves):
 			moves.append((index, source, fig_moves))
@@ -579,19 +580,21 @@ def print_bitboards():
 	print("beta_k");print_board(beta_k)
 	print("beta");print_board(beta)
 
-def print_state():
-	print("Number of alpha Pawns");print(len(l_alpha_p));print();print("alpha_p");print_board(alpha_p);print()
+def print_state(Color=""):
+	if Color:
+		print(f"------------- {Color} Moves: -----------------------")
+	else:
+		print("-----------------------------------------------------");print()
+	print(f"Number of alpha Pawns: {len(l_alpha_p)}");print_board(alpha_p)
 	# for p in l_alpha_p:print_board(p);print()
 
-	print("beta_p");print_board(beta_p);print();print("Number of beta Pawns");print(len(l_beta_p));print()
-	# for p in l_beta_p:print_board(p);print()
-
-
-	print("alpha_k");print_board(alpha_k);print();print("Number of alpha Knights");print(len(l_alpha_k));print()
+	print(f"Number of alpha Knights: {len(l_alpha_k)}");print_board(alpha_k)
 	#for k in l_alpha_k:print_board(k);print()
 
+	print(f"Number of beta Pawns: {len(l_beta_p)}");print_board(beta_p)
+	# for p in l_beta_p:print_board(p);print()
 
-	# print("beta_k");print_board(beta_k);print();print("Number of beta Knights");print(len(l_beta_k));print()
+	print(f"Number of beta Knights {len(l_beta_k)}");print_board(beta_k)
 	# for k in l_beta_k:print_board(k);print()
 
 
@@ -603,4 +606,4 @@ def print_state():
 #print(moves_to_string(alpha_generation()))
 
 if __name__ == "__main__":
-	print(play())
+	play()
