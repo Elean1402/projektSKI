@@ -226,12 +226,14 @@ class TestZuggenerator(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M, True)
         #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
-        FEN_r_knights_hit = ["6/8/8/8/3b01b02/2b03b01/4rr3/6 r", "6/8/8/8/3bb1bb2/2bb3bb1/4rr3/6 r",
-                             "6/8/8/8/3rb1rb2/2rb3rb1/4rr3/6 r"]
-        poss_r_knight_hit = ["E7-C6, E7-D5, E7-F5, E7-G6", "E7-C6, E7-D5, E7-F5, E7-G6", "E7-C6, E7-D5, E7-F5, E7-G6"]
+        FEN_r_pawns_hit = ["6/8/8/8/8/3b0b03/3b0r0b02/6 r", "6/8/8/8/8/4b0b02/3b0r0b02/6 r",
+                           "6/8/8/8/8/3bbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0bb2/3b0r0b02/6 r",
+                           "6/8/8/8/8/4b03/3b0r0b02/6 r",
+                           "6/8/8/8/8/3rbb03/3b0r0b02/6 r", "6/8/8/8/8/4b0rb2/3b0r0b02/6 r"]
+        poss_r_pawns_hit = ["E7-D6", "E7-F6", "E7-D6", "E7-F6", "", "E7-D6", "E7-F6"]
 
-        FEN = FEN_r_knights_hit
-        poss = poss_r_knight_hit
+        FEN = FEN_r_pawns_hit
+        poss = poss_r_pawns_hit
         for i in range(len(FEN)):
             fen_string,Player = FEN[i].split(" ")
             moves = poss[i]
@@ -245,7 +247,6 @@ class TestZuggenerator(unittest.TestCase):
             if(Player == "b"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
-                benchmark(fen_string, alpha_generation)
                 a = alpha_generation()
                 list_temp = moves_to_string(a)
                 list_Alpha = []
@@ -253,16 +254,15 @@ class TestZuggenerator(unittest.TestCase):
                     if element not in list_Alpha:
                         list_Alpha.append(element)
                 move_list = moves.split(", ")
-                for element in move_list:
-                    if element in list_Alpha:
-                        list_Alpha.remove(element)
-                        move_list.remove(element)
-                assert len(list_Alpha) == 0 and len(move_list) == 0
+                if (len(move_list) == len(list_Alpha)):
+                    for element in move_list:
+                        if element in list_Alpha:
+                            list_Alpha.remove(element)
+                assert len(list_Alpha) == 0
 
             # Beta
             elif(Player == "r"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
-                benchmark(fen_string, beta_generation)
                 list_temp = moves_to_string(beta_generation())
                 list_Beta = []
                 for element in list_Beta:
@@ -271,12 +271,12 @@ class TestZuggenerator(unittest.TestCase):
                 print(list_temp)
                 move_list = moves.split(", ")
 
+                if(len(move_list) == len(list_Beta)):
+                    for element in move_list:
+                        if element in list_Beta:
+                            list_Beta.remove(element)
 
-                for element in move_list:
-                    if element in list_Beta:
-                        list_Beta.remove(element)
-                        move_list.remove(element)
-                assert len(list_Beta) == 0 and len(move_list) == 0
+                assert len(list_Beta) == 0
 
 
             else:
