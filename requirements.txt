@@ -1,2 +1,2 @@
-
-# pip install ...
+numpy>=1.25.0
+pygame==2.5.2

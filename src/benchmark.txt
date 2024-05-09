@@ -1,0 +1,6 @@
+Platform: Mac(ARM)
+CPU: Apple M1 Pro
+RAM: 16GB
+Programmiersprache: Python
+Zustandsrepräsentation: Bitboard
+
