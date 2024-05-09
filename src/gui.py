@@ -116,8 +116,8 @@ class Gui:
   
     
   def __init__(self,fen):
-      self.BREITE =800
-      self.HÖHE = 800
+      self.BREITE =500
+      self.HÖHE = 500
       self.FELDER = 8
       self.fen = fen
       #starte pygame
@@ -134,7 +134,7 @@ class Gui:
   # Funktion zum Zeichnen von Text
   def zeichne_text(self,text, x, y, farbe):
       textobjekt = self.SCHRIFTART.render(text, True, farbe)
-      textrect = textobjekt.get_rect(center=(x+100, y+100))
+      textrect = textobjekt.get_rect(center=(x+63, y+63))
       self.screen.blit(textobjekt,textrect)
   
   # Zeichne Spielfigur
