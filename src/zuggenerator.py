@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from src.moveLib import MoveLib
-
+from src.benchmark import *
 
 
 
@@ -20,7 +20,7 @@ alpha_k =np.uint64(0) #knights start position
 l_alpha_k = []
 
 # Alpha
-alpha = alpha_p & alpha_k
+alpha = alpha_p | alpha_k
 
 
 # Beta pawns
@@ -32,18 +32,18 @@ beta_k =np.uint64(0) #knights start position
 l_beta_k = []
 
 # Beta
-beta = beta_p & beta_k
+beta = beta_p | beta_k
 
 
-def init_position(alpha_pawns, alpha_knights, beta_pawns, beta_knights):
+def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
 	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
 	alpha_p = alpha_pawns
 	alpha_k = alpha_knights
-	alpha = alpha_p & alpha_k
+	alpha = alpha_p | alpha_k
 
 	beta_p = beta_pawns
 	beta_k = beta_knights
-	beta = beta_p & beta_knights
+	beta = beta_p | beta_knights
 
 	def extract_figs():
 		for board, figure_list in zip((alpha_p, alpha_k, beta_p, beta_k),(l_alpha_p,l_alpha_k,l_beta_p,l_beta_k)):
@@ -119,7 +119,7 @@ def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather s
 	# p_movable = alpha_p & ~(alpha_k & beta_k) this in pre validation
 
 	# Pawns unmovable squares
-	blocked_p_squares = beta & alpha_k
+	blocked_p_squares = beta | alpha_k
 
 	# forward
 	if (source & alpha_p_forward) << ampf & ~blocked_p_squares:
@@ -298,7 +298,7 @@ def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather so
 	#p_movable = beta_p & ~(alpha_k & beta_k)
 
 	# Pawns unmovable squares
-	blocked_p_squares = alpha & beta_k
+	blocked_p_squares = alpha | beta_k
 
 	# forward
 	if (source & beta_p_forward) >> bmpf & ~blocked_p_squares:
@@ -530,19 +530,26 @@ def print_board(board:np.uint64):
 	str = np.binary_repr(board,width=64)
 	#str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
 	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
+	print()
 
-
+def print_bitboards():
+	print("alpha_p");print_board(alpha_p)
+	print("alpha_k");print_board(alpha_k)
+	print("alpha");print_board(alpha)
+	print("beta_p");print_board(beta_p)
+	print("beta_k");print_board(beta_k)
+	print("beta");print_board(beta)
 
 def print_state():
 	print("Number of alpha Pawns");print(len(l_alpha_p));print();print("alpha_p");print_board(alpha_p);print()
 	# for p in l_alpha_p:print_board(p);print()
 
-	# print("beta_p");print_board(beta_p);print();print("Number of beta Pawns");print(len(l_beta_p));print()
+	print("beta_p");print_board(beta_p);print();print("Number of beta Pawns");print(len(l_beta_p));print()
 	# for p in l_beta_p:print_board(p);print()
 
 
 	print("alpha_k");print_board(alpha_k);print();print("Number of alpha Knights");print(len(l_alpha_k));print()
-	for k in l_alpha_k:print_board(k);print()
+	#for k in l_alpha_k:print_board(k);print()
 
 
 	# print("beta_k");print_board(beta_k);print();print("Number of beta Knights");print(len(l_beta_k));print()
@@ -553,5 +560,6 @@ def print_state():
 #beta_random_move_execution(beta_generation())
 #alpha_random_move_execution(alpha_generation())
 #print_state()
-#init_position(alpha_p, alpha_k, beta_p, beta_k)
+init_position(alpha_p, alpha_k, beta_p, beta_k)
 #print(moves_to_string(alpha_generation()))
+benchmark(print("eric"))
