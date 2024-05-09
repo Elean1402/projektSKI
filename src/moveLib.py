@@ -3,16 +3,20 @@ from src.gamestate import GameState
 
 
 class MoveLib:
+    _coldict = {"A":1, "B":2, "C":3, "D":4,"E":5,"F":6, "G":7, "H":8 }
+    
     @classmethod
-    def move(self,start: str, target: str, mode = 1):
+    def move(self,start, target, mode = 1):
         """
         defines a move from position xy to zv
 
         Args:
-            start (str): start Position e.g. "A4"
-            target (str): target Position e.g. "A5"
-            mode (int, optional):  0 => string representation, 1 => bit (int64) representation.  
-                Defaults to 0.
+            start (str or uint64): start Position e.g. "A4"
+            target (str or uint64): target Position e.g. "A5"
+            mode (int, optional):  
+                0: str -> tupel(str,str), 
+                1: str -> tupel(uint64,uint64)
+                3: uint64 -> str 
 
         Returns:
             mode=0: (str,str): string tupel of start and target (for Tests & internal usage)
@@ -20,12 +24,22 @@ class MoveLib:
             mode=3: str: for communication with game server
         """
         if mode == 0:
-            return start,target
+            if(type(start)==str and type(target)==str):
+                return start,target
+            else:
+                raise ValueError("start and target are not of type str")
         if mode == 1:
-            #Todo convert string to bits
-            return self.extractValueFromString(start) | GameState.BITBOARD, self.extractValueFromString(target) | GameState.BITBOARD
+            if(type(start)==str and type(target)==str):
+                #TODO convert string to bits
+                return self.extractValueFromString(start) | GameState.BITBOARD, self.extractValueFromString(target) | GameState.BITBOARD
+            else:
+                raise ValueError("start and target are not of type str")
         if mode == 3:
-            return start + "-" + target
+            if(type(start)==np.uint64 and type(target) == np.uint64):
+                #TODO convert uint64 position to str value
+                return self.BitsToPosition(start) + "-" + self.BitsToPosition(start)
+            else:
+                raise ValueError("start and target are not of type np.uint64")
     @classmethod
     def extractValueFromString(self,pos: str):
         """
@@ -87,8 +101,8 @@ class MoveLib:
             case "7": return 47
             case "8": return 55
             case _: return None
-
-    def mapLetterToNumber(letter:str):
+    @classmethod
+    def mapLetterToNumber(self,letter:str):
         """
         map the letters to column numbers
 
@@ -98,14 +112,40 @@ class MoveLib:
         Returns:
             int: column number
         """
-        match letter:
-            case "A": return 1
-            case "B": return 2
-            case "C": return 3
-            case "D": return 4
-            case "E": return 5
-            case "F": return 6
-            case "G": return 7
-            case "H": return 8
-            case _: return None 
-                
+        retVal = 0
+        try:
+            retVal = self._coldict[letter]
+        except Exception as error:
+            print("Error: ", type(error).__name__)
+            return None
+        
+        # match letter:
+        #     case "A": return 1
+        #     case "B": return 2
+        #     case "C": return 3
+        #     case "D": return 4
+        #     case "E": return 5
+        #     case "F": return 6
+        #     case "G": return 7
+        #     case "H": return 8
+        #     case _: return None 
+        return retVal
+    @classmethod         
+    def BitsToPosition(self,value:np.uint64):
+        row = 0
+        col = 0
+        tmp = value
+        while(tmp >= 1):
+            tmp = tmp >> np.uint64(1)
+            if(col == 7):
+               col = 0
+               row +=1 
+            col+=1
+            
+        colToLetter = dict(map(reversed, self._coldict.items()))
+        retCol = ""
+        try:
+            retCol =colToLetter[col]
+        except:
+            print("Error at BitsToPosition")
+        return retCol + str(row)
