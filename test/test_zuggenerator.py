@@ -224,7 +224,7 @@ class TestZuggenerator(unittest.TestCase):
         M = Gui.fenToMatrix("br5/8/8/8/8/8/8/6")
         
         BB = GameState.createBitBoardFrom(M, True)
-        GUI = Gui("6/8/8/8/8/8/8/4rr1")
+        #GUI = Gui("6/8/8/8/8/8/8/4rr1")
 
         FEN_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b", "6/2r0b0r03/2r0r04/8/8/8/8/6 b",
                          "6/2r0b0r03/3r0rr3/8/8/8/8/6 b", "6/2r0b0r03/2rrr04/8/8/8/8/6 b"]
@@ -232,10 +232,22 @@ class TestZuggenerator(unittest.TestCase):
         FEN = FEN_pawns_hit
         poss = poss_pawns_hit
         for i in range(len(FEN)):
-            FEN[i],Player = FEN[i].split(" ")
-            print(FEN[i])
+            fen_string,Player = FEN[i].split(" ")
+            moves = poss[i]
+            print(fen_string)
+            GUI = Gui(fen_string)
+            GUI.start()
             print(Player)
-
+            if(Player == "b"):
+                init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
+                list_Alpha = moves_to_string(alpha_generation())
+                assert list_Alpha == moves
+            elif(Player == "r"):
+                init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
+                list_Beta = moves_to_string(beta_generation())
+                assert list_Beta == moves
+            else:
+                raise ValueError("Player not found")
 
 
 if __name__ == '__main__':

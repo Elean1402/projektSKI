@@ -73,6 +73,11 @@ def isOver():
 	elif beta & beta_on_ground_row:
 		return "bw" # beta won
 	return "continue"
+
+def move(*args):
+	pass
+def moves_to_string(moves):
+	return [move(source, dest) for index,source,dests in moves for dest in dests]
 	
 
 ######################################################################################################
