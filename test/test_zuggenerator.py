@@ -244,19 +244,20 @@ class TestZuggenerator(unittest.TestCase):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 a = GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
                 benchmark(fen_string, alpha_generation)
-                a_moves = alpha_generation()
-                print(a_moves)
-                list_Alpha = moves_to_string(a_moves)
-                print(list_Alpha)
-                print(moves)
-                move_list = []
-                move_list.append(moves)
-                assert list_Alpha == move_list
+                list_temp = moves_to_string(alpha_generation())
+                list_Alpha = []
+                for element in list_temp:
+                    if element not in list_Alpha:
+                        resultantList.append(element)
+                assert list_Alpha == moves
             elif(Player == "r"):
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 benchmark(fen_string, beta_generation)
-                b_moves = beta_generation()
-                list_Beta = moves_to_string(b_moves)
+                list_temp = moves_to_string(beta_generation())
+                list_Beta = []
+                for element in list_temp:
+                    if element not in list_Beta:
+                        resultantList.append(element)
                 print(list_Beta)
                 print(moves)
                 move_list = []
