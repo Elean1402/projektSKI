@@ -4,34 +4,29 @@ from src.moveLib import MoveLib
 from src.gamestate import GameState
 from src.gui import Gui
 
-
-
-
 ######################################################################################################
 # Initialisation
 ######################################################################################################
 
 alpha_turn = True
 
-
 # Alpha pawns
-alpha_p = np.uint64(0b0111111001111110) #panws start position
+alpha_p = np.uint64(0b0111111001111110)  #panws start position
 l_alpha_p = []
 
 # Alpha knights
-alpha_k = np.uint64(0) #knights start position
+alpha_k = np.uint64(0)  #knights start position
 l_alpha_k = []
 
 # Alpha
 alpha = alpha_p | alpha_k
 
-
 # Beta pawns
-beta_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000) #pawns start position
+beta_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000)  #pawns start position
 l_beta_p = []
 
 #Beta knights
-beta_k =np.uint64(0) #knights start position
+beta_k = np.uint64(0)  #knights start position
 l_beta_k = []
 
 # Beta
@@ -39,30 +34,28 @@ beta = beta_p | beta_k
 
 
 def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta, l_alpha_k, l_alpha_p, l_beta_k, l_beta_p
-	l_alpha_k, l_alpha_p, l_beta_k, l_beta_p = [],[],[],[]
-	alpha_p = alpha_pawns
-	alpha_k = alpha_knights
-	alpha = alpha_p | alpha_k
+    global alpha_p, alpha_k, alpha, beta_p, beta_k, beta, l_alpha_k, l_alpha_p, l_beta_k, l_beta_p
+    l_alpha_k, l_alpha_p, l_beta_k, l_beta_p = [], [], [], []
+    alpha_p = alpha_pawns
+    alpha_k = alpha_knights
+    alpha = alpha_p | alpha_k
 
-	beta_p = beta_pawns
-	beta_k = beta_knights
-	beta = beta_p | beta_knights
+    beta_p = beta_pawns
+    beta_k = beta_knights
+    beta = beta_p | beta_knights
 
-	def extract_figs():
-		for board, figure_list in zip((alpha_p, alpha_k, beta_p, beta_k),(l_alpha_p,l_alpha_k,l_beta_p,l_beta_k)):
-			# Create an array to store the new uint8 values
-			# Iterate over each bit position in the uint8 value
-			for bit in range(64):
-				if board & (np.uint64(1 << bit)):
-					figure_list.append(np.uint64(1 << bit))
-					
+    def extract_figs():
+        for board, figure_list in zip((alpha_p, alpha_k, beta_p, beta_k), (l_alpha_p, l_alpha_k, l_beta_p, l_beta_k)):
+            # Create an array to store the new uint8 values
+            # Iterate over each bit position in the uint8 value
+            for bit in range(64):
+                if board & (np.uint64(1 << bit)):
+                    figure_list.append(np.uint64(1 << bit))
 
+    extract_figs()
 
-	
-	extract_figs()
+    return alpha_p, l_alpha_p, alpha_k, l_alpha_k, alpha, beta_p, l_beta_p, beta_k, l_beta_k, beta
 
-	return alpha_p, l_alpha_p, alpha_k, l_alpha_k, alpha, beta_p, l_beta_p, beta_k,l_beta_k, beta
 
 ######################################################################################################
 # Other
@@ -72,41 +65,42 @@ def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
 alpha_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
 beta_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
 
+
 def isOver():
-	if alpha & alpha_on_ground_row:
-		# print_board(alpha)
-		# print_board(alpha_on_ground_row)
-		# print_board(alpha & alpha_on_ground_row)
-		return "Alpha Won"	# alpha won
-	elif beta & beta_on_ground_row:
-		return "Beta Won" # beta won
-	return "c"	# continue
+    if alpha & alpha_on_ground_row:
+        # print_board(alpha)
+        # print_board(alpha_on_ground_row)
+        # print_board(alpha & alpha_on_ground_row)
+        return "Alpha Won"  # alpha won
+    elif beta & beta_on_ground_row:
+        return "Beta Won"  # beta won
+    return "c"  # continue
+
 
 def moves_to_string(moves):
-	return [MoveLib.move(source,dest,mode=3) for index,source,dests in moves for dest in dests]
+    return [MoveLib.move(source, dest, mode=3) for index, source, dests in moves for dest in dests]
 
-	
+
 def play(FEN_board=False):
-	global alpha_turn
-	if FEN_board:
-		init_position(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
-	else:
-		init_position(beta_p, beta_k, alpha_p, alpha_k)
-	game = []
-	while isOver() == "c":
-		if alpha_turn:
-			source, dest = alpha_random_move_execution(alpha_generation())
-		else:
-			source, dest = beta_random_move_execution(beta_generation())
-		game.append(MoveLib.move(source,dest,mode=3))
-		if alpha_turn:
-			print_state("Alpha")
-		else:
-			print_state("Beta")
-		alpha_turn = not alpha_turn
-		input()
-	print(isOver())
-
+    global alpha_turn
+    if FEN_board:
+        init_position(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
+    else:
+        init_position(beta_p, beta_k, alpha_p, alpha_k)
+    game = []
+    while isOver() == "c":
+        if alpha_turn:
+            source, dest = alpha_random_move_execution(alpha_generation())
+        else:
+            source, dest = beta_random_move_execution(beta_generation())
+        game.append(MoveLib.move(source, dest, mode=3))
+        if alpha_turn:
+            print_state("Alpha")
+        else:
+            print_state("Beta")
+        alpha_turn = not alpha_turn
+        input()
+    print(isOver())
 
 
 ######################################################################################################
@@ -128,7 +122,6 @@ alpha_k_right = np.uint64(0b0000000011111000111111001111110011111100111111001111
 alpha_k_forward_left = np.uint64(0b0000000000000000001111110111111101111111011111110111111101111111)
 alpha_k_left = np.uint64(0b0000000000011111001111110011111100111111001111110011111100111111)
 
-
 # Shifts for moves
 
 # Pawns
@@ -139,157 +132,161 @@ ampf, ampl, ampr, amphl, amphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8
 # left, forward left, right, forward right
 amkl, amkfl, amkr, amkfr = np.uint8(10), np.uint8(17), np.uint8(6), np.uint8(15)
 
-def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather source can move (being below knight)
-	dests = []
+
+def alpha_p_move_generation(source: np.uint64):  # after pre-validation wheather source can move (being below knight)
+    dests = []
     # Pwans
-	# Movable Pawns (not under a knight)
-	# p_movable = alpha_p & ~(alpha_k & beta_k) this in pre validation
+    # Movable Pawns (not under a knight)
+    # p_movable = alpha_p & ~(alpha_k & beta_k) this in pre validation
 
-	# Pawns unmovable squares
-	blocked_p_squares = ~(beta | alpha_k)
+    # Pawns unmovable squares
+    blocked_p_squares = ~(beta | alpha_k)
 
-	# forward
-	if (source & alpha_p_forward) << ampf & blocked_p_squares:
-		dests.append(source << ampf) 
+    # forward
+    if (source & alpha_p_forward) << ampf & blocked_p_squares:
+        dests.append(source << ampf)
 
-	# left
-	if (source & alpha_p_left) << ampl & blocked_p_squares:
-		dests.append(source << ampl) 
+    # left
+    if (source & alpha_p_left) << ampl & blocked_p_squares:
+        dests.append(source << ampl)
 
-	# right
-	if (source & alpha_p_right) >> ampr & blocked_p_squares:
-		dests.append(source >> ampr) 
+    # right
+    if (source & alpha_p_right) >> ampr & blocked_p_squares:
+        dests.append(source >> ampr)
 
-	# hit left
-	if (source & alpha_p_hit_left) << amphl & beta:
-		dests.append(source << amphl) 
+    # hit left
+    if (source & alpha_p_hit_left) << amphl & beta:
+        dests.append(source << amphl)
 
-	# hit right
-	if (source & alpha_p_hit_right) << amphr & beta:
-		dests.append(source << amphr) 
-	
-	return dests
-	
-def alpha_k_move_generation(source:np.uint64): # no pre-validation needed
-	dests = []
+    # hit right
+    if (source & alpha_p_hit_right) << amphr & beta:
+        dests.append(source << amphr)
 
-	# left
-	if (source & alpha_k_left) << amkl & ~alpha_k:
-		dests.append(source << amkl) 
-
-	# forward_left
-	if (source & alpha_k_forward_left) << amkfl & ~alpha_k:
-		dests.append(source << amkfl) 
-
-	# right
-	if (source & alpha_k_right) << amkr& ~alpha_k:
-		dests.append(source << amkr) 
-
-	# forward_right
-	if (source & alpha_k_forward_right) << amkfr & ~alpha_k:
-		dests.append(source << amkfr) 
-
-	return dests
-
-def alpha_p_move_execution(index, source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
-
-	# delete source Position (bitboard)
-	alpha_p = alpha_p ^ source
-	
-	# on alpha_p -> knight
-	if dest & alpha_p:
-		alpha_k = alpha_k ^ dest
-		del l_alpha_p[index]
-		l_alpha_k.append(dest)
-	
-	# on beta_k -> hit & knight
-	elif dest & beta_k:
-		beta_k = beta_k ^ dest
-		alpha_k = alpha_k ^ dest
-		l_beta_k.remove(dest)
-		del l_alpha_p[index]
-		l_alpha_k.append(dest)
-		beta = beta_p ^ beta_k
+    return dests
 
 
-	# on beta_p -> hit
-	elif dest & beta_p:
-		beta_p = beta_p ^ dest
-		alpha_p = alpha_p ^ dest
-		l_beta_p.remove(dest)
-		l_alpha_p[index] = dest
-		beta = beta_p ^ beta_k
+def alpha_k_move_generation(source: np.uint64):  # no pre-validation needed
+    dests = []
+
+    # left
+    if (source & alpha_k_left) << amkl & ~alpha_k:
+        dests.append(source << amkl)
+
+    # forward_left
+    if (source & alpha_k_forward_left) << amkfl & ~alpha_k:
+        dests.append(source << amkfl)
+
+    # right
+    if (source & alpha_k_right) << amkr & ~alpha_k:
+        dests.append(source << amkr)
+
+    # forward_right
+    if (source & alpha_k_forward_right) << amkfr & ~alpha_k:
+        dests.append(source << amkfr)
+
+    return dests
 
 
-	# simple move
-	else: 
-		alpha_p = alpha_p ^ dest
-		l_alpha_p[index] = dest
-	
-	alpha = alpha_p ^ alpha_k
+def alpha_p_move_execution(index, source: np.uint64, dest: np.uint64):
+    global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
 
-def alpha_k_move_execution(index, source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
-	# delete source Position (bitboard)
-	alpha_k = alpha_k ^ source
+    # delete source Position (bitboard)
+    alpha_p = alpha_p ^ source
 
-	# on alpha_p -> knight
-	if dest & alpha_p:
-		alpha_k = alpha_k ^ dest
-		l_alpha_k[index] = dest
-	
-	# on beta_k -> hit & knight
-	elif dest & beta_k:
-		beta_k = beta_k ^ dest
-		alpha_k = alpha_k ^ dest
-		l_beta_k.remove(dest)
-		l_alpha_k[index] = dest
-		beta = beta_p ^ beta_k
+    # on alpha_p -> knight
+    if dest & alpha_p:
+        alpha_k = alpha_k ^ dest
+        del l_alpha_p[index]
+        l_alpha_k.append(dest)
+
+    # on beta_k -> hit & knight
+    elif dest & beta_k:
+        beta_k = beta_k ^ dest
+        alpha_k = alpha_k ^ dest
+        l_beta_k.remove(dest)
+        del l_alpha_p[index]
+        l_alpha_k.append(dest)
+        beta = beta_p ^ beta_k
 
 
-	# on beta_p -> hit & pawn
-	elif dest & beta_p:
-		beta_p = beta_p ^ dest
-		alpha_p = alpha_p ^ dest
-		l_beta_p.remove(dest)
-		del l_alpha_k[index] 
-		l_alpha_p.append(dest)
-		beta = beta_p ^ beta_k
+    # on beta_p -> hit
+    elif dest & beta_p:
+        beta_p = beta_p ^ dest
+        alpha_p = alpha_p ^ dest
+        l_beta_p.remove(dest)
+        l_alpha_p[index] = dest
+        beta = beta_p ^ beta_k
 
 
-	# simple move -> pawn
-	else: 
-		alpha_p = alpha_p ^ dest
-		del l_alpha_k[index]
-		l_alpha_p.append(dest)
-	
-	alpha = alpha_p ^ alpha_k
+    # simple move
+    else:
+        alpha_p = alpha_p ^ dest
+        l_alpha_p[index] = dest
+
+    alpha = alpha_p ^ alpha_k
+
+
+def alpha_k_move_execution(index, source: np.uint64, dest: np.uint64):
+    global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+    # delete source Position (bitboard)
+    alpha_k = alpha_k ^ source
+
+    # on alpha_p -> knight
+    if dest & alpha_p:
+        alpha_k = alpha_k ^ dest
+        l_alpha_k[index] = dest
+
+    # on beta_k -> hit & knight
+    elif dest & beta_k:
+        beta_k = beta_k ^ dest
+        alpha_k = alpha_k ^ dest
+        l_beta_k.remove(dest)
+        l_alpha_k[index] = dest
+        beta = beta_p ^ beta_k
+
+
+    # on beta_p -> hit & pawn
+    elif dest & beta_p:
+        beta_p = beta_p ^ dest
+        alpha_p = alpha_p ^ dest
+        l_beta_p.remove(dest)
+        del l_alpha_k[index]
+        l_alpha_p.append(dest)
+        beta = beta_p ^ beta_k
+
+
+    # simple move -> pawn
+    else:
+        alpha_p = alpha_p ^ dest
+        del l_alpha_k[index]
+        l_alpha_p.append(dest)
+
+    alpha = alpha_p ^ alpha_k
+
 
 def alpha_generation():
-	moves = []
-	knights =  alpha_k | beta_k
-	for index,source in enumerate(filter(lambda x: x & ~knights, l_alpha_p)):	#pre-validation (pawn under knight)
-		fig_moves = alpha_p_move_generation(source)
-		if len(fig_moves):
-			moves.append((index, source, fig_moves))
-	
-	for index,source in enumerate(l_alpha_k):
-		fig_moves = alpha_k_move_generation(source)
-		if len(fig_moves):
-			moves.append((index, source, fig_moves))
-	return moves
+    moves = []
+    knights = alpha_k | beta_k
+    for index, source in enumerate(filter(lambda x: x & ~knights, l_alpha_p)):  #pre-validation (pawn under knight)
+        fig_moves = alpha_p_move_generation(source)
+        if len(fig_moves):
+            moves.append((index, source, fig_moves))
 
-def alpha_random_move_execution(moves): #  (index, source,[dest,dest,dest])
-	fig = random.choice(moves)
-	move = random.choice(fig[2])
-	if fig[1] & alpha_k:
-		alpha_k_move_execution(fig[0],fig[1],move)
-	else:
-		alpha_p_move_execution(fig[0],fig[1],move)
-	return fig[1], move
+    for index, source in enumerate(l_alpha_k):
+        fig_moves = alpha_k_move_generation(source)
+        if len(fig_moves):
+            moves.append((index, source, fig_moves))
+    return moves
 
 
+def alpha_random_move_execution(moves):  #  (index, source,[dest,dest,dest])
+    fig = random.choice(moves)
+    move = random.choice(fig[2])
+    if fig[1] & alpha_k:
+        alpha_k_move_execution(fig[0], fig[1], move)
+    else:
+        alpha_p_move_execution(fig[0], fig[1], move)
+    return fig[1], move
 
 
 ######################################################################################################
@@ -311,7 +308,6 @@ beta_k_right = np.uint64(0b11111100111111001111110011111100111111001111110011111
 beta_k_forward_left = np.uint64(0b0111111101111111011111110111111101111111001111110000000000000000)
 beta_k_left = np.uint64(0b0011111100111111001111110011111100111111001111110001111100000000)
 
-
 # Shifts for moves
 
 # Pawns
@@ -323,241 +319,242 @@ bmpf, bmpl, bmpr, bmphl, bmphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8
 bmkl, bmkfl, bmkr, bmkfr = np.uint8(6), np.uint8(15), np.uint8(10), np.uint8(17)
 
 
-def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather source can move (being below knight)
-	dests = []
+def beta_p_move_generation(source: np.uint64):  # after pre-validation wheather source can move (being below knight)
+    dests = []
     # Pwans
-	# Movable Pawns (not under a knight)
-	#p_movable = beta_p & ~(alpha_k & beta_k)
+    # Movable Pawns (not under a knight)
+    #p_movable = beta_p & ~(alpha_k & beta_k)
 
-	# Pawns unmovable squares
-	blocked_p_squares = ~(alpha | beta_k)
+    # Pawns unmovable squares
+    blocked_p_squares = ~(alpha | beta_k)
 
-	# forward
-	if (source & beta_p_forward) >> bmpf & blocked_p_squares:
-		dests.append(source >> bmpf) 
+    # forward
+    if (source & beta_p_forward) >> bmpf & blocked_p_squares:
+        dests.append(source >> bmpf)
 
-	# left
-	if (source & beta_p_left) << bmpl & blocked_p_squares:
-		dests.append(source << bmpl) 
+    # left
+    if (source & beta_p_left) << bmpl & blocked_p_squares:
+        dests.append(source << bmpl)
 
-	# right
-	if (source & beta_p_right) >> bmpr & blocked_p_squares:
-		dests.append(source >> bmpr) 
+    # right
+    if (source & beta_p_right) >> bmpr & blocked_p_squares:
+        dests.append(source >> bmpr)
 
-	# hit left
-	if (source & beta_p_hit_left) >> bmphl & alpha:
-		dests.append(source >> bmphl) 
+    # hit left
+    if (source & beta_p_hit_left) >> bmphl & alpha:
+        dests.append(source >> bmphl)
 
-	# hit right
-	if (source & alpha_p_hit_right) >> bmphr & alpha:
-		dests.append(source >> bmphr) 
-	
-	return dests
+    # hit right
+    if (source & alpha_p_hit_right) >> bmphr & alpha:
+        dests.append(source >> bmphr)
 
-def beta_k_move_generation(source:np.uint64): # no pre-validation needed
-
-	dests = []
-
-	# left
-	if (source & beta_k_left) >> bmkl & ~beta_k:
-		dests.append(source >> bmkl) 
-
-	# forward_left
-	if (source & beta_k_forward_left) >> bmkfl & ~beta_k:
-		dests.append(source >> bmkfl) 
-
-	# right
-	if (source & beta_k_right) >> bmkr & ~beta_k:
-		dests.append(source >> bmkr) 
-
-	# forward_left
-	if (source & beta_k_forward_right) >> bmkfr & ~beta_k:
-		dests.append(source >> bmkfr) 
-
-	return dests
-
-def beta_p_move_execution(index, source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+    return dests
 
 
-	# delete source Position (bitboard)
-	beta_p = beta_p ^ source
-	
-	# on beta_p -> knight
-	if dest & beta_p:
-		beta_k = beta_k ^ dest
-		del l_beta_p[index]
-		l_beta_k.append(dest)
-	
-	# on alpha_k -> hit & knight
-	elif dest & alpha_k:
-		alpha_k = alpha_k ^ dest
-		beta_k = beta_k ^ dest
-		l_alpha_k.remove(dest)
-		del l_beta_p[index]
-		l_beta_k.append(dest)
-		alpha = alpha_p ^ alpha_k
+def beta_k_move_generation(source: np.uint64):  # no pre-validation needed
+
+    dests = []
+
+    # left
+    if (source & beta_k_left) >> bmkl & ~beta_k:
+        dests.append(source >> bmkl)
+
+    # forward_left
+    if (source & beta_k_forward_left) >> bmkfl & ~beta_k:
+        dests.append(source >> bmkfl)
+
+    # right
+    if (source & beta_k_right) >> bmkr & ~beta_k:
+        dests.append(source >> bmkr)
+
+    # forward_left
+    if (source & beta_k_forward_right) >> bmkfr & ~beta_k:
+        dests.append(source >> bmkfr)
+
+    return dests
 
 
-	# on alpha_p -> hit
-	elif dest & alpha_p:
-		alpha_p = alpha_p ^ dest
-		beta_p = beta_p ^ dest
-		l_alpha_p.remove(dest)
-		l_beta_p[index] = dest
-		alpha = alpha_p ^ alpha_k
+def beta_p_move_execution(index, source: np.uint64, dest: np.uint64):
+    global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+
+    # delete source Position (bitboard)
+    beta_p = beta_p ^ source
+
+    # on beta_p -> knight
+    if dest & beta_p:
+        beta_k = beta_k ^ dest
+        del l_beta_p[index]
+        l_beta_k.append(dest)
+
+    # on alpha_k -> hit & knight
+    elif dest & alpha_k:
+        alpha_k = alpha_k ^ dest
+        beta_k = beta_k ^ dest
+        l_alpha_k.remove(dest)
+        del l_beta_p[index]
+        l_beta_k.append(dest)
+        alpha = alpha_p ^ alpha_k
 
 
-	# simple move
-	else: 
-		beta_p = beta_p ^ dest
-		l_beta_p[index] = dest
-	
-	beta = beta_p ^ beta_k
-
-def beta_k_move_execution(index, source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
-
-	# delete source Position (bitboard)
-	beta_k = beta_k ^ source
-	
-	# on beta_p -> knight
-	if dest & beta_p:
-		beta_k = beta_k ^ dest
-		l_beta_k[index] = dest
-	
-	# on alpha_k -> hit & knight
-	elif dest & alpha_k:
-		alpha_k = alpha_k ^ dest
-		beta_k = beta_k ^ dest
-		l_alpha_k.remove(dest)
-		l_beta_k[index] = dest
-		alpha = alpha_p ^ alpha_k
+    # on alpha_p -> hit
+    elif dest & alpha_p:
+        alpha_p = alpha_p ^ dest
+        beta_p = beta_p ^ dest
+        l_alpha_p.remove(dest)
+        l_beta_p[index] = dest
+        alpha = alpha_p ^ alpha_k
 
 
-	# on alpha_p -> hit & pawn
-	elif dest & alpha_p:
-		alpha_p = alpha_p ^ dest
-		beta_p = beta_p ^ dest
-		l_alpha_p.remove(dest)
-		del l_beta_k[index] 
-		l_beta_p.append(dest)
-		alpha = alpha_p ^ alpha_k
+    # simple move
+    else:
+        beta_p = beta_p ^ dest
+        l_beta_p[index] = dest
+
+    beta = beta_p ^ beta_k
 
 
-	# simple move -> pawn
-	else: 
-		beta_p = beta_p ^ dest
-		del l_beta_k[index]
-		l_beta_p.append(dest)
-	
-	beta = beta_p ^ beta_k
+def beta_k_move_execution(index, source: np.uint64, dest: np.uint64):
+    global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
 
-def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
-	global alpha, beta
-	if dest not in [tup[2] for tup in beta_p_move_generation(source)+beta_k_move_generation(source)]:
-		print("invalid move")
-	if source & beta_k:
-		#if source beta_k_move_generation
-		# delete source Position (bitboard)
-		beta_k = beta_k ^ source
-		
-		# on beta_p -> knight
-		if dest & beta_p:
-			beta_k = beta_k & dest
-			l_beta_k[l_beta_k.index(source)] = dest
-		
-		# on alpha_k -> hit & knight
-		elif dest & alpha_k:
-			alpha_k = alpha_k ^ dest
-			beta_k = beta_k & dest
-			l_alpha_k.remove(dest)
-			l_beta_k[l_beta_k.index(source)] = dest
-			alpha = alpha_p & alpha_k
+    # delete source Position (bitboard)
+    beta_k = beta_k ^ source
+
+    # on beta_p -> knight
+    if dest & beta_p:
+        beta_k = beta_k ^ dest
+        l_beta_k[index] = dest
+
+    # on alpha_k -> hit & knight
+    elif dest & alpha_k:
+        alpha_k = alpha_k ^ dest
+        beta_k = beta_k ^ dest
+        l_alpha_k.remove(dest)
+        l_beta_k[index] = dest
+        alpha = alpha_p ^ alpha_k
 
 
-		# on alpha_p -> hit & pawn
-		elif dest & alpha_p:
-			alpha_p = alpha_p ^ dest
-			beta_p = beta_p & dest
-			l_alpha_p.remove(dest)
-			l_beta_k.remove(source)
-			l_beta_p.append(dest)
-			alpha = alpha_p & alpha_k
+    # on alpha_p -> hit & pawn
+    elif dest & alpha_p:
+        alpha_p = alpha_p ^ dest
+        beta_p = beta_p ^ dest
+        l_alpha_p.remove(dest)
+        del l_beta_k[index]
+        l_beta_p.append(dest)
+        alpha = alpha_p ^ alpha_k
 
 
-		# simple move -> pawn
-		else: 
-			beta_p = beta_p & dest
-			l_beta_k.remove(source)
-			l_beta_p.append(dest)
-		
-		beta = beta_p & beta_k
-	elif source & beta_p:
-		# delete source Position (bitboard)
-		beta_p = beta_p ^ source
-		
-		# on beta_p -> knight
-		if dest & beta_p:
-			beta_k = beta_k & dest
-			l_beta_p.remove(source)
-			l_beta_k.append(dest)
-		
-		# on alpha_k -> hit & knight
-		elif dest & beta_k:
-			alpha_k = alpha_k ^ dest
-			beta_k = beta_k & dest
-			l_alpha_k.remove(dest)
-			l_beta_p.remove(source)
-			l_beta_k.append(dest)
-			alpha = alpha_p & alpha_k
+    # simple move -> pawn
+    else:
+        beta_p = beta_p ^ dest
+        del l_beta_k[index]
+        l_beta_p.append(dest)
+
+    beta = beta_p ^ beta_k
 
 
-		# on alpha_p -> hit 
-		elif dest & beta_p:
-			alpha_p = alpha_p ^ dest
-			beta_p = beta_p & dest
-			l_alpha_p.remove(dest)
-			l_beta_p[l_beta_p.index(source)] = dest
-			alpha = alpha_p & alpha_k
+def beta_move_execution(source: np.uint64, dest: np.uint64):  # not used
+    global alpha, beta
+    if dest not in [tup[2] for tup in beta_p_move_generation(source) + beta_k_move_generation(source)]:
+        print("invalid move")
+    if source & beta_k:
+        #if source beta_k_move_generation
+        # delete source Position (bitboard)
+        beta_k = beta_k ^ source
+
+        # on beta_p -> knight
+        if dest & beta_p:
+            beta_k = beta_k & dest
+            l_beta_k[l_beta_k.index(source)] = dest
+
+        # on alpha_k -> hit & knight
+        elif dest & alpha_k:
+            alpha_k = alpha_k ^ dest
+            beta_k = beta_k & dest
+            l_alpha_k.remove(dest)
+            l_beta_k[l_beta_k.index(source)] = dest
+            alpha = alpha_p & alpha_k
 
 
-		# simple move
-		else: 
-			beta_p = beta_p & dest
-			l_beta_p[l_beta_p.index(source)] = dest
-		
-		beta = beta_p & beta_k
-	else:
-		print("no figure on source position")
+        # on alpha_p -> hit & pawn
+        elif dest & alpha_p:
+            alpha_p = alpha_p ^ dest
+            beta_p = beta_p & dest
+            l_alpha_p.remove(dest)
+            l_beta_k.remove(source)
+            l_beta_p.append(dest)
+            alpha = alpha_p & alpha_k
+
+
+        # simple move -> pawn
+        else:
+            beta_p = beta_p & dest
+            l_beta_k.remove(source)
+            l_beta_p.append(dest)
+
+        beta = beta_p & beta_k
+    elif source & beta_p:
+        # delete source Position (bitboard)
+        beta_p = beta_p ^ source
+
+        # on beta_p -> knight
+        if dest & beta_p:
+            beta_k = beta_k & dest
+            l_beta_p.remove(source)
+            l_beta_k.append(dest)
+
+        # on alpha_k -> hit & knight
+        elif dest & beta_k:
+            alpha_k = alpha_k ^ dest
+            beta_k = beta_k & dest
+            l_alpha_k.remove(dest)
+            l_beta_p.remove(source)
+            l_beta_k.append(dest)
+            alpha = alpha_p & alpha_k
+
+
+        # on alpha_p -> hit
+        elif dest & beta_p:
+            alpha_p = alpha_p ^ dest
+            beta_p = beta_p & dest
+            l_alpha_p.remove(dest)
+            l_beta_p[l_beta_p.index(source)] = dest
+            alpha = alpha_p & alpha_k
+
+
+        # simple move
+        else:
+            beta_p = beta_p & dest
+            l_beta_p[l_beta_p.index(source)] = dest
+
+        beta = beta_p & beta_k
+    else:
+        print("no figure on source position")
+
 
 def beta_generation():
-	moves = []
-	knights =  alpha_k | beta_k
+    moves = []
+    knights = alpha_k | beta_k
 
-	for index,source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):
-		fig_moves = beta_p_move_generation(source)
-		if len(fig_moves):
-			moves.append((index, source, fig_moves))
-	
-	for index,source in enumerate(l_beta_k):
-		fig_moves = beta_k_move_generation(source)
-		if len(fig_moves):
-			moves.append((index, source, fig_moves))
-	return moves
+    for index, source in enumerate(filter(lambda x: x & ~knights, l_beta_p)):
+        fig_moves = beta_p_move_generation(source)
+        if len(fig_moves):
+            moves.append((index, source, fig_moves))
+
+    for index, source in enumerate(l_beta_k):
+        fig_moves = beta_k_move_generation(source)
+        if len(fig_moves):
+            moves.append((index, source, fig_moves))
+    return moves
+
 
 def beta_random_move_execution(moves):
-	fig = random.choice(moves)
-	move = random.choice(fig[2])
-	if fig[1] & beta_k:
-		beta_k_move_execution(fig[0],fig[1],move)
-	else:
-		beta_p_move_execution(fig[0],fig[1],move)
-	return fig[1], move
-	
-
-
-
+    fig = random.choice(moves)
+    move = random.choice(fig[2])
+    if fig[1] & beta_k:
+        beta_k_move_execution(fig[0], fig[1], move)
+    else:
+        beta_p_move_execution(fig[0], fig[1], move)
+    return fig[1], move
 
 
 #########################################################################################################
@@ -565,38 +562,51 @@ def beta_random_move_execution(moves):
 #########################################################################################################
 
 
+def print_board(board: np.uint64):
+    str = np.binary_repr(board, width=64)
+    #str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
+    print('\n'.join(str[i:i + 8] for i in range(0, len(str), 8)))
+    print()
 
-def print_board(board:np.uint64):
-	str = np.binary_repr(board,width=64)
-	#str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
-	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
-	print()
 
 def print_bitboards():
-	print("alpha_p");print_board(alpha_p)
-	print("alpha_k");print_board(alpha_k)
-	print("alpha");print_board(alpha)
-	print("beta_p");print_board(beta_p)
-	print("beta_k");print_board(beta_k)
-	print("beta");print_board(beta)
+    print("alpha_p");
+    print_board(alpha_p)
+    print("alpha_k");
+    print_board(alpha_k)
+    print("alpha");
+    print_board(alpha)
+    print("beta_p");
+    print_board(beta_p)
+    print("beta_k");
+    print_board(beta_k)
+    print("beta");
+    print_board(beta)
+
 
 def print_state(Color=""):
-	if Color:
-		print(f"------------- {Color} Moves: -----------------------")
-	else:
-		print("-----------------------------------------------------");print()
-	print(f"Number of alpha Pawns: {len(l_alpha_p)}");print_board(alpha_p)
-	# for p in l_alpha_p:print_board(p);print()
+    if Color:
+        print(f"------------- {Color} Moves: -----------------------")
+    else:
+        print("-----------------------------------------------------");
+        print()
+    print(f"Number of alpha Pawns: {len(l_alpha_p)}");
+    print_board(alpha_p)
+    # for p in l_alpha_p:print_board(p);print()
 
-	print(f"Number of alpha Knights: {len(l_alpha_k)}");print_board(alpha_k)
-	#for k in l_alpha_k:print_board(k);print()
+    print(f"Number of alpha Knights: {len(l_alpha_k)}");
+    print_board(alpha_k)
+    #for k in l_alpha_k:print_board(k);print()
 
-	print(f"Number of beta Pawns: {len(l_beta_p)}");print_board(beta_p)
-	# for p in l_beta_p:print_board(p);print()
+    print(f"Number of beta Pawns: {len(l_beta_p)}");
+    print_board(beta_p)
+    # for p in l_beta_p:print_board(p);print()
 
-	print(f"Number of beta Knights {len(l_beta_k)}");print_board(beta_k)
-	# for k in l_beta_k:print_board(k);print()
+    print(f"Number of beta Knights {len(l_beta_k)}");
+    print_board(beta_k)
 
+
+# for k in l_beta_k:print_board(k);print()
 
 
 #beta_random_move_execution(beta_generation())
@@ -606,4 +616,4 @@ def print_state(Color=""):
 #print(moves_to_string(alpha_generation()))
 
 if __name__ == "__main__":
-	play()
+    play()
