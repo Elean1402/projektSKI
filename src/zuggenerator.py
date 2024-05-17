@@ -62,6 +62,59 @@ def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
 # Other
 ######################################################################################################
 
+# Rows
+R1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000011111111)
+R2 = np.uint64(0b0000000000000000000000000000000000000000000000001111111100000000)
+R3 = np.uint64(0b0000000000000000000000000000000000000000111111110000000000000000)
+R4 = np.uint64(0b0000000000000000000000000000000011111111000000000000000000000000)
+R5 = np.uint64(0b0000000000000000000000001111111100000000000000000000000000000000)
+R6 = np.uint64(0b0000000000000000111111110000000000000000000000000000000000000000)
+R7 = np.uint64(0b0000000011111111000000000000000000000000000000000000000000000000)
+R8 = np.uint64(0b1111111100000000000000000000000000000000000000000000000000000000)
+def rating(player = 1):
+	rating = 0
+	for p in alpha_p:
+		if p & R1: rating +=1
+		elif p & R2: rating +=2
+		elif p & R3: rating +=3
+		elif p & R4: rating +=4
+		elif p & R5: rating +=5
+		elif p & R6: rating +=6
+		elif p & R7: rating +=7
+		elif p & R8: rating +=10000
+
+	for p in beta_p:
+		if p & R1: rating -=10000
+		elif p & R2: rating -=7
+		elif p & R3: rating -=6
+		elif p & R4: rating -=5
+		elif p & R5: rating -=4
+		elif p & R6: rating -=3
+		elif p & R7: rating -=2
+		elif p & R8: rating -=1
+
+	for k in alpha_k:
+		if k & R1: rating +=1
+		elif k & R2: rating +=2
+		elif k & R3: rating +=3
+		elif k & R4: rating +=4
+		elif k & R5: rating +=5
+		elif k & R6: rating +=6
+		elif k & R7: rating +=7
+		elif k & R8: rating +=10000
+
+	for k in beta_k:
+		if k & R1: rating -=10000
+		elif k & R2: rating -=7
+		elif k & R3: rating -=6
+		elif k & R4: rating -=5
+		elif k & R5: rating -=4
+		elif k & R6: rating -=3
+		elif k & R7: rating -=2
+		elif k & R8: rating -=1
+
+	return rating
+
 
 alpha_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
 beta_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
