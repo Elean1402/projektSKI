@@ -1,7 +1,7 @@
 from timeit import repeat
 
 
-def benchmark(fen,func):
+def benchmark(func, fen=""):
     txt = open("benchmark.txt", "a")
     print(str(func))
     zug_time = min(repeat(func, repeat=100, number=10000))
