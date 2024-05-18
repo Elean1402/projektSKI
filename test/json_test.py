@@ -124,4 +124,6 @@ def add_json(fen: list[str], moves: list[str]):
 
     with open('test_data.json', 'w') as f:
         json.dump(test_cases, f, indent=2)
+
+
 print(locals())

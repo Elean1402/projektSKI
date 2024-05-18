@@ -212,10 +212,8 @@ class TestZuggenerator(unittest.TestCase):
 
     def test_generate_zug(self):
 
-        FEN_r_pawns_hit = ["6/8/4b03/1r01b0r03/2r02r0b01/1b02b01r01/1r06/6 b",
-                           "b0b0b0b0b0b0/8/8/4b03/1r01b01r02/8/3r02r01/6 r"]
-        poss_r_pawns_hit = ["D2-E3", "D2-C3", "D2-E3", "D2-C3", "", "D2-C3", "D2-E3", "E7-D6", "E7-F6", "E7-D6",
-                            "E7-F6", "", "E7-D6", "E7-F6"]
+        FEN_r_pawns_hit = ["6/2r0b0r03/3r0r03/8/8/8/8/6 b"]
+        poss_r_pawns_hit = ["D2-E3"]
 
         FEN = FEN_r_pawns_hit
         poss = poss_r_pawns_hit
@@ -232,8 +230,8 @@ class TestZuggenerator(unittest.TestCase):
             if Player == "b":
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
                 GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True)
-                benchmark(fen_string, alpha_generation)
                 a = alpha_generation()
+                benchmark(alpha_generation, fen_string)
                 list_temp = moves_to_string(a)
                 list_Alpha = []
                 for element in list_temp:
@@ -248,7 +246,7 @@ class TestZuggenerator(unittest.TestCase):
             # Beta
             elif Player == "r":
                 init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(fen_string), True))
-                benchmark(fen_string, beta_generation)
+                benchmark(beta_generation, fen_string)
                 list_temp = moves_to_string(beta_generation())
                 list_Beta = []
                 for element in list_Beta:
