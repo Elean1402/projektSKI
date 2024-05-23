@@ -10,12 +10,21 @@ class EvalFunc:
     # _UNPROTECTED_KNIGHTS = ?
     # _UPGRADE_TO_KNIGHT = ?
     # _BLOCKED_FIGURES = ?
-    # _MATERIALS = ?
+    
+    # _MAT_PAWN = ?
+    # _MAT_KNIGHT = ?
+    # _ENDGAME_MAT_PAWN = ?
+    # _ENDGAME_MAT_KNIGHT = ?
     
     #NEEDED: Total Order Featurescores
     #e.g. Materials > Mobility ... and so on
-    
-    def mobility(self, board: list[np.uint64]):
+    def __init__(self,version):
+        #TODO
+        #version soll eine Datenstruktur sein, um die Konstanten festzulegen.
+        #bitte dafür eine eigene py Datei anlegen.
+        True
+        
+    def __mobility(self, board: list[np.uint64]):
         """Score distribution over Board
            Please see Lecture Notes Page 43.
            If necessary: Split up this Function into several subfunctions!!
@@ -30,7 +39,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def pieceSquareTable(self, board: list[np.uint64]):
+    def __pieceSquareTable(self, board: list[np.uint64]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -46,7 +55,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def protectedFigures(self, board:list[np.uint64]):
+    def __protectedFigures(self, board:list[np.uint64]):
         """Scores for protected figures
            distinguish Score for Protecting pawns and knights
            If necessary: create helper-function for pawns and knights
@@ -61,7 +70,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def unprotectedFigures(self, board:list[np.uint64]):
+    def __unprotectedFigures(self, board:list[np.uint64]):
         """Scores for unprotected figures
            distinguish Score between pawns and knights
            if necessary: create helper-function for pawns and knights
@@ -76,7 +85,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def upgradeFigure(self, board:list[np.uint64]):
+    def __upgradeFigure(self, board:list[np.uint64]):
         """Score for upgrading figure to Knight
            -----------------------------------------
            MUST: use the defined Constants!!!!!!
@@ -89,7 +98,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def blockedFigures(self, board:list[np.uint64]):
+    def __blockedFigures(self, board:list[np.uint64]):
         """Score to block movement of figure
            Why? -> if all enemy figures are blocked, game will result into win
            -----------------------------------------
@@ -103,7 +112,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def materialPoints(self, board:list[np.uint64]):
+    def __materialPoints(self, board:list[np.uint64]):
         """Scores figures
         -----------------------------------------
            MUST: use the defined Constants!!!!!!
