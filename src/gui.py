@@ -17,7 +17,7 @@ class Gui:
   __DARKBLUE = (0,0,255)
   __BACKGROUND = (0,0,0)
 
-  def checkFen(fen: str):
+  def __checkFen(fen: str):
       """
       checks if the FEN string is correct
 
@@ -29,6 +29,7 @@ class Gui:
       """
       #TODO
       return True
+  
   @classmethod
   def fenToMatrix(self,fen:str):
       """Reads FEN and maps it into a 8x8 Matrix
