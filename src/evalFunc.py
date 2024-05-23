@@ -56,7 +56,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def __pieceSquareTable(self, TargetPos: np.uint64, board: list[np.uint64]):
+    def __pieceSquareTable(self,moveList:list, board: list[np.uint64]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -65,11 +65,14 @@ class EvalFunc:
            MUST: use the defined Constants!!!!!!
            -----------------------------------------
         Args:
+            moveList: list[(int, np.uint64, list[np.uint64])]
+                    -> list[index, startPos, moveList]
             board (list[np.uint64])
         Returns:
             Score Board: unknown
         """
         #TODO
+        #determine Figure: Pawn or Knight
         return 0
     
     def __protectedFigures(self, board:list[np.uint64]):
@@ -141,21 +144,24 @@ class EvalFunc:
         """
         #TODO
         return 0
-    
-    def computeOverallScore(self, moveList: list[np.uint64], board:list[np.uint64]):
+    @classmethod
+    def computeOverallScore(self, moveList: list, board:list[np.uint64]):
         """Computes the total Score of current State
 
         Args:
+            moveList: list((int, np.uint64,list[np.uint64]))
+                    -> list(index, figure, movelist)
             board (list[np.uint64]): _description_
         Returns:
-            TupleList[tuple]: (move:np.uint64 , score: int)
-            Ordering: Highest score at the end of the list.   
+            (TupleList[tuple], int): (move:np.uint64 , score: int)
+            Ordering: Move with highest score at the end of the list.   
         """
-        scoredList = TupleList()
+        scoredList = ScoredMoveList()
+        self.__pieceSquareTable(moveList)
         #TODO
         
         
-        scoredList = sorted(scoredList,key=lambda x: x[1])
+        scoredList.sort()
         return scoredList
         
 

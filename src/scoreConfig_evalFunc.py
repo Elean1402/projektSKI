@@ -3,7 +3,7 @@ import numpy as np
 """
 class ScoreConfig:
     __REVERSEROW = {1:"8",2:"7",3:"6",4:"5",5:"4",6:"3",7:"2",8:"1"}
-    
+    @classmethod
     def reversePsqT(self,dictToReverse: dict):
         """Reverse the PieceSquareTable for the opponent Player
 
