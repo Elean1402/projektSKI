@@ -1,28 +1,46 @@
 from src.gamestate import GameState
 import numpy as np
 
+class TupleList(list):
+    def append(self, item):
+        if isinstance(item, tuple):
+            super().append(item)
+        else:
+            raise TypeError("item is not tuple")
+
 class EvalFunc:
-    # Score distribution of implemented features
-    # _MOBILITY = ?
-    # _PROTECTION_PAWNS = ?
-    # _PROTECTION_KNIGHTS = ?
-    # _UNPROTECTED_PAWNS = ?
-    # _UNPROTECTED_KNIGHTS = ?
-    # _UPGRADE_TO_KNIGHT = ?
-    # _BLOCKED_FIGURES = ?
+    # Score distribution (not final) of implemented features
     
-    # _MAT_PAWN = ?
-    # _MAT_KNIGHT = ?
-    # _ENDGAME_MAT_PAWN = ?
-    # _ENDGAME_MAT_KNIGHT = ?
+    __CONFIG_DICT = {"MOBILITY" : -1,
+                     "PROTECTION_PAWNS" : -1,
+                     "PROTECTION_KNIGHTS" : -1,
+                     "UNPROTECTED_PAWNS" : -1,
+                     "UNPROTECTED_KNIGHTS" : -1,
+                     "UPGRADE_TO_KNIGHT" : -1,
+                     "BLOCKED_FIGURES" : -1,
+                     "MAT_PAWN" : -1,
+                     "MAT_KNIGHT" : -1,
+                     "ENDGAME_MAT_PAWN" : -1,
+                     "ENDGAME_MAT_KNIGHT" : -1,
+                     "PIECESQUARE_TABLE_PAWN": np.uint64(0),
+                     "PIECESQUARE_TABLE_KNIGHT": np.uint64(0)}
     
     #NEEDED: Total Order Featurescores
     #e.g. Materials > Mobility ... and so on
-    def __init__(self,version):
+    def __init__(self,config: dict):
         #TODO
-        #version soll eine Datenstruktur sein, um die Konstanten festzulegen.
-        #bitte dafür eine eigene py Datei anlegen.
-        True
+        print("Please use only scoreConfig_evalFunc.py for configurating Config!!")
+        #Bitte config nur aus scoreConfig_evalFunc.py verwenden
+        if len(self.__CONFIG_DICT) != len(config):
+            raise ValueError("Configs do not have same size")
+        self.__CONFIG_DICT = self.__CONFIG_DICT | config
+        #check __Config if all constants got new values
+        vals = self.__CONFIG_DICT.values()
+        if(len(list(filter(lambda x: x==-1, vals)))>0):
+            raise ValueError("Config is not complete, you may forgot a key-value pair, value -1 means not set")
+        if(self.__CONFIG_DICT["PIECESQUARE_TABLE_PAWN"] == 0 or
+           self.__CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT"] == 0):
+            raise ValueError("Config: PIECESQUARE_TABLE_\{Pawn,Knight\} not set")
         
     def __mobility(self, board: list[np.uint64]):
         """Score distribution over Board
@@ -39,7 +57,7 @@ class EvalFunc:
         #TODO
         return 0
     
-    def __pieceSquareTable(self, board: list[np.uint64]):
+    def __pieceSquareTable(self, TargetPos: np.uint64, board: list[np.uint64]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -125,16 +143,21 @@ class EvalFunc:
         #TODO
         return 0
     
-    def computeOverallScore(self, board:list[np.uint64]):
+    def computeOverallScore(self, moveList: list[np.uint64], board:list[np.uint64]):
         """Computes the total Score of current State
 
         Args:
             board (list[np.uint64]): _description_
-        Return:
-            Score: Int
+        Returns:
+            TupleList[tuple]: (move:np.uint64 , score: int)
+            Ordering: Highest score at the end of the list.   
         """
+        scoredList = TupleList()
         #TODO
-        return 0
+        
+        
+        scoredList = sorted(scoredList,key=lambda x: x[1])
+        return scoredList
         
 
     

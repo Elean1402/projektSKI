@@ -1,4 +1,4 @@
-    
+import numpy as np    
 """All Versions have to return a Dictionary
 """
 class ScoreConfig:
@@ -14,5 +14,7 @@ class ScoreConfig:
                      "MAT_PAWN" : -1,
                      "MAT_KNIGHT" : -1,
                      "ENDGAME_MAT_PAWN" : -1,
-                     "ENDGAME_MAT_KNIGHT" : -10}
+                     "ENDGAME_MAT_KNIGHT" : -1,
+                     "PIECESQUARE_TABLE_PAWN": np.uint64(0),
+                     "PIECESQUARE_TABLE_KNIGHT": np.uint64(0)}
         return config
