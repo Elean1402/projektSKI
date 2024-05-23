@@ -2,7 +2,9 @@ import numpy as np
 """All Versions have to return a Dictionary
 """
 class ScoreConfig:
-    def reversePsqT(dictToReverse: dict):
+    __REVERSEROW = {1:"8",2:"7",3:"6",4:"5",5:"4",6:"3",7:"2",8:"1"}
+    
+    def reversePsqT(self,dictToReverse: dict):
         """Reverse the PieceSquareTable for the opponent Player
 
         Args:
@@ -12,23 +14,22 @@ class ScoreConfig:
         """
         if(len(dictToReverse)!= 64):
             raise ValueError("Dict size not 64")
-        orderCol = {"A":"B","B":"C","C":"D","D":"E","E":"F","F":"G","G":"H","H":"A"}
-        reverseRow = {1:"8",2:"7",3:"6",4:"5",5:"4",6:"3",7:"2",8:"1"}
+        
         newDictionary = {}
         for row in np.arange(1,9):
-            newDictionary["A"+reverseRow[row]]= dictToReverse["A"+str(row)]
-            newDictionary["B"+reverseRow[row]]= dictToReverse["B"+str(row)]
-            newDictionary["C"+reverseRow[row]]= dictToReverse["C"+str(row)]
-            newDictionary["D"+reverseRow[row]]= dictToReverse["D"+str(row)]
-            newDictionary["E"+reverseRow[row]]= dictToReverse["E"+str(row)]
-            newDictionary["F"+reverseRow[row]]= dictToReverse["F"+str(row)]
-            newDictionary["G"+reverseRow[row]]= dictToReverse["G"+str(row)]
-            newDictionary["H"+reverseRow[row]]= dictToReverse["H"+str(row)]
+            newDictionary["A"+self.__REVERSEROW[row]]= dictToReverse["A"+str(row)]
+            newDictionary["B"+self.__REVERSEROW[row]]= dictToReverse["B"+str(row)]
+            newDictionary["C"+self.__REVERSEROW[row]]= dictToReverse["C"+str(row)]
+            newDictionary["D"+self.__REVERSEROW[row]]= dictToReverse["D"+str(row)]
+            newDictionary["E"+self.__REVERSEROW[row]]= dictToReverse["E"+str(row)]
+            newDictionary["F"+self.__REVERSEROW[row]]= dictToReverse["F"+str(row)]
+            newDictionary["G"+self.__REVERSEROW[row]]= dictToReverse["G"+str(row)]
+            newDictionary["H"+self.__REVERSEROW[row]]= dictToReverse["H"+str(row)]
         return newDictionary
     
     def Version0(self):
         """Tests for Piece Square Table
-
+           Only for on Blue Player the Piece Square Table (Pawn and Knight) is needed, 
         Returns:
             dict: Configuration for evalFunc
         """
