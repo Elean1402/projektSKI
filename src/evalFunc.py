@@ -1,12 +1,9 @@
 from src.gamestate import GameState
+from src.model import *
+from src.moveLib import MoveLib
 import numpy as np
 
-class TupleList(list):
-    def append(self, item):
-        if isinstance(item, tuple):
-            super().append(item)
-        else:
-            raise TypeError("item is not tuple")
+
 
 class EvalFunc:
     # Score distribution (not final) of implemented features
@@ -22,8 +19,10 @@ class EvalFunc:
                      "MAT_KNIGHT" : -1,
                      "ENDGAME_MAT_PAWN" : -1,
                      "ENDGAME_MAT_KNIGHT" : -1,
-                     "PIECESQUARE_TABLE_PAWN": np.uint64(0),
-                     "PIECESQUARE_TABLE_KNIGHT": np.uint64(0)}
+                     "PIECESQUARE_TABLE_PAWN_Blue": {},
+                     "PIECESQUARE_TABLE_KNIGHT_Blue": {},
+                     "PIECESQUARE_TABLE_PAWN_Red": {},
+                     "PIECESQUARE_TABLE_KNIGHT_Red": {},}
     
     #NEEDED: Total Order Featurescores
     #e.g. Materials > Mobility ... and so on
@@ -38,9 +37,9 @@ class EvalFunc:
         vals = self.__CONFIG_DICT.values()
         if(len(list(filter(lambda x: x==-1, vals)))>0):
             raise ValueError("Config is not complete, you may forgot a key-value pair, value -1 means not set")
-        if(self.__CONFIG_DICT["PIECESQUARE_TABLE_PAWN"] == 0 or
-           self.__CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT"] == 0):
-            raise ValueError("Config: PIECESQUARE_TABLE_\{Pawn,Knight\} not set")
+        if(len(self.__CONFIG_DICT["PIECESQUARE_TABLE_PAWN"]) == 0 or
+           len(self.__CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT"]) == 0):
+            raise ValueError("Config: PIECESQUARE_TABLE_\{Pawn,Knight\} Dictionary not set")
         
     def __mobility(self, board: list[np.uint64]):
         """Score distribution over Board
