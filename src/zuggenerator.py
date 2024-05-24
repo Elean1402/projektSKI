@@ -48,9 +48,9 @@ def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
 	alpha_k = alpha_knights
 	alpha = alpha_p | alpha_k
 
-    beta_p = beta_pawns
-    beta_k = beta_knights
-    beta = beta_p | beta_knights
+	beta_p = beta_pawns
+	beta_k = beta_knights
+	beta = beta_p | beta_knights
 
 	for board, figure_list in zip((alpha_p, alpha_k, beta_p, beta_k),(l_alpha_p,l_alpha_k,l_beta_p,l_beta_k)):
 		for bit in range(64):
@@ -238,7 +238,7 @@ def alpha_k_move_generation(source:np.uint64): # no pre-validation needed
 	if (source & alpha_k_forward_right) << akfr & ~alpha_k:
 		dests.append(source << akfr) 
 
-    return dests
+	return dests
 
 def alpha_p_move_execution(source:np.uint64, dest:np.uint64):
 	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
@@ -337,7 +337,6 @@ def alpha_k_move_execution(source:np.uint64, dest:np.uint64):
 	alpha = alpha_p | alpha_k
 
 
-
 def alpha_generation():
 	moves = []
 	precon = ~(alpha_k | beta_k)
@@ -426,7 +425,7 @@ def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather so
 
 def beta_k_move_generation(source: np.uint64):  # no pre-validation needed
 
-    dests = []
+	dests = []
 
 	# left
 	if (source & beta_k_left) >> bkl & ~beta_k:
@@ -444,7 +443,7 @@ def beta_k_move_generation(source: np.uint64):  # no pre-validation needed
 	if (source & beta_k_forward_right) >> bkfr & ~beta_k:
 		dests.append(source >> bkfr) 
 
-    return dests
+	return dests
 
 def beta_p_move_execution(source:np.uint64, dest:np.uint64):
 	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
@@ -589,14 +588,14 @@ def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
 			alpha = alpha_p & alpha_k
 
 
-        # on alpha_p -> hit & pawn
-        elif dest & alpha_p:
-            alpha_p = alpha_p ^ dest
-            beta_p = beta_p & dest
-            l_alpha_p.remove(dest)
-            l_beta_k.remove(source)
-            l_beta_p.append(dest)
-            alpha = alpha_p & alpha_k
+		# on alpha_p -> hit & pawn
+		elif dest & alpha_p:
+			alpha_p = alpha_p ^ dest
+			beta_p = beta_p & dest
+			l_alpha_p.remove(dest)
+			l_beta_k.remove(source)
+			l_beta_p.append(dest)
+			alpha = alpha_p & alpha_k
 
 
 		# simple move -> pawn
