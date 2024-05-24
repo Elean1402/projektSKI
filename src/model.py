@@ -2,9 +2,6 @@ import numpy as np
 
 class ScoredMoveList(list):
     
-    
-    
-    
     def append(self, item):
         if (isinstance(item, tuple) and
             isinstance(item[0],np.uint64) and
@@ -24,6 +21,29 @@ class ScoredMoveList(list):
 
         Type: List[(np.uint64, np.uint64,int,int)]
             ->List[(FromPos, TargetPos,MoveScore, TotalscoreAfterMove)]
+        """
+        for item in args:
+            self.append(item)
+
+class ScoreListForMerging(list):
+    def append(self, item):
+        """Specific Type for Preprocessing Scores
+
+        Args:
+             Type: List( ( np.uint64, dict( { np.uint64: int } ) ) )
+            ->List( (startPos, dict( { targetPos: score } ) ) )
+        """
+        if(isinstance(item, tuple) and
+           isinstance(item[0], np.uint64) and
+           isinstance(item[1],dict) and
+           isinstance(next(iter(item[1].values(), int)))):
+            super().append(item)
+        else:
+            raise TypeError("item is not from type ScoredListForMerge: List( ( np.uint64, dict( { np.uint64: int } ) ) )")
+    def __init__(self,*args):
+        """Specific List Type for Preprocessing Scores for Eval Func
+        Type: List( ( np.uint64, dict( { np.uint64: int } ) ) )
+            ->List( (startPos, dict( { targetPos: score } ) ) )
         """
         for item in args:
             self.append(item)

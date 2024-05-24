@@ -40,7 +40,7 @@ class ScoreConfig:
             "A5":5,     "B5":20,  "C5":20,    "D5":20,    "E5":20,    "F5":20,    "G5":20,    "H5":5,
             "A4":5,     "B4":30,  "C4":30,    "D4":30,    "E4":30,    "F4":30,    "G4":30,    "H4":5,
             "A3":5,     "B3":40,  "C3":40,    "D3":40,    "E3":40,    "F3":40,    "G3":40,    "H3":5,
-            "A2":5,     "B2":50,  "C2":50,    "D2":50,    "E2":50,    "F2":50,    "G2":50,    "H2":5,
+            "A2":5,     "B2":45,  "C2":50,    "D2":50,    "E2":50,    "F2":50,    "G2":45,    "H2":5,
             "A1":0,     "B1":100, "C1":100,   "D1":100,   "E1":100,   "F1":100,   "G1":100,   "H1":0,
         }
         psqTPawnRed = self.reversePsqT(psqTPawnBlue)
@@ -58,6 +58,7 @@ class ScoreConfig:
         
         
         config =    {"MOBILITY" : 0,
+                     "TURN_OPTIONS": np.uint(2),
                      "PROTECTION_PAWNS" : 0,
                      "PROTECTION_KNIGHTS" : 0,
                      "UNPROTECTED_PAWNS" : 0,
