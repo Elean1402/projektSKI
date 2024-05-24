@@ -36,6 +36,19 @@ class EvalFunc(unittest.TestCase):
        print(scorelist)
        self.assertEqual(True,False)
     
+    def test_turnOptions(self):
+        ef = EvalFunction(ScoreConfig.Version0())
+        M = Gui.fenToMatrix("2r3/8/8/8/8/8/8/3b2")
+        board = GameState.createBitBoardFrom(M,True)
+        moveList = list()
+        moveList.append( ( 0,np.uint64(2**4),list([np.uint64(2**12),np.uint64(2**3),np.uint64(2**5)] ) ) )
+        scorelist = ScoreListForMerging()
+        for index in moveList:
+            scorelist.append(ef._pieceSquareTable(index[1],index[2],board))
+        self.assertEqual(3, ef._TURNOPTIONS)
+        self.assertEqual(3*ef._CONFIG_DICT[Config.TURN_OPTIONS], ef._computeTurnOptions())
+        self.assertEqual(0, ef._TURNOPTIONS)
+        
     def test_moveIsNeighbourOfStartPos(self):
         ef = EvalFunction(ScoreConfig.Version0())
         self.assertEqual(ef._moveIsNeighbourOfStartPos(np.uint64(2**4),np.uint64(2**12)),True)

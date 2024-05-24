@@ -1,5 +1,5 @@
 import numpy as np
-from typing import overload
+from enum import Enum
 class ScoredMoveList(list):
     
     def append(self, item):
@@ -58,4 +58,28 @@ class ScoreListForMerging(list):
         if(len(args)>0):
             for item in args:
                 self.append(item)
-        
+
+class Config(Enum):
+    MOBILITY = "MOBILITY"
+    TURN_OPTIONS ="TURN_OPTIONS"
+    PROTECTION_PAWNS = "PROTECTION_PAWNS"
+    PROTECTION_KNIGHTS = "PROTECTION_KNIGHTS"
+    UNPROTECTED_PAWNS = "UNPROTECTED_PAWNS"
+    UNPROTECTED_KNIGHTS = "UNPROTECTED_KNIGHTS"
+    UPGRADE_TO_KNIGHT = "UPGRADE_TO_KNIGHT"
+    BLOCKED_FIGURES = "BLOCKED_FIGURES"
+    MAT_PAWN = "MAT_PAWN"
+    MAT_KNIGHT = "MAT_KNIGHT"
+    ENDGAME_MAT_PAWN = "ENDGAME_MAT_PAWN"
+    ENDGAME_MAT_KNIGHT = "ENDGAME_MAT_KNIGHT"
+    PIECESQUARE_TABLE_PAWN_Blue ="PIECESQUARE_TABLE_PAWN_Blue"
+    PIECESQUARE_TABLE_KNIGHT_Blue ="PIECESQUARE_TABLE_KNIGHT_Blue"
+    PIECESQUARE_TABLE_PAWN_Red ="PIECESQUARE_TABLE_PAWN_Red"
+    PIECESQUARE_TABLE_KNIGHT_Red ="PIECESQUARE_TABLE_KNIGHT_Red"
+
+class Player(Enum):
+    """Alpha = Red (Bottom)
+       Beta = Blue (Top)
+    """
+    Red = 0
+    Blue = 1
