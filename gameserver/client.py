@@ -49,7 +49,7 @@ def main():
 				last_action_time = pygame.time.get_ticks()  # Reset the timer after taking an action
 
 		# Check if 3 seconds have passed without any action
-		if pygame.time.get_ticks() - last_action_time > 3000:  # 3000 milliseconds = 3 seconds
+		if pygame.time.get_ticks() - last_action_time > 10000:  # 3000 milliseconds = 3 seconds
 			print("Timeout: No action for 3 seconds")
 			sys.exit(0)
 
