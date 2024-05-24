@@ -9,7 +9,7 @@ import numpy as np
 class EvalFunction:
     # Score distribution (not final) of implemented features
     _TURNOPTIONS=0
-    __PLAYER = 0
+    _PLAYER = 0
     _CONFIG_DICT = { Config.MOBILITY : -1,
                      Config.TURN_OPTIONS: -1,
                      Config.PROTECTION_PAWNS : -1,
@@ -40,7 +40,7 @@ class EvalFunction:
             player : from model.py use Player enum class. Defaults to Player.Red.
         """
         #TODO
-        self.__PLAYER = player
+        self._PLAYER = player
         #Bitte config nur aus scoreConfig_evalFunc.py verwenden
         if (len(self._CONFIG_DICT) != len(config)):
             raise ValueError("Configs do not have same size")
@@ -226,14 +226,16 @@ class EvalFunction:
         """
         #TODO
         #count Blue Pawns
-        bp = bin(board[GameState._ZARR_INDEX_B_PAWNS] & (~board[GameState._ZARR_INDEX_R_KNIGHTS]))[2:].count("1")
+        bp = bin(board[GameState._ZARR_INDEX_B_PAWNS] & (~board[GameState._ZARR_INDEX_R_KNIGHTS]))[2:].count("1")*self._CONFIG_DICT[Config.MAT_PAWN]
         #count Blue Knights
-        bk = bin(board[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+        bk = bin(board[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")*self._CONFIG_DICT[Config.MAT_KNIGHT]
         #count Red Pawns
-        rp = bin(board[GameState._ZARR_INDEX_R_PAWNS] & (~board[GameState._ZARR_INDEX_B_KNIGHTS]))[2:].count("1")
+        rp = bin(board[GameState._ZARR_INDEX_R_PAWNS] & (~board[GameState._ZARR_INDEX_B_KNIGHTS]))[2:].count("1")*self._CONFIG_DICT[Config.MAT_PAWN]
         #count Red Knights
-        rk = bin(board[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
-        return 0
+        rk = bin(board[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")*self._CONFIG_DICT[Config.MAT_KNIGHT]
+        if(self._PLAYER == Player.Blue ):
+            return bp+bk-rp-rk
+        return rp+rk-bp-bk
     @classmethod
     def computeOverallScore(self, moveList: list, board:list[np.uint64], player = Player.Red):
         """Computes the total Score of current State
@@ -249,11 +251,21 @@ class EvalFunction:
             Ordering: Move with highest score at the end of the list.   
         """
         scoredList = ScoredMoveList()
+        #ScoreListForMeging can be merged with other Dict -> Count(Dict)
+        # so, that values are added on same keys
+        # e.g. dictA + dictB 
         tempScore = ScoreListForMerging()
+        totalScore = 0
         for index in moveList:
-            tempScore.append(self.__pieceSquareTable(index[1],index[2], board))
+            tempScore.append(self._pieceSquareTable(index[1],index[2], board))
+            #TODO add some more Features
+            
         #TODO
+        totalScore += self._computeTurnOptions()
+        totalScore += self.__materialPoints(board)
         
+        
+        #TODO Last processing
         
         scoredList.sort()
         return scoredList
