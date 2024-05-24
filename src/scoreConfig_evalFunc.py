@@ -31,11 +31,11 @@ class ScoreConfig:
     @classmethod
     def Version0(self):
         """Tests for Piece Square Table
-           Only for on Blue Player the Piece Square Table (Pawn and Knight) is needed, 
+           Only for on Red Player the Piece Square Table (Pawn and Knight) is needed, 
         Returns:
             dict: Configuration for evalFunc
         """
-        psqTPawnBlue = {    
+        psqTPawnRed = {    
             "A8":0,     "B8":0,   "C8":0,     "D8":0,     "E8":0,     "F8":0,     "G8":0,     "H8":0,
             "A7":1,     "B7":5,   "C7":5,     "D7":5,     "E7":5,     "F7":5,     "G7":5,     "H7":1,
             "A6":5,     "B6":10,  "C6":10,    "D6":10,    "E6":10,    "F6":10,    "G6":10,    "H6":5,
@@ -45,8 +45,8 @@ class ScoreConfig:
             "A2":5,     "B2":45,  "C2":50,    "D2":50,    "E2":50,    "F2":50,    "G2":45,    "H2":5,
             "A1":0,     "B1":100, "C1":100,   "D1":100,   "E1":100,   "F1":100,   "G1":100,   "H1":0,
         }
-        psqTPawnRed = self.reversePsqT(psqTPawnBlue)
-        psqTKnightBlue = {    
+        psqTPawnBlue = self.reversePsqT(psqTPawnRed)
+        psqTKnightRed = {    
             "A8":0,     "B8":3,     "C8":5,     "D8":5,     "E8":5,     "F8":5,     "G8":3,     "H8":0,
             "A7":5,     "B7":10,    "C7":10,    "D7":10,    "E7":10,    "F7":10,    "G7":10,    "H7":5,
             "A6":10,    "B6":15,    "C6":20,    "D6":20,    "E6":20,    "F6":20,    "G6":15,    "H6":10,
@@ -56,11 +56,11 @@ class ScoreConfig:
             "A2":30,    "B2":30,    "C2":30,    "D2":35,    "E2":35,    "F2":30,    "G2":30,    "H2":30,
             "A1":0,     "B1":100,   "C1":100,   "D1":100,   "E1":100,   "F1":100,   "G1":100,   "H1":0,
         }
-        psqTKnightRed =  self.reversePsqT(psqTKnightBlue)
+        psqTKnightBlue =  self.reversePsqT(psqTKnightRed)
         
         
         config =    {Config.MOBILITY : 0,
-                     Config.TURN_OPTIONS: np.uint(2),
+                     Config.TURN_OPTIONS: 2,
                      Config.PROTECTION_PAWNS : 0,
                      Config.PROTECTION_KNIGHTS : 0,
                      Config.UNPROTECTED_PAWNS : 0,
@@ -80,11 +80,11 @@ class ScoreConfig:
     @classmethod
     def Version1(self):
         """Like Version0 but now with Materials
-           Only for on Blue Player the Piece Square Table (Pawn and Knight) is needed, 
+           Just define only for Player Red the Piece Square Table (Pawn and Knight), 
         Returns:
             dict: Configuration for evalFunc
         """
-        psqTPawnBlue = {    
+        psqTPawnRed = {    
             "A8":0,     "B8":0,   "C8":0,     "D8":0,     "E8":0,     "F8":0,     "G8":0,     "H8":0,
             "A7":1,     "B7":5,   "C7":5,     "D7":5,     "E7":5,     "F7":5,     "G7":5,     "H7":1,
             "A6":5,     "B6":10,  "C6":10,    "D6":10,    "E6":10,    "F6":10,    "G6":10,    "H6":5,
@@ -94,8 +94,8 @@ class ScoreConfig:
             "A2":5,     "B2":45,  "C2":50,    "D2":50,    "E2":50,    "F2":50,    "G2":45,    "H2":5,
             "A1":0,     "B1":100, "C1":100,   "D1":100,   "E1":100,   "F1":100,   "G1":100,   "H1":0,
         }
-        psqTPawnRed = self.reversePsqT(psqTPawnBlue)
-        psqTKnightBlue = {    
+        psqTPawnBlue = self.reversePsqT(psqTPawnRed)
+        psqTKnightRed = {    
             "A8":0,     "B8":3,     "C8":5,     "D8":5,     "E8":5,     "F8":5,     "G8":3,     "H8":0,
             "A7":5,     "B7":10,    "C7":10,    "D7":10,    "E7":10,    "F7":10,    "G7":10,    "H7":5,
             "A6":10,    "B6":15,    "C6":20,    "D6":20,    "E6":20,    "F6":20,    "G6":15,    "H6":10,
@@ -105,11 +105,11 @@ class ScoreConfig:
             "A2":30,    "B2":30,    "C2":30,    "D2":35,    "E2":35,    "F2":30,    "G2":30,    "H2":30,
             "A1":0,     "B1":100,   "C1":100,   "D1":100,   "E1":100,   "F1":100,   "G1":100,   "H1":0,
         }
-        psqTKnightRed =  self.reversePsqT(psqTKnightBlue)
+        psqTKnightBlue =  self.reversePsqT(psqTKnightRed)
         
         
         config =    {Config.MOBILITY : 0,
-                     Config.TURN_OPTIONS: np.uint(2),
+                     Config.TURN_OPTIONS: 2,
                      Config.PROTECTION_PAWNS : 0,
                      Config.PROTECTION_KNIGHTS : 0,
                      Config.UNPROTECTED_PAWNS : 0,

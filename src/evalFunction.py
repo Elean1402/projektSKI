@@ -25,7 +25,7 @@ class EvalFunction:
                      Config.PIECESQUARE_TABLE_PAWN_Blue: {},
                      Config.PIECESQUARE_TABLE_KNIGHT_Blue: {},
                      Config.PIECESQUARE_TABLE_PAWN_Red: {},
-                     Config.PIECESQUARE_TABLE_KNIGHT_Red: {},}
+                     Config.PIECESQUARE_TABLE_KNIGHT_Red: {}}
     
     __RANGE = np.array([1,6,1,1],dtype=np.uint64)
     __ZERO = np.uint64(0)
@@ -72,7 +72,7 @@ class EvalFunction:
         return 0
     def __turnOptions(self,size:int):
         self._TURNOPTIONS += size
-    
+   
     def _computeTurnOptions(self):
         """Computes the Value of the Turnoptions
             After calling this Function, will reset Turnoptions to 0
@@ -84,6 +84,7 @@ class EvalFunction:
         return val
     
     # Muss evtl. später optimiert werden, es könnte sein, dass die Loops (initialisierung) langsam sind
+    
     def _moveIsNeighbourOfStartPos(self,startPos: np.uint64, targetPos:np.uint64):
         """Checks if targetPos is neighbour of StartPos
            --> the figure is a pawn
@@ -214,7 +215,7 @@ class EvalFunction:
         #TODO
         return 0
     
-    def __materialPoints(self, board:list[np.uint64]):
+    def _materialPoints(self, board:list[np.uint64]):
         """Scores figures
         -----------------------------------------
            MUST: use the defined Constants!!!!!!
@@ -236,19 +237,20 @@ class EvalFunction:
         if(self._PLAYER == Player.Blue ):
             return bp+bk-rp-rk
         return rp+rk-bp-bk
-    @classmethod
-    def computeOverallScore(self, moveList: list, board:list[np.uint64], player = Player.Red):
+    
+    def computeOverallScore(self, moveList: list, board:list[np.uint64]):
         """Computes the total Score of current State
            MoveList only read once!
         Args:
             moveList: list((int, np.uint64,list[np.uint64]))
                     -> list(index, figure, movelist)
-            board (list[np.uint64]): _description_
-            player: Please use from model.py Player enum class to select Red or Blue
-                  -> std. value is Player.Red
+                    The list from alpha/beta-generation() from Zuggenerator 
+            board (list[np.uint64]): Bitboard
+            
         Returns:
-            (TupleList[tuple], int): (move:np.uint64 , Total score: int)
-            Ordering: Move with highest score at the end of the list.   
+            List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int)
+            Ordering: Move with highest overall score at the end of the list.
+            use pop() to get it   
         """
         scoredList = ScoredMoveList()
         #ScoreListForMeging can be merged with other Dict -> Count(Dict)
@@ -257,16 +259,17 @@ class EvalFunction:
         tempScore = ScoreListForMerging()
         totalScore = 0
         for index in moveList:
-            tempScore.append(self._pieceSquareTable(index[1],index[2], board))
+            tempScore.append(self._pieceSquareTable(index[0],index[1], board))
             #TODO add some more Features
             
         #TODO
         totalScore += self._computeTurnOptions()
-        totalScore += self.__materialPoints(board)
+        totalScore += self._materialPoints(board)
         
-        
+        print("tempscore:\n", tempScore)
         #TODO Last processing
-        
+        for (startpos,adict) in tempScore:
+            scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos]) for targetPos in adict])
         scoredList.sort()
         return scoredList
         

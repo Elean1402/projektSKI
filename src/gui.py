@@ -35,7 +35,10 @@ class Gui:
       """Reads FEN and maps it into a 8x8 Matrix
         1 = red, 4 = blue
         2 = rr, 3 = br, 5= rb, 8= bb
-        first color is top
+        Assuming first row in FEN is at bottom of the Board
+        (in Lecture newest slide, its the opposite)
+        Red is Top
+        
 
       Args:
           fen (str): _description_

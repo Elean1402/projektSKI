@@ -1,5 +1,5 @@
 import unittest
-import logging
+#import logging
 from src.gui import*
 
 class FenStringLib(unittest.TestCase):
@@ -205,7 +205,26 @@ class FenStringLib(unittest.TestCase):
              [0,4,4,4,4,4,4,0],
              [0,4,4,4,4,4,4,0]]),0)
         print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
-        self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)     
+        self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)
+    
+    #@unittest.skip("Wo ist oben und unten, laut VL ist die erste Zeile im FEN oben")
+    def test_fenToMatrix12(self):
+        """Tests for FEN"""
+        fen1 = "b5/8/8/8/8/8/8/r5"
+        testMatrix =Gui.fenToMatrix(fen1)
+        
+        
+        targetMatrix = np.array(
+            [[0,1,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,4,0,0,0,0,0,0]])
+        print("testcase:\n",testMatrix,"\ntarget:\n", targetMatrix,self)
+        self.assertEqual(np.array_equal(testMatrix, targetMatrix),True)        
     
 if __name__ == '__main__':
     

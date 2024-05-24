@@ -9,19 +9,29 @@ class ScoredMoveList(list):
             isinstance(item[2],int) and
             isinstance(item[3],int)):
             super().append(item)
+        elif(isinstance(item,list) and 
+            isinstance(item[0], tuple) and
+            isinstance(item[0][0],np.uint64) and
+            isinstance(item[0][1], np.uint64) and
+            isinstance(item[0][2],int) and
+            isinstance(item[0][3],int)):
+            super().extend(item)
         else:
-            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int)]")
+            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int)]:\n item:", item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]))
     
     def sort(self):
         """Sort List in ascending order by total score"""
         super().sort(key=lambda x: x[3])
         return self
-    def __init__(self,args):
+    def __init__(self,*args):
         """Specific list type for scoring
 
         Type: List[(np.uint64, np.uint64,int,int)]
             ->List[(FromPos, TargetPos,MoveScore, TotalscoreAfterMove)]
         """
+        if(len(args)==0):
+            return None
+        
         for item in args:
             self.append(item)
 
@@ -38,7 +48,7 @@ class ScoreListForMerging(list):
              if(isinstance(item[0], tuple) and
                 isinstance(item[0][0], np.uint64) and
                 isinstance(item[0][1],dict)):
-                super().append(item)
+                super().append(*item)
                 return None
         else:
             if(isinstance(item, tuple) and
@@ -78,8 +88,8 @@ class Config(Enum):
     PIECESQUARE_TABLE_KNIGHT_Red ="PIECESQUARE_TABLE_KNIGHT_Red"
 
 class Player(Enum):
-    """Alpha = Red (Bottom)
-       Beta = Blue (Top)
+    """ Blue (Bottom) = Alpha (from Zuggenerator)
+        Rot (Top) = Beta (from Zuggenerator)
     """
     Red = 0
     Blue = 1
