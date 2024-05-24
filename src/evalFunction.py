@@ -6,7 +6,7 @@ import numpy as np
 
 
 
-class EvalFunc:
+class EvalFunction:
     # Score distribution (not final) of implemented features
     _TURNOPTIONS=0
     
@@ -33,19 +33,24 @@ class EvalFunc:
     #NEEDED: Total Order Featurescores
     #e.g. Materials > Mobility ... and so on
     def __init__(self,config: dict):
+        """"Please use only scoreConfig_evalFunc.py for configurating Config!!"
+
+        """
         #TODO
-        print("Please use only scoreConfig_evalFunc.py for configurating Config!!")
+        
         #Bitte config nur aus scoreConfig_evalFunc.py verwenden
-        if len(self._CONFIG_DICT) != len(config):
+        if (len(self._CONFIG_DICT) != len(config)):
             raise ValueError("Configs do not have same size")
         self._CONFIG_DICT = self._CONFIG_DICT | config
         #check __Config if all constants got new values
         vals = self._CONFIG_DICT.values()
         if(len(list(filter(lambda x: x==-1, vals)))>0):
             raise ValueError("Config is not complete, you may forgot a key-value pair, value -1 means not set")
-        if(len(self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN"]) == 0 or
-           len(self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT"]) == 0):
-            raise ValueError("Config: PIECESQUARE_TABLE_\{Pawn,Knight\} Dictionary not set")
+        if(len(self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Blue"]) == 0 or
+           len(self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Blue"]) == 0 or
+           len(self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Red"]) == 0 or
+           len(self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Red"]) == 0 ):
+            raise ValueError("Config: PIECESQUARE_TABLE_\\{Pawn,Knight\\} Dictionary not set")
         
         
     def __mobility(self, board: list[np.uint64]):
@@ -67,7 +72,7 @@ class EvalFunc:
     
     
     # Muss evtl. später optimiert werden, es könnte sein, dass die Loops (initialisierung) langsam sind
-    def __moveIsNeighbourOfStartPos(self,startPos: np.uint64, targetPos:np.uint64):
+    def _moveIsNeighbourOfStartPos(self,startPos: np.uint64, targetPos:np.uint64):
         """Checks if targetPos is neighbour of StartPos
            --> the figure is a pawn
 
@@ -98,7 +103,7 @@ class EvalFunc:
                 break
         return bool 
     
-    def __pieceSquareTable(self,moveList:list, board: list[np.uint64]):
+    def _pieceSquareTable(self,startPos: np.uint64, targetmoves: list[np.uint64], board: list[np.uint64]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -116,19 +121,26 @@ class EvalFunc:
         #TODO
         #determine Figure: Pawn or Knight
         scoreList = ScoreListForMerging()
-        for index in moveList:
-            targetScores = dict()
-            if(index[1] & board[GameState._ZARR_INDEX_R_PAWNS] & (~ board[GameState._ZARR_INDEX_B_KNIGHTS])):
-                targetScores.update(dict({key: self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Red"][MoveLib.BitsToPosition(key)]} for key in index[2] if self.__moveIsNeighbourOfStartPos(index[1], key)))
-            elif (index[1] & board[GameState._ZARR_INDEX_R_KNIGHTS]):
-                targetScores.update(dict({key: self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Red"][MoveLib.BitsToPosition(key)]} for key in index[2] if not self.__moveIsNeighbourOfStartPos(index[1], key)))
-            elif(index[1] & board[GameState._ZARR_INDEX_B_PAWNS] & (~ board[GameState._ZARR_INDEX_R_KNIGHTS])):
-                targetScores.update(dict({key: self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Blue"][MoveLib.BitsToPosition(key)]} for key in index[2] if self.__moveIsNeighbourOfStartPos(index[1], key)))
-            elif (index[1] & board[GameState._ZARR_INDEX_B_KNIGHTS]):
-                targetScores.update(dict({key: self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Blue"][MoveLib.BitsToPosition(key)]} for key in index[2] if not self.__moveIsNeighbourOfStartPos(index[1], key)))
+        
+        targetScores = Counter({})
+        
+        if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & (~ board[GameState._ZARR_INDEX_B_KNIGHTS])):
+            targetScores.update(
+                {key: self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Red"][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
+        elif (startPos & board[GameState._ZARR_INDEX_R_KNIGHTS]):
+            targetScores.update(
+                {key: self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Red"][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
+        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & (~ board[GameState._ZARR_INDEX_R_KNIGHTS])):
+            targetScores.update(
+                {key: self._CONFIG_DICT["PIECESQUARE_TABLE_PAWN_Blue"][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
+        elif (startPos & board[GameState._ZARR_INDEX_B_KNIGHTS]):
+            targetScores.update(
+                {key: self._CONFIG_DICT["PIECESQUARE_TABLE_KNIGHT_Blue"][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
             
-            scoreList.append((index[1], targetScores))
-            self.__turnOptions(len(index[2]))
+        if(len(targetScores) == 0):
+            raise ValueError("Error in MoveList, please check Zuggenerator")
+        scoreList.append((startPos, targetScores))
+        self.__turnOptions(len(targetmoves))
             
                 
         return scoreList
@@ -216,7 +228,8 @@ class EvalFunc:
         """
         scoredList = ScoredMoveList()
         tempScore = ScoreListForMerging()
-        tempScore.append(self.__pieceSquareTable(moveList, board))
+        for index in moveList:
+            tempScore.append(self.__pieceSquareTable(index[1],index[2], board))
         #TODO
         
         

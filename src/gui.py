@@ -65,6 +65,7 @@ class Gui:
                       elif value == 0 and counter ==1 : counter=0;spalte+=1
               except ValueError:
                   figure = self.mapColorToValue(tmpRow[i])
+                  
                   if figure == 0:
                       raise Exception("FEN String contains unknown character!")
                   if counter ==2 :spalte +=1; counter=1
@@ -79,7 +80,8 @@ class Gui:
                       case 4: board[zeile][spalte] += figure if figure == 4 else -1
                   
           zeile +=1
-      return board       
+          
+      return board
 
   def mapColorToValue(c:str):
       """

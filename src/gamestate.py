@@ -117,7 +117,7 @@ class GameState:
                 M += tmp*self.figureStack[figure]
         
         else:
-            if(BB.shape[0] != 4):
+            if(len(BB) != 4):
                 raise ValueError(self, "Bitboardarray lengths not equal 4, check output of Zuggenerator")
             
             r = BB[self._ZARR_INDEX_R_PAWNS] & ~BB[self._ZARR_INDEX_R_KNIGHTS] & ~BB[self._ZARR_INDEX_B_KNIGHTS]

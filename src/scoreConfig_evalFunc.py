@@ -27,6 +27,7 @@ class ScoreConfig:
             newDictionary["H"+self.__REVERSEROW[row]]= dictToReverse["H"+str(row)]
         return newDictionary
     
+    @classmethod
     def Version0(self):
         """Tests for Piece Square Table
            Only for on Blue Player the Piece Square Table (Pawn and Knight) is needed, 
