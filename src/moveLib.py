@@ -1,6 +1,11 @@
-from src.gamestate import GameState
-import numpy as np
 
+import numpy as np
+import sys
+import os
+
+# Füge das Verzeichnis src zum Python-Pfad hinzu
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+from gamestate import GameState
 class MoveLib:
     _coldict = {"A":1, "B":2, "C":3, "D":4,"E":5,"F":6, "G":7, "H":8 }
     _bitColDict = {7:"A", 6:"B", 5:"C", 4:"D", 3:"E", 2:"F", 1:"G",0:"H"}

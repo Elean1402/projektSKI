@@ -1,9 +1,15 @@
 import numpy as np
 import random
-from src.moveLib import MoveLib
-from src.gamestate import GameState
-from src.gui import Gui
-from src.benchmark import benchmark
+import sys
+import os
+
+# Füge das Verzeichnis src zum Python-Pfad hinzu
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
+from moveLib import MoveLib
+from gamestate import GameState
+from gui import Gui
+from benchmark import benchmark
 
 
 
@@ -71,7 +77,7 @@ R7 = np.uint64(0b000000001111111100000000000000000000000000000000000000000000000
 R8 = np.uint64(0b1111111100000000000000000000000000000000000000000000000000000000)
 def rating(player = 1):
 	rating = 0
-	for p in alpha_p:
+	for p in l_alpha_p:
 		if p & R1: rating +=1
 		elif p & R2: rating +=2
 		elif p & R3: rating +=3
@@ -81,7 +87,7 @@ def rating(player = 1):
 		elif p & R7: rating +=7
 		elif p & R8: rating +=10000
 
-	for p in beta_p:
+	for p in l_beta_p:
 		if p & R1: rating -=10000
 		elif p & R2: rating -=7
 		elif p & R3: rating -=6
@@ -91,7 +97,7 @@ def rating(player = 1):
 		elif p & R7: rating -=2
 		elif p & R8: rating -=1
 
-	for k in alpha_k:
+	for k in l_alpha_k:
 		if k & R1: rating +=1
 		elif k & R2: rating +=2
 		elif k & R3: rating +=3
@@ -101,7 +107,7 @@ def rating(player = 1):
 		elif k & R7: rating +=7
 		elif k & R8: rating +=10000
 
-	for k in beta_k:
+	for k in l_beta_k:
 		if k & R1: rating -=10000
 		elif k & R2: rating -=7
 		elif k & R3: rating -=6
