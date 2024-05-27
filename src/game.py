@@ -96,10 +96,11 @@ def print_state(Color=""):
 	
 	red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
 
-	for p in board.l_blue_p: red_p = red_p ^ p
-	for k in board.l_blue_k: red_k = red_k ^ k
-	for p in board.l_red_p: blue_p = blue_p ^ p
-	for k in board.l_red_k: blue_k = blue_k ^ k
+	for p in board.l_blue_p: blue_p = blue_p ^ p
+	for k in board.l_blue_k: blue_k = blue_k ^ k
+	for p in board.l_red_p: red_p = red_p ^ p
+	for k in board.l_red_k: red_k = red_k ^ k
+
 
 	print("red")
 	print_board(board.red_p | board.red_k)
