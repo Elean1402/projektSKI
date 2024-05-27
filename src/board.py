@@ -199,8 +199,6 @@ def blue_generation():
 	return moves
 
 def blue_move_execution(source:np.uint64, dest:np.uint64):
-	print_board(blue_p)
-	print_board(source)
 	if source & blue_p:
 		blue_p_move_execution(source, dest)
 	else:
