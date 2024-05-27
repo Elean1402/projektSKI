@@ -11,6 +11,7 @@ def alpha_beta_search(game: dict):
 	init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
 	print_state()
 	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+	print(temp)
 	alpha = -float('inf')
 	beta = float('inf')
 	depth = 2
@@ -32,7 +33,10 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
+		print("blue",m.BitsToPosition(move[0]))
+		print("blue",m.BitsToPosition(move[1]))
 		board.blue_move_execution(move[0], move[1])
+
 		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp)
 		init_board(*temp)
@@ -55,9 +59,12 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 		return 3
 
 	scorelist = ef.computeOverallScore(board.red_generation(), board=temp)
-	print("2",scorelist)
+	print("2",scorelist, ef._PLAYER)
 	for i in range(len(scorelist)):
+
 		move = scorelist.pop()
+		print(m.BitsToPosition(move[0]))
+		print(m.BitsToPosition(move[1]))
 		#board.red_move_execution(move[0], move[1])
 		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
 		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp)

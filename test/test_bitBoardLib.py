@@ -30,7 +30,7 @@ class BitBoardLib(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(BB[GameState._ARR_INDEX_R], 2**62)
+        self.assertEqual(True,False)
         
     def test_createBitBoardFrom5(self):
         M = Gui.fenToMatrix("rr5/8/8/8/8/8/8/6")
