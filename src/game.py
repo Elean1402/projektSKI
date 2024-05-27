@@ -58,6 +58,8 @@ def play(FEN_board="6/2r0b0r03/3r0r03/8/8/8/8/6" , blue_turn=True):
 	else:
 		init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
 	print_state("Startpos")
+	moves = board.blue_generation()
+	print(moves)
 
 	input()
 	while isOver() == "c":

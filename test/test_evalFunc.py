@@ -65,10 +65,11 @@ class EvalFunc(unittest.TestCase):
         board = GameState.createBitBoardFrom(M,True)
         print("Board blue pawns:",board[GameState._ZARR_INDEX_B_PAWNS])
         init_position(
-            board[GameState._ZARR_INDEX_R_PAWNS],
-            board[GameState._ZARR_INDEX_R_KNIGHTS],
             board[GameState._ZARR_INDEX_B_PAWNS],
-            board[GameState._ZARR_INDEX_B_KNIGHTS])
+            board[GameState._ZARR_INDEX_B_KNIGHTS],
+            board[GameState._ZARR_INDEX_R_PAWNS],
+            board[GameState._ZARR_INDEX_R_KNIGHTS]
+        )
         moveList = alpha_generation()
         print("moveList:",moveList)
         scorelist = ef.computeOverallScore(moveList,board)

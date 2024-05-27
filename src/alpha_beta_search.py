@@ -1,20 +1,16 @@
-from evalFunction import EvalFunction
-from game import init_board
+from evalFunction import *
 from gameserver import *
-from gamestate import *
-from model import *
-from moveLib import MoveLib
 from scoreConfig_evalFunc import *
-from zuggenerator import *
-from board import blue_generation, blue_move_execution, blue_takeback, red_generation ,red_move_execution, red_takeback, stack
-
-
+from board import *
+from game import *
+from gui import *
 
 def alpha_beta_search(game: dict):
-	init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
-	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]))
-	print_state()
+	print(game["board"])
 
+	init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
+	print_state()
+	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
 	alpha = -float('inf')
 	beta = float('inf')
 	depth = 2
@@ -28,19 +24,19 @@ def alpha_beta_search(game: dict):
 def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
 	ef = EvalFunction(ScoreConfig.Version1(), Player.Blue)
-	print(generate_moves(game))
 	if depth_left == 0:
-		return ef.computeOverallScore(generate_moves(game), board=temp).pop()
+		return 2
 
-	scorelist = ef.computeOverallScore(generate_moves(game), board=temp)
+	scorelist = ef.computeOverallScore(board.blue_generation(), board=temp)
 
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		blue_move_execution(move[0], move[1])
-
+		board.blue_move_execution(move[0], move[1])
+		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp)
-
+		init_board(*temp)
+		#takeback(*stack.pop())
 
 		l[move] = score
 		# rework move
@@ -54,16 +50,19 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 
 def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
-	ef = EvalFunction(ScoreConfig.Version1(), Player.Blue)
+	ef = EvalFunction(ScoreConfig.Version1(), Player.Red)
 	if depth_left == 0:
-		return ef.computeOverallScore(generate_moves(game), board=temp).pop()
-	scorelist = ef.computeOverallScore(generate_moves(game), board=temp)
-	print(scorelist)
+		return 3
+
+	scorelist = ef.computeOverallScore(board.red_generation(), board=temp)
+	print("2",scorelist)
 	for i in range(len(scorelist)):
 		move = scorelist.pop()
-		red_move_execution(move[0], move[1])
+		#board.red_move_execution(move[0], move[1])
+		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
 		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp)
-		takeback(*stack.pop())
+		init_board(*temp)
+		#takeback(*stack.pop())
 		# rework move
 		l[move] = score
 		if score <= alpha:
@@ -89,6 +88,7 @@ def generate_moves(game: dict) -> list:
 		return red_generation()
 	else:
 		raise ValueError("Player must be either b or r")
+
 
 def takeback(source, dest, hit=False):
 	if player == "b":
