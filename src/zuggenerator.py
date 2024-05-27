@@ -330,6 +330,20 @@ def alpha_k_move_execution(source:np.uint64, dest:np.uint64):
 	# new alpha
 	alpha = alpha_p | alpha_k
 
+
+
+def alpha_random_move_execution(moves): #  (index, source,[dest,dest,dest])
+	fig = random.choice(moves)
+	move = random.choice(fig[1])
+	if fig[0] & alpha_k:
+		alpha_k_move_execution(fig[0],move)
+	else:
+		alpha_p_move_execution(fig[0],move)
+	return fig[0], move
+
+def alpha_hits():
+	return (alpha_k >> akl) | (alpha_k >> akfl) | (alpha_k >> akr) | (alpha_k >> akfr) | (alpha_p >> aphl) | (alpha_p >> aphr)
+
 def alpha_generation():
 	moves = []
 	precon = ~(alpha_k | beta_k)
@@ -344,19 +358,6 @@ def alpha_generation():
 		if len(fig_moves):
 			moves.append((source, fig_moves))
 	return moves
-
-def alpha_random_move_execution(moves): #  (index, source,[dest,dest,dest])
-	fig = random.choice(moves)
-	move = random.choice(fig[1])
-	if fig[0] & alpha_k:
-		alpha_k_move_execution(fig[0],move)
-	else:
-		alpha_p_move_execution(fig[0],move)
-	return fig[0], move
-
-def alpha_hits():
-	return (alpha_k >> akl) | (alpha_k >> akfl) | (alpha_k >> akr) | (alpha_k >> akfr) | (alpha_p >> aphl) | (alpha_p >> aphr)
-
 
 ######################################################################################################
 # BETA
@@ -558,84 +559,6 @@ def beta_random_move_execution(moves):
 		beta_p_move_execution(fig[0],move)
 	return fig[0], move
 	
-def beta_move_execution(source:np.uint64, dest:np.uint64): # not used
-	global alpha, beta
-	if dest not in [tup[2] for tup in beta_p_move_generation(source)+beta_k_move_generation(source)]:
-		print("invalid move")
-	if source & beta_k:
-		#if source beta_k_move_generation
-		# delete source Position (bitboard)
-		beta_k = beta_k ^ source
-		
-		# on beta_p -> knight
-		if dest & beta_p:
-			beta_k = beta_k & dest
-			l_beta_k[l_beta_k.index(source)] = dest
-		
-		# on alpha_k -> hit & knight
-		elif dest & alpha_k:
-			alpha_k = alpha_k ^ dest
-			beta_k = beta_k & dest
-			l_alpha_k.remove(dest)
-			l_beta_k[l_beta_k.index(source)] = dest
-			alpha = alpha_p & alpha_k
-
-
-		# on alpha_p -> hit & pawn
-		elif dest & alpha_p:
-			alpha_p = alpha_p ^ dest
-			beta_p = beta_p & dest
-			l_alpha_p.remove(dest)
-			l_beta_k.remove(source)
-			l_beta_p.append(dest)
-			alpha = alpha_p & alpha_k
-
-
-		# simple move -> pawn
-		else: 
-			beta_p = beta_p & dest
-			l_beta_k.remove(source)
-			l_beta_p.append(dest)
-		
-		beta = beta_p & beta_k
-	elif source & beta_p:
-		# delete source Position (bitboard)
-		beta_p = beta_p ^ source
-		
-		# on beta_p -> knight
-		if dest & beta_p:
-			beta_k = beta_k & dest
-			l_beta_p.remove(source)
-			l_beta_k.append(dest)
-		
-		# on alpha_k -> hit & knight
-		elif dest & beta_k:
-			alpha_k = alpha_k ^ dest
-			beta_k = beta_k & dest
-			l_alpha_k.remove(dest)
-			l_beta_p.remove(source)
-			l_beta_k.append(dest)
-			alpha = alpha_p & alpha_k
-
-
-		# on alpha_p -> hit 
-		elif dest & beta_p:
-			alpha_p = alpha_p ^ dest
-			beta_p = beta_p & dest
-			l_alpha_p.remove(dest)
-			l_beta_p[l_beta_p.index(source)] = dest
-			alpha = alpha_p & alpha_k
-
-
-		# simple move
-		else: 
-			beta_p = beta_p & dest
-			l_beta_p[l_beta_p.index(source)] = dest
-		
-		beta = beta_p & beta_k
-	else:
-		print("no figure on source position")
-
 def beta_hits():
 	return (beta_k >> bkl) | (beta_k >> bkfl) | (beta_k >> bkr) | (beta_k >> bkfr) | (beta_p >> bphl) | (beta_p >> bphr)
 
@@ -651,22 +574,6 @@ def print_board(board:np.uint64):
 	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
 	print()
 
-def print_bitboards():
-	print("alpha_p");print_board(alpha_p)
-	print("alpha_k");print_board(alpha_k)
-	print("alpha");print_board(alpha)
-	print("beta_p");print_board(beta_p)
-	print("beta_k");print_board(beta_k)
-	print("beta");print_board(beta)
-
-def print_game():
-	def split_string(string, chunk_size=8):
-		temp =  [list(string[i:i+chunk_size]) for i in range(0, len(string), chunk_size)]
-
-	red_pawns  = np.binary_repr(alpha_p,width=64)
-	red_knights  = np.binary_repr(alpha_k,width=64)
-	blue_pawns  = np.binary_repr(beta_p,width=64)
-	blue_knights  = np.binary_repr(beta_k,width=64)
 
 
 def print_state(Color=""):
@@ -713,15 +620,15 @@ def print_state(Color=""):
 
 # import time
 if __name__ == "__main__":
-	init_position(beta_p, beta_k, alpha_p, alpha_k)
+	#init_position(beta_p, beta_k, alpha_p, alpha_k)
 	# print_bitboards()
 	# for p in l_beta_p:
 	# 	print_board(p)
-	#play()
+	play()
 	#init_position(beta_p, beta_k, alpha_p, alpha_k)
 	#benchmark(alpha_left)
 	#benchmark(alpha_right)
-	benchmark(alpha_generation)
+	#benchmark(alpha_generation)
 	# benchmark(alpha_generation_list1)
 
 
