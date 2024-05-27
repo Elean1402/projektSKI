@@ -199,12 +199,10 @@ def blue_generation():
 	return moves
 
 def blue_move_execution(source:np.uint64, dest:np.uint64):
-	print_board(blue_p)
-	print_board(source)
-	if source & blue_p:
-		blue_p_move_execution(source, dest)
-	else:
+	if source & blue_k:
 		blue_k_move_execution(source, dest)
+	else:
+		blue_p_move_execution(source, dest)
 
 def blue_takeback(source, dest, hit=False):
 	global blue_p, blue_k, blue, red_p, red_k, red
@@ -440,10 +438,10 @@ def red_generation():
 	return moves
 
 def red_move_execution(source:np.uint64, dest:np.uint64):
-	if source & red_p:
-		red_p_move_execution(source, dest)
-	else:
+	if source & red_k:
 		red_k_move_execution(source, dest)
+	else:
+		red_p_move_execution(source, dest)
 		
 def red_takeback(source, dest, hit=False):
 	global blue_p, blue_k, blue, red_p, red_k, red
