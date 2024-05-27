@@ -113,7 +113,7 @@ def moves_to_string(moves):
 	
 
 if __name__ == "__main__":
-	#init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
-	#print_state()
-	play()
+	init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
+	print_state()
+	#play()
 	#print(moves_to_string(board.red_generation()))

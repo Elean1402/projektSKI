@@ -2,7 +2,7 @@ import numpy as np
 
 """
 for import use:
-from board import blue_generation, blue_move_execution, blue_takeback, red_generation, red_move_execution, red_takeback
+from src.board import blue_generation, blue_move_execution, blue_takeback, red_generation, red_move_execution, red_takeback, stack
 
 l_ --> List
 _p --> pawn
@@ -10,6 +10,8 @@ _k --> knight
 blue --> start player
 red --> second player
 """
+
+
 # Game Repr
 stack = []
 
