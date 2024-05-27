@@ -4,6 +4,7 @@ from benchmark import *
 import numpy as np
 from gameserver import *
 from gamestate import *
+from moveLib import *
 
 def alpha_beta_max(alpha: int, beta: int, depth_left: int, game: dict) -> int:
 	if depth_left == 0:
@@ -35,11 +36,18 @@ def generate_moves(game: dict) -> list:
 	# und ruf alpha_beta_min mit beta.generation
 	# rufe alpha_beta_max mit beta.generation auf, wenn wir rot sind
 	# und ruf alpha_beta_min mit alpha.generation
+	m = MoveLib()
 	board, player = game["board"].split(" ")
-	board = GameState.createBitBoardFrom(Gui.fenToMatrix(board), True)
-	init_position(*board)
+	init_position(*GameState.createBitBoardFrom(Gui.fenToMatrix(board), True))
 	if player == "b":
 		player = "r"
+		gen = moves_to_string(alpha_generation())
+		source, dest = gen[0].split("-")
+		#print(gen[0])
+		#print(m.move(source, dest, mode=1))
+		print(alpha_generation())
+		alpha_p_move_execution(*m.move(source, dest, mode=1))
+		print(alpha_generation())
 		return alpha_generation()
 	elif player == "r":
 		player = "b"
