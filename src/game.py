@@ -6,7 +6,7 @@ import random
 import numpy as np
 
 
-def init_board(blue_pawns, blue_knights, red_pawns, red_knights):
+def init_board( red_pawns, red_knights,blue_pawns, blue_knights):
     board.blue_p = blue_pawns
     board.blue_k = blue_knights
     board.blue = blue_pawns | blue_knights
@@ -52,14 +52,12 @@ def blue_random_move_execution(moves): #  (index, source,[dest,dest,dest])
 		board.blue_p_move_execution(fig[0],move)
 	return fig[0], move
 
-def play(FEN_board="6/2r0b0r03/3r0r03/8/8/8/8/6" , blue_turn=True):
+def play(FEN_board=False, blue_turn=True):
 	if FEN_board:
-		init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board), True))
+		init_board(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
 	else:
 		init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
 	print_state("Startpos")
-	moves = board.blue_generation()
-	print(moves)
 
 	input()
 	while isOver() == "c":
@@ -115,7 +113,7 @@ def moves_to_string(moves):
 	
 
 if __name__ == "__main__":
-	#init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
-	#print_state()
-	play()
+	init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
+	print_state()
+	#play()
 	#print(moves_to_string(board.red_generation()))

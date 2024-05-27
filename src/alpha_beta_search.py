@@ -5,16 +5,15 @@ from board import *
 from game import *
 from gui import *
 
+
 def alpha_beta_search(game: dict):
 	print(game["board"])
 
-	init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
-	print_state()
 	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
-	print(temp)
+	init_board(*temp)
 	alpha = -float('inf')
 	beta = float('inf')
-	depth = 2
+	depth = 5
 	l = dict()
 	best_score = alpha_beta_max(alpha, beta, depth, game, l, temp)
 	print("best score", best_score)
@@ -27,20 +26,28 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	ef = EvalFunction(ScoreConfig.Version1(), Player.Blue)
 	if depth_left == 0:
 		return 2
+	print("blue")
+	print_board(board.blue)
+	gen = board.blue_generation()
 
-	scorelist = ef.computeOverallScore(board.blue_generation(), board=temp)
+	if len(gen) == 0:
+
+		scorelist = []
+	else:
+
+		print(moves_to_string(gen))
+		scorelist = ef.computeOverallScore(gen, board=temp)
+
 
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		print("blue",m.BitsToPosition(move[0]))
-		print("blue",m.BitsToPosition(move[1]))
-		board.blue_move_execution(move[0], move[1])
-
 		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
-		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp)
+		board.blue_move_execution(move[0], move[1])
+		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)
-		#takeback(*stack.pop())
+		#takeback(*stack.pop(),game)
 
 		l[move] = score
 		# rework move
@@ -57,20 +64,26 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	ef = EvalFunction(ScoreConfig.Version1(), Player.Red)
 	if depth_left == 0:
 		return 3
+	print("red")
+	print_board(board.red)
+	gen = board.red_generation()
+	if len(gen) == 0:
+		scorelist = []
 
-	scorelist = ef.computeOverallScore(board.red_generation(), board=temp)
-	print("2",scorelist, ef._PLAYER)
+	else:
+
+		print(moves_to_string(gen))
+
+		scorelist = ef.computeOverallScore(gen, board=temp)
+	
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		print(m.BitsToPosition(move[0]))
-		print(m.BitsToPosition(move[1]))
-		#board.red_move_execution(move[0], move[1])
 		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
-		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp)
+		board.red_move_execution(move[0], move[1])
+		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)
-		#takeback(*stack.pop())
-		# rework move
 		l[move] = score
 		if score <= alpha:
 			return alpha  # fail hard alpha-cutoff
@@ -98,7 +111,7 @@ def generate_moves(game: dict) -> list:
 
 
 def takeback(source, dest, hit=False):
-	if player == "b":
+	if game["player"] == "b":
 		blue_takeback(source, dest, hit=False)
 	else:
 		red_takeback(source, dest, hit=False)
