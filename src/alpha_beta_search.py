@@ -6,29 +6,29 @@ from gameserver import *
 from gamestate import *
 from moveLib import *
 
-def alpha_beta_max(alpha: int, beta: int, depth_left: int, game: dict) -> int:
-	if depth_left == 0:
-		return rating()
-
-	for move in generate_moves(game):
-		score = alpha_beta_min(alpha, beta, depth_left - 1, game)
-		if score >= beta:
-			return beta  # fail hard beta-cutoff
-		if score > alpha:
-			alpha = score  # alpha acts like max in MiniMax
-	return alpha
-
-
-def alpha_beta_min(alpha: int, beta: int, depth_left: int, game: dict) -> int:
-	if depth_left == 0:
-		return - rating()
-	for move in generate_moves(game):
-		score = alpha_beta_max(alpha, beta, depth_left - 1, game)
-		if score <= alpha:
-			return alpha  # fail hard alpha-cutoff
-		if score < beta:
-			beta = score  # beta acts like min in MiniMax
-	return beta
+# def alpha_beta_max(alpha: int, beta: int, depth_left: int, game: dict) -> int:
+# 	if depth_left == 0:
+# 		return rating()
+#
+# 	for move in generate_moves(game):
+# 		score = alpha_beta_min(alpha, beta, depth_left - 1, game)
+# 		if score >= beta:
+# 			return beta  # fail hard beta-cutoff
+# 		if score > alpha:
+# 			alpha = score  # alpha acts like max in MiniMax
+# 	return alpha
+#
+#
+# def alpha_beta_min(alpha: int, beta: int, depth_left: int, game: dict) -> int:
+# 	if depth_left == 0:
+# 		return - rating()
+# 	for move in generate_moves(game):
+# 		score = alpha_beta_max(alpha, beta, depth_left - 1, game)
+# 		if score <= alpha:
+# 			return alpha  # fail hard alpha-cutoff
+# 		if score < beta:
+# 			beta = score  # beta acts like min in MiniMax
+# 	return beta
 
 
 def generate_moves(game: dict) -> list:
