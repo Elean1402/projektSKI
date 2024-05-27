@@ -40,9 +40,9 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		board.blue_move_execution(move[0], move[1])
-		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)
 		#takeback(*stack.pop(),game)
@@ -69,14 +69,14 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 
 	else:
 		scorelist = efred.computeOverallScore(gen, board=temp)
-		print([(m.BitsToPosition(x[0]),m.BitsToPosition(x[1])) for x in scorelist])
+		print([(m.BitsToPosition(x[0]), m.BitsToPosition(x[1])) for x in scorelist])
 	
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		board.red_move_execution(move[0], move[1])
-		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k]
+		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)
 		l[move] = score

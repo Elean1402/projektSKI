@@ -133,7 +133,6 @@ def blue_p_move_execution(source:np.uint64, dest:np.uint64):
 	
 def blue_k_move_execution(source:np.uint64, dest:np.uint64):
 	global blue_p, blue_k, blue, red_p, red_k, red
-	
 	# delete source Position 
 	blue_k = blue_k ^ source
 	l_blue_k.remove(source)
@@ -202,6 +201,10 @@ def blue_move_execution(source:np.uint64, dest:np.uint64):
 	if source & blue_p:
 		blue_p_move_execution(source, dest)
 	else:
+		print("source")
+		print_board(source)
+		print("blue_p")
+		print_board(blue_p)
 		blue_k_move_execution(source, dest)
 
 def blue_takeback(source, dest, hit=False):
