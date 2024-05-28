@@ -1,12 +1,10 @@
 import numpy as np
 from src.gamestate import*
-from src.model import Player,BitMask, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray
+from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray
 from src.moveLib import MoveLib as mv
 
 class MoveGenerator:
     _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
-    
-    
     
     def __init__(self, board: list[np.uint64]):
         """ Must use Gamestate._ZARR_... constants as indices
@@ -18,11 +16,9 @@ class MoveGenerator:
         #print("initialized board", board)
         self._board = board
         
-    
     def updateBoard(self,board:list[np.uint64]):
         self._board = board
         
-    
     def genMoves(self,player:Player):
         
         #check if game is over
@@ -30,7 +26,6 @@ class MoveGenerator:
         unvalidatedMoves = self._genUnvalidatedMoves(player)
         #TODO: Validate moves and filter them
         
-            
     def _genUnvalidatedMoves(self, player:Player): 
         pawnsPositions = self._getAllPawns(player)
         knightPositions = self._getAllKnights(player)
@@ -58,7 +53,7 @@ class MoveGenerator:
             yield b
             n^=b
     
-    def _getTarget(self, filteredPos: np.uint64, bitmask:BitMask):
+    def _getTarget(self, filteredPos: np.uint64, bitmask:np.uint64):
         """ Gets target field of concerned  bitmask
             ***Need to be optimized via dict which holds a function to make bit shifting***
         Arguments:
@@ -68,41 +63,41 @@ class MoveGenerator:
             (Tuple(np.uint64, np.uint64): (startPosition, targetposition)"""
 
         targetPosition = np.uint64(0)
-        if(bitmask == BitMask.PAWN_TO_LEFT):
+        if(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.PAWN_TO_LEFT]
-        elif(bitmask == BitMask.PAWN_TO_RIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.PAWN_TO_RIGHT]
         
-        elif(bitmask == BitMask.RED_PAWN_TO_BOTTOM):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM]
-        elif(bitmask == BitMask.RED_KNIGHT_LEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_LEFT]
-        elif(bitmask == BitMask.RED_KNIGHT_RIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_RIGHT]
-        elif(bitmask == BitMask.RED_KNIGHT_TO_BOTLEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]
-        elif(bitmask == BitMask.RED_KNIGHT_TO_BOTRIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]
         
-        elif(bitmask == BitMask.BLUE_PAWN_TO_TOP):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP]
-        elif(bitmask == BitMask.BLUE_KNIGHT_LEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_LEFT]
-        elif(bitmask == BitMask.BLUE_KNIGHT_RIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_RIGHT]
-        elif(bitmask == BitMask.BLUE_KNIGHT_TO_TOPLEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]
-        elif(bitmask == BitMask.BLUE_KNIGHT_TO_TOPRIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]
         
-        elif(bitmask == BitMask.RED_PAWN_TO_BOTTOM_LEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]
-        elif(bitmask == BitMask.RED_PAWN_TO_BOTTOM_RIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
             targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]
         
-        elif(bitmask == BitMask.BLUE_PAWN_TO_TOP_LEFT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]
-        elif(bitmask == BitMask.BLUE_PAWN_TO_TOP_RIGHT):
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]
         else:
             raise ValueError("bitmask not recognized, please check Bitmask class or bitmask value")
@@ -132,39 +127,43 @@ class MoveGenerator:
         else:
             raise TypeError("parameter player is not from class Player, please use model.py: e.g. Player.Blue..")
         
-    def _filterPositions(self, player:Player, positions: np.uint64, bitmask: BitMask):
+    def _filterPositions(self, player:Player, positions: np.uint64, bitmask: np.uint64):
         """ Assuming Red starts at top
             ***optimize case pattern with Dict lookup later***
-            Filters the positions of figures in the direction of description of Bitmask
+            Filters the positions of figures which can theoretically move in the direction described by Bitmask
 
         Args:
             player (Player): enum - see model.py
             positions (np.uint64): single Bitboard
-            bitmask (BitMask): Filtermask for processing possible Moves
+            bitmask (BitMaskDict[DictMoveEntry): Filtermask for processing possible Moves
 
         Returns:
-            positions (np.uint64): All possible Positions which can move in direction descriped in Bitmask 
+            positions (np.uint64): All possible Positions which can move in direction described by Bitmask 
         """
         if(
             (player == Player.Red and (
-            bitmask == BitMask.PAWN_TO_LEFT or
-            bitmask == BitMask.PAWN_TO_RIGHT or
-            bitmask == BitMask.RED_PAWN_TO_BOTTOM or
-            bitmask == BitMask.RED_KNIGHT_LEFT or
-            bitmask == BitMask.RED_KNIGHT_RIGHT or
-            bitmask == BitMask.RED_KNIGHT_TO_BOTLEFT or
-            bitmask == BitMask.RED_KNIGHT_TO_BOTRIGHT))
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]))
            or 
             (player == Player.Blue and (
-            bitmask == BitMask.PAWN_TO_LEFT or
-            bitmask == BitMask.PAWN_TO_RIGHT or
-            bitmask == BitMask.BLUE_PAWN_TO_TOP or
-            bitmask == BitMask.BLUE_KNIGHT_LEFT or
-            bitmask == BitMask.BLUE_KNIGHT_RIGHT or
-            bitmask == BitMask.BLUE_KNIGHT_TO_TOPLEFT or
-            bitmask == BitMask.BLUE_KNIGHT_TO_TOPRIGHT))):
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]))):
             #only positions which can move in direction of description of bitmask
-            positions = positions & (~ bitmask)
+            positions = positions & (bitmask)
         else:
             raise ValueError("Bitmask and choosed Player are wrong")
         return positions
@@ -183,14 +182,12 @@ class MoveGenerator:
         
         return False
     
-    
     def execSingleMove(self,move):
         #TODO check if Board is initialized
         #TODO exec Move
         #TODO update Board
         
         return self._board.copy()
-    
     
     def prettyPrintBoard(self):
         #print("internal board", self._board)
