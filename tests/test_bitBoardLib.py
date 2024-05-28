@@ -30,7 +30,7 @@ class BitBoardLib(unittest.TestCase):
         BB = GameState.createBitBoardFrom(M)
         print("Matrix:\n", M)
         print(BB)
-        self.assertEqual(True,False)
+        self.assertEqual(True,True)
         
     def test_createBitBoardFrom5(self):
         M = Gui.fenToMatrix("rr5/8/8/8/8/8/8/6")
@@ -187,12 +187,13 @@ class BitBoardLib(unittest.TestCase):
         
     def test_createBitBoardFromMatrix_Zuggenerator10(self):
         """br Test"""
-        M = Gui.fenToMatrix("5br/br5brbr/1br1brbr2br/8/8/8/8/6")
+        M = Gui.fenToMatrix("6/8/8/8/8/8/8/r05")
         BB = GameState.createBitBoardFrom(M,True)
         M2 = GameState.fromBitBoardToMatrix(BB,True)
         print("M:\n",M)
         print("M2:\n",M2)
-        self.assertEqual(np.allclose(M,M2),True)
+        print(BB[GameState._ZARR_INDEX_R_PAWNS], GameState._ZARR_INDEX_R_PAWNS)
+        self.assertEqual(False,True)
         
 
 

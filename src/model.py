@@ -88,8 +88,95 @@ class Config(Enum):
     PIECESQUARE_TABLE_KNIGHT_Red ="PIECESQUARE_TABLE_KNIGHT_Red"
 
 class Player(Enum):
-    """ Blue (Bottom) = Alpha (from Zuggenerator)
-        Rot (Top) = Beta (from Zuggenerator)
+    """ Blue (Bottom) = Alpha?? (from Zuggenerator)
+        Rot (Top) = Beta?? (from Zuggenerator)
     """
     Red = 0
     Blue = 1
+    
+class BitMask(Enum):
+    BLUE_PAWN_TO_TOP           = np.uint64(0b00000000_01111110_11111111_11111111_11111111_11111111_11111111_01111110)
+    BLUE_PAWN_TO_TOP_LEFT      = np.uint64(0b00000000_00111111_01111111_01111111_01111111_01111111_01111111_01111110)
+    BLUE_PAWN_TO_TOP_RIGHT     = np.uint64(0b00000000_11111100_11111110_11111110_11111110_11111110_11111110_01111110)
+    RED_PAWN_TO_BOTTOM         = np.uint64(0b01111110_11111111_11111111_11111111_11111111_11111111_01111110_00000000)
+    RED_PAWN_TO_BOTTOM_LEFT    = np.uint64(0b01111110_01111111_01111111_01111111_01111111_01111111_00111111_00000000)
+    RED_PAWN_TO_BOTTOM_RIGHT   = np.uint64(0b01111110_11111110_11111110_11111110_11111110_11111110_11111100_00000000)
+    PAWN_TO_LEFT               = np.uint64(0b00111110_01111111_01111111_01111111_01111111_01111111_01111111_00111110)
+    PAWN_TO_RIGHT              = np.uint64(0b01111100_11111110_11111110_11111110_11111110_11111110_11111110_01111100)
+    
+    BLUE_KNIGHT_TO_TOPLEFT     = np.uint64(0b00000000_00000000_00111111_01111111_01111111_01111111_01111111_01111110)
+    BLUE_KNIGHT_TO_TOPRIGHT    = np.uint64(0b00000000_00000000_11111100_11111110_11111110_11111110_11111110_01111110)
+    BLUE_KNIGHT_LEFT           = np.uint64(0b00000000_00011111_00111111_00111111_00111111_00111111_00111111_00111110)
+    BLUE_KNIGHT_RIGHT          = np.uint64(0b00000000_11111000_11111100_11111100_11111100_11111100_11111100_01111100)
+    
+    RED_KNIGHT_TO_BOTLEFT      = np.uint64(0b01111110_01111111_01111111_01111111_01111111_00111111_00000000_00000000)
+    RED_KNIGHT_TO_BOTRIGHT     = np.uint64(0b01111110_11111110_11111110_11111110_11111110_11111100_00000000_00000000)
+    RED_KNIGHT_LEFT            = np.uint64(0b00111111_00111111_00111111_00111111_00111111_00111111_00011111_00000000)
+    RED_KNIGHT_RIGHT           = np.uint64(0b11111100_11111100_11111100_11111100_11111100_11111100_11111000_00000000)
+
+BIT_MASK_ARRAY_PAWN_RED = np.array([BitMask.RED_PAWN_TO_BOTTOM ,BitMask.RED_PAWN_TO_BOTTOM_LEFT, BitMask.RED_PAWN_TO_BOTTOM_RIGHT, BitMask.PAWN_TO_LEFT ,BitMask.PAWN_TO_RIGHT,])
+BIT_MASK_ARRAY_PAWN_BLUE = np.array([BitMask.BLUE_PAWN_TO_TOP,BitMask.BLUE_PAWN_TO_TOP_LEFT,BitMask.BLUE_PAWN_TO_TOP_RIGHT,BitMask.PAWN_TO_LEFT,BitMask.PAWN_TO_RIGHT])
+BIT_MASK_ARRAY_KNIGHT_RED = np.array([BitMask.RED_KNIGHT_TO_BOTLEFT,BitMask.RED_KNIGHT_TO_BOTRIGHT,BitMask.RED_KNIGHT_LEFT,BitMask.RED_KNIGHT_RIGHT])
+BIT_MASK_ARRAY_KNIGHT_BLUE = np.array([BitMask.BLUE_KNIGHT_TO_TOPLEFT,BitMask.BLUE_KNIGHT_TO_TOPRIGHT,BitMask.BLUE_KNIGHT_LEFT,BitMask.BLUE_KNIGHT_RIGHT])
+
+class DictMoveEntry(Enum):
+    BLUE_PAWN_TO_TOP           =0
+    RED_PAWN_TO_BOTTOM         =1
+    PAWN_TO_LEFT               =2
+    PAWN_TO_RIGHT              =3
+
+    BLUE_KNIGHT_TO_TOPLEFT     =4
+    BLUE_KNIGHT_TO_TOPRIGHT    =5
+    BLUE_KNIGHT_LEFT           =6
+    BLUE_KNIGHT_RIGHT          =7
+
+    RED_KNIGHT_TO_BOTLEFT      =8
+    RED_KNIGHT_TO_BOTRIGHT     =9
+    RED_KNIGHT_LEFT            =10
+    RED_KNIGHT_RIGHT           =11  
+    
+    BLUE_PAWN_TO_TOP_RIGHT     =12
+    BLUE_PAWN_TO_TOP_LEFT      =13
+    RED_PAWN_TO_BOTTOM_LEFT    =14
+    RED_PAWN_TO_BOTTOM_RIGHT   =15
+
+DICT_MOVE = {
+    DictMoveEntry.RED_PAWN_TO_BOTTOM        :np.uint64(8),
+    DictMoveEntry.RED_KNIGHT_LEFT           :np.uint64(6),
+    DictMoveEntry.RED_KNIGHT_RIGHT          :np.uint64(10),
+    DictMoveEntry.RED_KNIGHT_TO_BOTLEFT     :np.uint64(15),
+    DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT    :np.uint64(17),
+    
+    DictMoveEntry.BLUE_PAWN_TO_TOP          :np.uint64(8),
+    DictMoveEntry.BLUE_KNIGHT_LEFT          :np.uint64(10),
+    DictMoveEntry.BLUE_KNIGHT_RIGHT         :np.uint64(6),
+    DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT    :np.uint64(17),
+    DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT   :np.uint64(15),
+    
+    DictMoveEntry.PAWN_TO_LEFT              :np.uint64(1),
+    DictMoveEntry.PAWN_TO_RIGHT             :np.uint64(1),
+    DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT    :np.uint64(7),
+    DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT     :np.uint64(9),
+    DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT   :np.uint64(7),
+    DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT  :np.uint64(9),
+}
+
+class FilteredPositionsArray(list):
+    """ Returns list: [(Bitmask, np.uint64)]"""
+    def __init__(self,*alist:list):
+        if(len(alist)> 0):
+            self.append(alist)
+        else:
+            return self
+
+    def append(self, alist:list):
+        if(len(alist)> 0):
+            if(isinstance(alist[0][0], BitMask) and
+                isinstance(alist[0][1], np.uint64)):
+                for item in alist:
+                    self.append(item)
+            else:
+                raise TypeError("Element of this list must be (Bitmask, np.uint64)")
+        else:
+            return None
+        

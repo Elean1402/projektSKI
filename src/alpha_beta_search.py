@@ -5,12 +5,14 @@ from board import *
 from game import *
 from gui import *
 
+efr = EvalFunction(ScoreConfig.Version1(), Player.Red)
+efb = EvalFunction(ScoreConfig.Version1(), Player.Blue)
 def alpha_beta_search(game: dict):
 	print(game["board"])
 
 	init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
 	print_state()
-	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+	temp = get_Board().copy()
 	print(temp)
 	alpha = -float('inf')
 	beta = float('inf')
@@ -24,58 +26,77 @@ def alpha_beta_search(game: dict):
 
 def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
-	ef = EvalFunction(ScoreConfig.Version1(), Player.Blue)
+	
 	if depth_left == 0:
 		return 2
 
-	scorelist = ef.computeOverallScore(board.blue_generation(), board=temp)
-
+	scorelist = efb.computeOverallScore(board.blue_generation(), board=temp)
+	print([(m.move(x[0],x[1],3))for x in scorelist])
 	for i in range(len(scorelist)):
-
+		
 		move = scorelist.pop()
-		print("blue",m.BitsToPosition(move[0]))
-		print("blue",m.BitsToPosition(move[1]))
+		print("best move for Player Blue=", m.move(move[0],move[1],3))
+		print("state before move execution:")
+		print(GameState.fromBitBoardToMatrix(temp,True))
 		board.blue_move_execution(move[0], move[1])
+		newBoard = get_Board()
+		gameResponse = isOver()
+		print("GameResponse = ", gameResponse)
+		if(gameResponse == "c"):
+			print("Board after move exec")
+			print(GameState.fromBitBoardToMatrix(newBoard,True))
+			print(newBoard)
+			score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, newBoard)
+		
+			#takeback(*stack.pop())
 
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
-		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp)
-		init_board(*temp)
-		#takeback(*stack.pop())
-
-		l[move] = score
-		# rework move
-		if score >= beta:
-			return beta  # fail hard beta-cutoff
-		if score > alpha:
-			alpha = score  # alpha acts like max in MiniMax
-
-	return alpha
+			l[move] = score
+			# rework move
+			if score >= beta:
+				return beta  # fail hard beta-cutoff
+			if score > alpha:
+				alpha = score  # alpha acts like max in MiniMax
+		elif(gameResponse == 'Blue Won'):
+			print(gameResponse)
+			return 1000
+		return alpha
 
 
 def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
-	ef = EvalFunction(ScoreConfig.Version1(), Player.Red)
+	
 	if depth_left == 0:
 		return 3
 
-	scorelist = ef.computeOverallScore(board.red_generation(), board=temp)
-	print("2",scorelist, ef._PLAYER)
+	scorelist = efr.computeOverallScore(board.red_generation(), temp)
+	print("Züge:",[(m.move(x[0],x[1],3))for x in scorelist])
+	
 	for i in range(len(scorelist)):
-
+		
 		move = scorelist.pop()
-		print(m.BitsToPosition(move[0]))
-		print(m.BitsToPosition(move[1]))
-		#board.red_move_execution(move[0], move[1])
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k]
-		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp)
-		init_board(*temp)
-		#takeback(*stack.pop())
-		# rework move
-		l[move] = score
-		if score <= alpha:
-			return alpha  # fail hard alpha-cutoff
-		if score < beta:
-			beta = score  # beta acts like min in MiniMax
+		print("best move for Player red", m.move(move[0],move[1],3))
+		print("state before move execution:")
+		print(GameState.fromBitBoardToMatrix(temp,True))
+		board.red_move_execution(move[0], move[1])
+		newBoard = get_Board()
+		gameResponse = isOver()
+		print("GameResponse = ", gameResponse)
+		if(gameResponse == "c"):
+			print("Board after move exec")
+			print(GameState.fromBitBoardToMatrix(newBoard,True))
+			print(newBoard)
+			score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, newBoard)
+		
+			#takeback(*stack.pop())
+			# rework move
+			l[move] = score
+			if score <= alpha:
+				return alpha  # fail hard alpha-cutoff
+			if score < beta:
+				beta = score  # beta acts like min in MiniMax
+		elif(gameResponse == "Red Won"):
+			print("red Won")
+			return 1000
 
 	return beta
 
@@ -98,7 +119,7 @@ def generate_moves(game: dict) -> list:
 
 
 def takeback(source, dest, hit=False):
-	if player == "b":
+	if game['player'] == "b":
 		blue_takeback(source, dest, hit=False)
 	else:
 		red_takeback(source, dest, hit=False)

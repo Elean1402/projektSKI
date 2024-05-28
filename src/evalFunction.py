@@ -1,6 +1,6 @@
-from src.gamestate import GameState
-from src.model import *
-from src.moveLib import MoveLib
+from gamestate import GameState
+from model import *
+from moveLib import MoveLib
 from collections import Counter
 import numpy as np
 
@@ -9,7 +9,7 @@ import numpy as np
 class EvalFunction:
     # Score distribution (not final) of implemented features
     _TURNOPTIONS=0
-    _PLAYER = 0
+    _player = 0
     _CONFIG_DICT = { Config.MOBILITY : -1,
                      Config.TURN_OPTIONS: -1,
                      Config.PROTECTION_PAWNS : -1,

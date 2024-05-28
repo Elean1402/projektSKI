@@ -1,5 +1,5 @@
 import numpy as np  
-from src.model import*  
+from model import*  
 """All Versions have to return a Dictionary
 """
 class ScoreConfig:
