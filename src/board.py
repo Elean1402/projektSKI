@@ -1,4 +1,5 @@
 import numpy as np
+from src.game import print_state
 
 """
 for import use:
@@ -81,11 +82,18 @@ def blue_k_move_generation(source:np.uint64):
 
 def blue_p_move_execution(source:np.uint64, dest:np.uint64):
 	global blue_p, blue_k, blue, red_p, red_k, red
-	
-    # delete source Position 
-	blue_p = blue_p ^ source
-	l_blue_p.remove(source)
-	
+	try:
+		# delete source Position 
+		l_blue_p.remove(source)
+		blue_p = blue_p ^ source
+	except:
+		print("------------------------- Exception -------------------------")
+		print("source")
+		print_board(source)
+		print("dest")
+		print_board(dest)
+		print_state()
+		raise Exception("blue_p_move_exeution")
 	# on blue_p -> knight
 	if dest & blue_p:
 		# add blue knight
@@ -312,9 +320,19 @@ def red_k_move_generation(source:np.uint64): # no pre-validation needed
 def red_p_move_execution(source:np.uint64, dest:np.uint64):
 	global blue_p, blue_k, blue, red_p, red_k, red
 
-	# delete source Position 
-	red_p = red_p ^ source
-	l_red_p.remove(source)
+	try:
+		# delete source Position 
+		l_red_p.remove(source)
+		red_p = red_p ^ source
+
+	except:
+		print("------------------------- Exception -------------------------")
+		print("source")
+		print_board(source)
+		print("dest")
+		print_board(dest)
+		print_state()
+		raise Exception("red_p_move_exeution")
 	
 	# on red_p -> knight
 	if dest & red_p:

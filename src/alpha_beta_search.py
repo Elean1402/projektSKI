@@ -1,9 +1,9 @@
-from evalFunction import *
-from gameserver import *
-from scoreConfig_evalFunc import *
-from board import *
-from game import *
-from gui import *
+from src.evalFunction import *
+from src.gameserver import *
+from src.scoreConfig_evalFunc import *
+from src.board import *
+from src.game import *
+from src.gui import *
 
 
 def alpha_beta_search(game: dict):
@@ -11,9 +11,10 @@ def alpha_beta_search(game: dict):
 
 	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
 	init_board(*temp)
+	print_state()
 	alpha = -float('inf')
 	beta = float('inf')
-	depth = 5
+	depth = 7
 	l = dict()
 	best_score = alpha_beta_max(alpha, beta, depth, game, l, temp)
 	print("best score", best_score)
@@ -40,8 +41,10 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
+		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
 		board.blue_move_execution(move[0], move[1])
+		print_state("Blue")
+
 		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)
@@ -74,8 +77,10 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
+		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
 		board.red_move_execution(move[0], move[1])
+		print_state("Red")
+
 		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
 		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp2)
 		init_board(*temp)

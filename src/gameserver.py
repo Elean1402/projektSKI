@@ -1,4 +1,4 @@
-from alpha_beta_search import *
+from src.alpha_beta_search import *
 
 test = "6/8/8/8/8/4b03/4r0r02/6 b"
 #beste moves= E6-F7 -> F7-F8 (gewonnen in 2 züge)
