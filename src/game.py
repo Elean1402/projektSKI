@@ -6,13 +6,18 @@ import random
 import numpy as np
 
 
-def init_board( red_pawns, red_knights,blue_pawns, blue_knights):
+def init_board(red_pawns, red_knights,blue_pawns, blue_knights):
     board.blue_p = blue_pawns
     board.blue_k = blue_knights
     board.blue = blue_pawns | blue_knights
     board.red_p = red_pawns
     board.red_k = red_knights
     board.red = red_pawns | red_knights
+    board.l_blue_p=[]
+    board.l_blue_k=[]
+    board.l_red_p=[]
+    board.l_red_k=[]
+
 
     for bit_board, figure_list in zip((board.blue_p, board.blue_k, board.red_p, board.red_k),(board.l_blue_p,board.l_blue_k,board.l_red_p,board.l_red_k)):
         for bit in range(64):
@@ -56,7 +61,7 @@ def play(FEN_board=False, blue_turn=True):
 	if FEN_board:
 		init_board(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
 	else:
-		init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
+		init_board(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0))
 	print_state("Startpos")
 
 	#input()
@@ -101,13 +106,60 @@ def print_state(Color=""):
 	for p in board.l_red_p: red_p = red_p ^ p
 	for k in board.l_red_k: red_k = red_k ^ k
 
+	if blue_p==board.blue_p:
+		if blue_k==board.blue_k:
+			if blue_p | blue_k==board.blue:
+				print("blue")
+				print_board(blue_p | blue_k)
+			else:
+				print("blue")
+				print_board(blue_p | blue_k)
+				print("board.blue")
+				print_board(board.blue)
+				raise Exception("blue != board.blue")
 
-	print("red")
-	print_board(board.red_p | board.red_k)
-	print()
-	print("blue")
-	print_board(board.blue_p | board.blue_k)
+		else:
+			print("blue_k")
+			print_board(board.blue_k)
+			print("l_blue_k")
+			print_board(blue_k)
+			raise Exception("blues knights != l_blues_knights")
+	else:
+		print("blue_p")
+		print_board(board.blue_p)
+		print("l_blue_p")
+		print_board(blue_p)
+		raise Exception("blues pawns != l_blues_pawns")
 	
+
+
+	if red_p==board.red_p: 
+		if red_k==board.red_k:
+			if blue_p | blue_k==board.blue:
+				print("red")
+				print_board(red_p | red_k)
+			else:
+				print("red")
+				print_board(red_p | red_k)
+				print("board.red")
+				print_board(board.blue)
+				raise Exception("red != board.red")
+			
+		else:
+			print("red_k")
+			print_board(board.red_k)
+			print("l_red_k")
+			print_board(red_k)
+			raise Exception("red knights != l_red_knights")
+	else:
+		print("red_p")
+		print_board(board.red_p)
+		print("l_red_p")
+		print_board(red_p)
+		raise Exception("red pawns != l_red_pawns")
+		
+	
+		
 def moves_to_string(moves):
 	return [MoveLib.move(source,dest,mode=3) for source,dests in moves for dest in dests]
 	
