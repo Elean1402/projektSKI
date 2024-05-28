@@ -266,7 +266,7 @@ class EvalFunction:
         totalScore += self._computeTurnOptions()
         totalScore += self._materialPoints(board)
         
-        print("tempscore:\n", tempScore)
+
         #TODO Last processing
         for (startpos,adict) in tempScore:
             scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos]) for targetPos in adict])

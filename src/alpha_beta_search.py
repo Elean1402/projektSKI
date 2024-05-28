@@ -23,20 +23,18 @@ def alpha_beta_search(game: dict):
 
 def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
-	ef = EvalFunction(ScoreConfig.Version1(), Player.Blue)
+	efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
 	if depth_left == 0:
 		return 2
-	print("blue")
-	print_board(board.blue)
-	gen = board.blue_generation()
 
+	gen = board.blue_generation()
+	print(moves_to_string(gen))
 	if len(gen) == 0:
 
 		scorelist = []
 	else:
-
-		print(moves_to_string(gen))
-		scorelist = ef.computeOverallScore(gen, board=temp)
+		scorelist = efblue.computeOverallScore(gen, board=temp)
+		print([(m.BitsToPosition(x[0]),m.BitsToPosition(x[1])) for x in scorelist])
 
 
 	for i in range(len(scorelist)):
@@ -61,20 +59,17 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 
 def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	m = MoveLib()
-	ef = EvalFunction(ScoreConfig.Version1(), Player.Red)
+	efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
 	if depth_left == 0:
 		return 3
-	print("red")
-	print_board(board.red)
 	gen = board.red_generation()
+	print(moves_to_string(gen))
 	if len(gen) == 0:
 		scorelist = []
 
 	else:
-
-		print(moves_to_string(gen))
-
-		scorelist = ef.computeOverallScore(gen, board=temp)
+		scorelist = efred.computeOverallScore(gen, board=temp)
+		print([(m.BitsToPosition(x[0]),m.BitsToPosition(x[1])) for x in scorelist])
 	
 	for i in range(len(scorelist)):
 
