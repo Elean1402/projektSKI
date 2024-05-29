@@ -9,7 +9,7 @@ from game import Game
 pygame.font.init()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from alpha_beta_search import generate_moves
-from zuggenerator import *
+
 
 
 def main():
