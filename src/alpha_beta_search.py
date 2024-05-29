@@ -1,112 +1,112 @@
+from moveLib import *
 from evalFunction import *
-from gameserver import *
 from scoreConfig_evalFunc import *
-from board import *
-from game import *
-from gui import *
+from gui import Gui
+from gamestate import GameState
 
+class AlphaBetaSearch:
+	"""
+	This class implements the Alpha-Beta Search algorithm for a given game.
 
-def alpha_beta_search(game: dict):
-	print(game["board"])
+	Attributes:
+		game (dict): The game state.
+		depth (int): The maximum depth of the search tree.
+		alpha (float): The best (highest) score that the maximizing player is assured of.
+		beta (float): The best (lowest) score that the minimizing player is assured of.
+	"""
 
-	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
-	init_board(*temp)
-	alpha = -float('inf')
-	beta = float('inf')
-	depth = 5
-	l = dict()
-	best_score = alpha_beta_max(alpha, beta, depth, game, l, temp)
-	print("best score", best_score)
+	def __init__(self, game: dict, depth = 5):
+		"""
+		The constructor for AlphaBetaSearch class.
 
-	return best_score
+		Parameters:
+			game (dict): The game state.
+			depth (int): The maximum depth of the search tree. Default is 5.
+		"""
+		self.game = game
+		self.depth = depth
+		self.game["bitboard"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+		self.alpha = -float('inf')
+		self.beta = float('inf')
 
+	def search(self):
+		"""
+		The function to start the Alpha-Beta Search.
 
-def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
-	m = MoveLib()
-	efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
-	if depth_left == 0:
-		return 2
+		Returns:
+			str: The best move.
+		"""
+		best_score, best_move = self.alpha_beta_max(self.alpha, self.beta, self.depth, self.game, None)
+		return best_move
 
-	gen = board.blue_generation()
-	print(moves_to_string(gen))
-	if len(gen) == 0:
+	def alpha_beta_max(self, alpha, beta, depth_left: int, game: dict, move: str):
+		"""
+		The function to find the maximum score and the corresponding move.
 
-		scorelist = []
-	else:
-		scorelist = efblue.computeOverallScore(gen, board=temp)
-		print([(m.BitsToPosition(x[0]),m.BitsToPosition(x[1])) for x in scorelist])
+		Parameters:
+			alpha (float): The best (highest) score that the maximizing player is assured of.
+			beta (float): The best (lowest) score that the minimizing player is assured of.
+			depth_left (int): The remaining depth of the search tree.
+			game (dict): The game state.
+			move (str): The current move.
 
+		Returns:
+			tuple: The maximum score and the corresponding move.
+		"""
+		m = MoveLib()
+		efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
+		if depth_left == 0:
+			return 2, move
 
-	for i in range(len(scorelist)):
+		scorelist = efblue.computeOverallScore(gen, board=game["bitboard"])
+		best_score = alpha
+		best_move = None
 
-		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
-		board.blue_move_execution(move[0], move[1])
-		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
-		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
-		init_board(*temp)
-		#takeback(*stack.pop(),game)
+		for i in range(len(scorelist)):
+			move = scorelist.pop()
+			#move execution
+			score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, game, move)
+			#retract move
+			if score >= beta:
+				return beta, move  # fail hard beta-cutoff
+			if score > alpha:
+				alpha = score  # alpha acts like max in MiniMax
+				best_move = move
 
-		l[move] = score
-		# rework move
-		if score >= beta:
-			return beta  # fail hard beta-cutoff
-		if score > alpha:
-			alpha = score  # alpha acts like max in MiniMax
+		return alpha, best_move
 
-	return alpha
+	def alpha_beta_min(self, alpha, beta, depth_left: int, game: dict, move: str):
+		"""
+		The function to find the minimum score and the corresponding move.
 
+		Parameters:
+			alpha (float): The best (highest) score that the maximizing player is assured of.
+			beta (float): The best (lowest) score that the minimizing player is assured of.
+			depth_left (int): The remaining depth of the search tree.
+			game (dict): The game state.
+			move (str): The current move.
 
-def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
-	m = MoveLib()
-	efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
-	if depth_left == 0:
-		return 3
-	gen = board.red_generation()
-	print(moves_to_string(gen))
-	if len(gen) == 0:
-		scorelist = []
+		Returns:
+			tuple: The minimum score and the corresponding move.
+		"""
+		m = MoveLib()
+		efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
+		if depth_left == 0:
+			return 3, move
 
-	else:
-		scorelist = efred.computeOverallScore(gen, board=temp)
-		print([(m.BitsToPosition(x[0]), m.BitsToPosition(x[1])) for x in scorelist])
-	
-	for i in range(len(scorelist)):
+		scorelist = efred.computeOverallScore(gen, board=game["bitboard"])
+		best_score = beta
+		best_move = None
 
-		move = scorelist.pop()
-		temp = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
-		board.red_move_execution(move[0], move[1])
-		temp2 = [board.blue_p, board.blue_k, board.red_p, board.red_k].copy()
-		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp2)
-		init_board(*temp)
-		l[move] = score
-		if score <= alpha:
-			return alpha  # fail hard alpha-cutoff
-		if score < beta:
-			beta = score  # beta acts like min in MiniMax
+		for i in range(len(scorelist)):
+			move = scorelist.pop()
+			#move execution
+			score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, game, move)
+			#retract move
+			if score <= alpha:
+				return alpha, move  # fail hard alpha-cutoff
+			if score < beta:
+				beta = score  # beta acts like min in MiniMax
+				best_move = move
 
-	return beta
-
-
-def generate_moves(game: dict) -> list:
-	# rufe alpha_beta_max mit alpha.generation auf, wenn wir Blau sind
-	# und ruf alpha_beta_min mit beta.generation
-	# rufe alpha_beta_max mit beta.generation auf, wenn wir rot sind
-	# und ruf alpha_beta_min mit alpha.generation
-
-	if game["player"] == "b":
-		game["player"] = "r"
-		return blue_generation()
-	elif game["player"] == "r":
-		game["player"] = "b"
-
-		return red_generation()
-	else:
-		raise ValueError("Player must be either b or r")
-
-
-def takeback(source, dest, hit=False):
-	if game["player"] == "b":
-		blue_takeback(source, dest, hit=False)
-	else:
-		red_takeback(source, dest, hit=False)
+		return beta, best_move
