@@ -4,7 +4,5 @@ RAM: 16GB
 Programmiersprache: Python
 Zustandsrepräsentation: Bitboard
 
-alpha_generation für  ist 0.011567625013412908ms pro 1000 Züge 
-alpha_generation für  ist 0.011876541000674479ms pro 1000 Züge 
-alpha_generation für  ist 0.01179029099876061ms pro 1000 Züge 
-alpha_generation für  ist 0.011359333002474159ms pro 1000 Züge 
+my_function für fen_string ist 0.0027870839985553175s (min aus 1000 Zügen) 
+my_function für fen_tstring ist 0.002619207982206717s (min aus 1000 Zügen) 

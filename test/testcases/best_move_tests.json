@@ -1,0 +1,96 @@
+{
+  "group_H" : [
+    {
+      "id": 1,
+      "fen": "1bb4/1b0b05/b01b0bb4/1b01b01b02/3r01rr2/b0r0r02rr2/4r01rr1/4r0r0 b",
+      "win_in" : 3, 
+      "best_move": "A6-A7"
+    }, 
+    {
+      "id": 2,
+      "fen": "1bb4/1b0b05/b01b0bb4/1b01b01b02/3r01rr2/b0r0r02rr2/4r01rr1/4r0r0 r",
+      "win_in" : 3, 
+      "best_move": "F5-G3"
+    },
+    {
+      "id": 3,
+      "fen": "6/3b0b03/3r02bb1/b0b03bb2/rrrr1bb2rr1/2b01b01r01/2r01r02r0/4r01 b",
+      "win_in": 2,
+      "best_move": "D5-C7"
+    },
+    {
+      "id": 4,
+      "fen": "6/3b0b03/3r02bb1/b0b03bb2/rrrr1bb2rr1/2b01b01r01/2r01r02r0/4r01 r",
+      "win_in" : 2, 
+      "best_move": "D3-E2"
+    }
+  ],
+  "group_F" : [
+    {
+      "id": 1,
+      "fen": "6/7b0/8/8/1r06/4b03/2rr1rrr02/5r0 b", 
+      "win_in" : 5, 
+      "best_move": "E6-D6"
+    },
+    {
+      "id": 2,
+      "fen": "6/4bbb02/b02b01b02/1b02b03/2b01rrrr2/6r01/r01r0r0r03/5r0 r",
+      "win_in" : 5, 
+      "best_move": "E5-F3, E5-D3"
+    }
+  ],
+  "group_T" : [
+    {
+      "id": 1,
+      "fen": "1b0b0b02/8/3b04/3b04/r0r06/2b05/5r0r01/6 b",
+      "win_in" : 2, 
+      "best_move": "C6-C7"
+    },
+    {
+      "id": 2,
+      "fen": "6/4bb3/8/8/4b0r0b01/8/8/6 b",
+      "win_in" : 1, 
+      "best_move": "E2-F4"
+    }
+  ],
+  "group_AG" : [
+    {
+      "id": 1,
+      "fen": "6/8/8/8/b0b02b0b0/2b05/2r0r0r0r02/6 b",
+      "win_in" : 2, 
+      "best_move": "C6-D7"
+    },
+    {
+      "id": 2,
+      "fen": "3b01b0/3bb1b02/8/8/8/2r0b0r02/8/0r04r0 b",
+      "win_in" : 2, 
+      "best_move": "D6-D7"
+    }
+  ],
+  "simple_tests": [
+    {
+      "id": 1,
+      "fen": "6/8/r07/8/8/8/3b04/6 b",
+      "win_in" : 1, 
+      "best_move": "D7-D8"
+    },
+    {
+      "id": 2,
+      "fen": "6/3r04/8/8/8/b07/8/6 r",
+      "win_in" : 1, 
+      "best_move": "D2-D1"
+    },
+    {
+      "id": 3,
+      "fen": "6/8/r07/8/8/3b04/8/6 b",
+      "win_in" : 1,
+      "best_move": "D6-D7"
+        },
+    {
+      "id": 4,
+      "fen": "6/8/3r04/8/8/b07/8/6 r",
+      "win_in" : 2,
+      "best_move": "D3-D2"
+    }
+  ]
+}
