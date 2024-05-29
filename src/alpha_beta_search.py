@@ -25,7 +25,7 @@ class AlphaBetaSearch:
 		"""
 		self.game = game
 		self.depth = depth
-		self.game["bitboard"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+		self.game["bitboards"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
 		self.alpha = -float('inf')
 		self.beta = float('inf')
 
@@ -58,7 +58,7 @@ class AlphaBetaSearch:
 		if depth_left == 0:
 			return 2, move
 
-		scorelist = efblue.computeOverallScore(gen, board=game["bitboard"])
+		scorelist = efblue.computeOverallScore(gen, board=game["bitboards"])
 		best_score = alpha
 		best_move = None
 

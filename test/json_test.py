@@ -1,6 +1,9 @@
 import json
-
-ISIS_FEN = ["1b0b0b0b0b0/1b01bb2b01/8/3bb1b02/5rr2/2r01r03/2rr5/r0r0r0r0r0r0 b",
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+from jsonHandler import JSONHandler
+FEN_ISIS = ["1b0b0b0b0b0/1b01bb2b01/8/3bb1b02/5rr2/2r01r03/2rr5/r0r0r0r0r0r0 b",
             "b0b0b01b01/2b03b01/8/3b01b02/1b01r01r02/2br1r03/b01r02r02/2r0r0r01 r",
             "b01b0b0b0b0/1b0b01b01b01/3b01b02/2b05/8/2r0r01rr2/1r04r01/r0r0r0r0r0r0 r",
             "b01b01b01/8/2b03b01/1b06/1r01b01b02/3r04/2r03r01/4r01 r",
@@ -50,7 +53,7 @@ ISIS_FEN = ["1b0b0b0b0b0/1b01bb2b01/8/3bb1b02/5rr2/2r01r03/2rr5/r0r0r0r0r0r0 b",
             "bb1b0b0b0b0/b01b0b0b01b01/8/3b04/3r04/2r05/1rr2r0r01r0/1r0r0r0r0r0 r",
             "2bbb0b0b0/1bbb0b0b0b0b01/8/8/8/1r01r04/2r01r0r0r01/r0r0r0r0r0r0 b",
             "bb5/1bb6/bb6b/b6r/rb6/6rb1/4rr3/6 b"]
-ISIS_poss = [
+poss_ISIS = [
     "C1-B1, C1-C2, C1-D1, D1-C1, D1-E1, E1-D1, E1-E2, E1-F1, F1-E1, F1-F2, F1-G1, G1-F1, G1-G2, B2-A2, B2-B3, B2-C2, D2-B3, D2-C4, D2-E4, D2-F3, G2-F2, G2-G3, G2-H2, D4-B5, D4-C6, D4-E6, D4-F5, F4-E4, F4-G4",
     "F8-G8, F8-F7, F8-E8, E8-F8, E8-E7, E8-D8, D8-E8, D8-D7, D8-C8, F7-G7, F7-F6, F7-E7, C7-D7, C7-B7, E6-F6, E6-E5, E6-D6, C6-E5, C6-D4, C6-B4, C6-A5, F5-G5, F5-E5, D5-E5, D5-C5",
     "B8-B7, B8-C8, C8-B8, C8-C7, C8-D8, D8-C8, D8-D7, D8-E8, E8-D8, E8-E7, E8-F8, F8-E8, F8-F7, F8-G8, G8-F8, G8-G7, B7-A7, B7-B6, B7-C7, C6-B6, C6-C5, C6-D6, D6-C6, D6-D5, D6-E6, G7-F7, G7-G6, G7-H7, F6-D5, F6-E4, F6-G4, F6-H5",
@@ -111,7 +114,7 @@ ISIS_poss = [
     "D5-C5, D5-E5, A7-A6, A7-B7, C7-B7, C7-C6, C7-D7, D7-C7, D7-D6, D7-E7, E7-D7, E7-E6, E7-F7, G7-F7, G7-G6, G7-H7, B8-A6, B8-C6, B8-D7, D8-C8, D8-D7, D8-E8, E8-D8, E8-E7, E8-F8, F8-E8, F8-F7, F8-G8, G8-F8, G8-G7",
     "C2-C3, D2-D3, E2-E3, F2-F3, G2-G3,G2-H2,F1-E1, G1-F1, D2-C2, E2-D2, F2-E2, G2-F2,E1-E2, F1-F2, G1-G2,E1-F1, F1-G1, C2-D2, D2-E2, E2-F2, F2-G2,D1-C3, B2-A4,D1-E3, B2-C4,B2-D3,D1-F2",
     "H3-G3,H3-H4, A4-A5,C4-A5,C4-B6, H5-G7,B1-C3, A3-B5, C4-D6,B1-D2, B2-D3, C4-E5,H5-F6,B2-A4"]
-ISIS_poss = [p.replace(">", "") for p in ISIS_poss]
+poss_ISIS = [p.replace(">", "") for p in poss_ISIS]
 
 ###############
 # Blaue Steine
@@ -210,10 +213,24 @@ test_cases = [
 ]
 
 
-def add_json(fen: list[str], moves: list[str]):
-    for index, test in enumerate(fen):
-        board, player = test.split(" ")
-        test_cases.append({"type": fen, "board": board, "moves": moves[index], "player": player})
+def main():
+	handler = JSONHandler("test.json")
+	
+	# Get the global variables from the current module
+	global_vars = {var: globals()[var] for var in globals() if isinstance(globals()[var], list)}
+	
+	# Separate the FEN and poss lists
+	fen_vars = [var for var in sorted(global_vars.keys()) if var.startswith("FEN")]
+	poss_vars = [var for var in sorted(global_vars.keys()) if var.startswith("poss")]
 
-    with open('test_data.json', 'w') as f:
-        json.dump(test_cases, f, indent=2)
+	# Ensure there's an equal number of FEN and poss lists
+	#assert len(fen_vars) == len(poss_vars), "Uneven number of FEN and poss lists"
+	
+	# Pair the FEN and poss lists
+	for fen_var, moves_var in zip(fen_vars, poss_vars):
+		fen_list = global_vars[fen_var]
+		moves_list = global_vars[moves_var]
+		handler.create_from_fen(fen_var, fen_list, moves_list)
+
+if __name__ == "__main__":
+	main()
