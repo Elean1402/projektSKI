@@ -399,9 +399,147 @@ class moveGenerator(unittest.TestCase):
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
         
+        self.assertListEqual(l, [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change])])
+    
+    def test_checkTargetPos_12(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
         
-        self.assertEqual(True,False)
+        BB = GameState.createBitBoardFromFEN("b05/1r0r07/8/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        
+        self.assertListEqual(l, [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change])])
+    
+    def test_checkTargetPos_13(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("b05/r0r0r07/8/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-A2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)
+    
+    def test_checkTargetPos_14(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-A3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)
+    
+    def test_checkTargetPos_15(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("bb5/8/r07/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-A3",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)
+    
+    def test_checkTargetPos_16(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("bb5/8/rr7/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-A3",[BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)
+    
+    def test_checkTargetPos_17(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("bb5/8/rb7/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget]),
+             ("A3-B5",[BoardCommand.Degrade_Blue_KnightOnTarget]),("A3-C4",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)
+    
+    def test_checkTargetPos_18(self):
+        """At this moment only for blue player implemented
+            Test for Pawns"""
+        
+        BB = GameState.createBitBoardFromFEN("b0b04/8/8/8/8/8/8/6")    
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard()
+       
+        moves= mvg._genValidatedMoves(Player.Blue)
+        print(moves)
+        mvg.prettyPrintMoves(moves)
+        #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
+        l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
+        t = [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Upgrade_Blue_KnightOnTarget]),
+             ("C1-B1",[BoardCommand.Upgrade_Blue_KnightOnTarget]), ("C1-C2",[BoardCommand.Move_Blue_Pawn_no_Change]),("C1-D1",[BoardCommand.Move_Blue_Pawn_no_Change])]
+        
+        l.sort(key=lambda x: x[0])
+        t.sort(key=lambda x: x[0])
+        
+        self.assertListEqual(l,t)  
     
     @unittest.skip("not implemented yet")
     def test_validateMoves_1(self):
