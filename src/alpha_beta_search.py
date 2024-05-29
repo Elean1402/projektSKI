@@ -5,16 +5,17 @@ from src.board import *
 from src.game import *
 from src.gui import *
 
+depth = 3
 
 def alpha_beta_search(game: dict):
 	print(game["board"])
 	player = game["player"]
 	temp = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
 	init_board(*temp)
+	print("Start Position")
 	print_state()
 	alpha = -float('inf')
 	beta = float('inf')
-	depth = 3
 	l = dict()
 	best_score = alpha_beta_max(alpha, beta, depth, game, l, temp)
 	print("best score", best_score)
@@ -44,29 +45,31 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
 		board.blue_move_execution(move[0], move[1])
 
-		#print_state("Blue")
+		print(f'Depth: {depth-depth_left+1}')
+		print_state("Blue")
+		input("Cont: ")
 
 		temp2 = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
 		# print("before alpha_beta_min")
 		# print_state()
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
 		#init_board(*temp)
-		print("before takeback")
-		print_state()
+		# print("before takeback")
+		# print_state()
 
 		
 		last_move =stack.pop()
-		print("to take back")
-		print("source")
-		print_board(last_move[0])
-		print("dest")
-		print_board(last_move[1])
+		# print("to take back")
+		# print("source")
+		# print_board(last_move[0])
+		# print("dest")
+		# print_board(last_move[1])
 		blue_takeback(*last_move)
 
 		# takeback(*last_move,game)
-		print("after takeback")
+		print("Blue takeback")
 		print_state()
-		input("Input")
+		input("Cont: ")
 
 
 		l[move] = score
@@ -98,7 +101,11 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 		move = scorelist.pop()
 		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
 		board.red_move_execution(move[0], move[1])
-		# print_state("Red")
+
+		print(f'Depth: {depth-depth_left+1}')
+		print_state("Red")
+		input("Cont: ")
+
 
 
 		temp2 = [board.red_p, board.red_k,board.blue_p, board.blue_k].copy()
@@ -107,20 +114,20 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 		# print_state()
 		score = alpha_beta_max(alpha, beta, depth_left - 1, game, l, temp2)
 		# init_board(*temp)
-		print("before takeback")
-		print_state()
+		# print("before takeback")
+		# print_state()
 
 		last_move =stack.pop()
-		print("to take back")
-		print("source")
-		print_board(last_move[0])
-		print("dest")
-		print_board(last_move[1])
+		# print("to take back")
+		# print("source")
+		# print_board(last_move[0])
+		# print("dest")
+		# print_board(last_move[1])
 		red_takeback(*last_move)
 
-		print("after takeback")
+		print("Red takeback")
 		print_state()
-		input("Input: ")
+		input("Cont: ")
 		
 		l[move] = score
 		if score <= alpha:

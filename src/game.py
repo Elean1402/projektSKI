@@ -88,10 +88,14 @@ def play(FEN_board=False, blue_turn=True):
 	print(isOver())
 	
 def print_board(board:np.uint64):
-	str = np.binary_repr(board,width=64)
+	string = np.binary_repr(board,width=64)
 	#str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
-	print('\n'.join(str[i:i+8] for i in range(0, len(str), 8)))
+	print('\n'.join(string[i:i+8] for i in range(0, len(string), 8)))
 	print()
+
+def board_to_string(board:np.uint64)->str:
+	return np.binary_repr(board,width=64)
+
 
 def print_state(Color=""):
 	if Color:
@@ -108,10 +112,7 @@ def print_state(Color=""):
 
 	if blue_p==board.blue_p:
 		if blue_k==board.blue_k:
-			if blue_p | blue_k==board.blue:
-				print("blue")
-				print_board(blue_p | blue_k)
-			else:
+			if blue_p | blue_k!=board.blue:
 				print("blue")
 				print_board(blue_p | blue_k)
 				print("board.blue")
@@ -135,16 +136,12 @@ def print_state(Color=""):
 
 	if red_p==board.red_p: 
 		if red_k==board.red_k:
-			if blue_p | blue_k==board.blue:
-				print("red")
-				print_board(red_p | red_k)
-			else:
+			if blue_p | blue_k!=board.blue:
 				print("red")
 				print_board(red_p | red_k)
 				print("board.red")
 				print_board(board.blue)
-				raise Exception("red != board.red")
-			
+				raise Exception("red != board.red")		
 		else:
 			print("red_k")
 			print_board(board.red_k)
@@ -157,7 +154,32 @@ def print_state(Color=""):
 		print("l_red_p")
 		print_board(red_p)
 		raise Exception("red pawns != l_red_pawns")
+	
+	s=""
+	BLUE = "\033[34m"
+	RED = "\033[31m"
+	RESET = "\033[0m"
+
+	for rp,bp,rk,bk in zip(board_to_string(red_p).replace('1','r'),board_to_string(blue_p ).replace('1','b'),board_to_string(red_k ).replace('1','R'),board_to_string(blue_k).replace('1','B')):
+		if rk!="0":
+			s+="R"
+		elif bk!="0":
+			s+="B"
+		elif rp!="0":
+			s+="r"
+		elif bp!="0":
+			s+="b"
+		else:
+			s+="0"
+	s='\n'.join(s[i:i+8] for i in range(0, len(s), 8))
+	print(s.replace("R",RED+"K"+RESET).replace("B",BLUE+"K"+RESET).replace("r",RED+"P"+RESET).replace("b",BLUE+"P"+RESET))
+	print()
+
+
 		
+
+	
+
 	
 		
 def moves_to_string(moves):
