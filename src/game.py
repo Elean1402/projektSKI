@@ -75,15 +75,15 @@ def play(FEN_board=False, blue_turn=True):
 			print_state("blue")
 		else:
 			print_state("red")
-		# inp = input()
-		# if inp=="t" and blue_turn:
-		# 	board.blue_takeback(*board.stack.pop())
-		# 	print_state("blue")
-		# elif inp=="t" and not blue_turn:
-		# 	board.red_takeback(*board.stack.pop())
-		# 	print_state("red")
-		# else :
-		blue_turn = not blue_turn
+		inp = input("Takeback? -> Enter 't': ")
+		if inp=="t" and blue_turn:
+			board.blue_takeback(*board.stack.pop())
+			print_state("blue")
+		elif inp=="t" and not blue_turn:
+			board.red_takeback(*board.stack.pop())
+			print_state("red")
+		else :
+			blue_turn = not blue_turn
 		
 	print(isOver())
 	
