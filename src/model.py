@@ -29,11 +29,10 @@ class ScoredMoveList(list):
         Type: List[(np.uint64, np.uint64,int,int)]
             ->List[(FromPos, TargetPos,MoveScore, TotalscoreAfterMove)]
         """
-        if(len(args)==0):
-            return None
+        if(len(args)>0):
+            self.append(args)
         
-        for item in args:
-            self.append(item)
+        
 
 class ScoreListForMerging(list):
     
@@ -48,14 +47,14 @@ class ScoreListForMerging(list):
              if(isinstance(item[0], tuple) and
                 isinstance(item[0][0], np.uint64) and
                 isinstance(item[0][1],dict)):
-                super().append(*item)
-                return None
+                super().extend(item)
+                
         else:
             if(isinstance(item, tuple) and
                 isinstance(item[0], np.uint64) and
                 isinstance(item[1],dict)):
                 super().append(item)
-                return None
+                
         raise TypeError("item is not from type ScoredListForMerge: List( ( np.uint64, dict( { np.uint64: int } ) ) )")
         
     
@@ -66,9 +65,7 @@ class ScoreListForMerging(list):
             ->List( (startPos, dict( { targetPos: score } ) ) )
         """
         if(len(args)>0):
-            for item in args:
-                self.append(item)
-
+           self.append(args)
 class Config(Enum):
     MOBILITY = "MOBILITY"
     TURN_OPTIONS ="TURN_OPTIONS"
@@ -163,22 +160,72 @@ DICT_MOVE = {
     DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT  :np.uint64(9),
 }
 
-class FilteredPositionsArray(list):
-    """ Returns list: [(Bitmask, np.uint64)]"""
-    def __init__(self,*alist:list):
+class FilteredPositionsArray(list): 
+    """ list: [(np.uint64, np.uint64)]
+                (bitmask, startpos)"""
+    def __init__(self,*alist):
+        """List[Tuple[bitmask:np.uint64, startpos:np.uint64]]
+           or Tuple[np.uint64, np.uint64]
+        """
         if(len(alist)> 0):
             self.append(alist)
-        else:
-            return self
-
-    def append(self, alist:list):
-        if(len(alist)> 0):
-            if(isinstance(alist[0][0], BitMask) and
-                isinstance(alist[0][1], np.uint64)):
-                for item in alist:
-                    self.append(item)
-            else:
-                raise TypeError("Element of this list must be (Bitmask, np.uint64)")
-        else:
-            return None
         
+
+    def append(self, items):
+        if(len(items)> 0):
+            if( isinstance(items, list) and
+                isinstance(items[0], tuple) and
+                isinstance(items[0][0], np.uint64) and
+                isinstance(items[0][1], np.uint64)):
+                super().extend(items)
+            elif(
+                isinstance(items, tuple) and
+                isinstance(items[0], np.uint64) and
+                isinstance(items[1], np.uint64)):
+                super().append(items)
+                
+            else:
+                raise TypeError("Element of this list must be (np.uint64, np.uint64)")
+            
+class UnvalidateMovesArray(list):
+    def __init__(self,*list):
+        """List of (uint64,uint64, uint64): (start,target,bitmask)
+        """
+        if(len(list)> 0):
+            self.append(list)
+    
+    def append(self, items):
+        if(len(items)> 0):
+            if( isinstance(items, list) and
+                isinstance(items[0], tuple) and
+                isinstance(items[0][0], np.uint64) and
+                isinstance(items[0][1], np.uint64) and
+                isinstance(items[0][2], np.uint64)):
+                super().extend(items)
+            elif(
+                isinstance(items, tuple) and
+                isinstance(items[0], np.uint64) and
+                isinstance(items[1], np.uint64)):
+                super().append(items)
+                
+            else:
+                raise TypeError("Element of this list must be (np.uint64, np.uint64, np.uint64)")
+NotAccessiblePos = np.uint64(2**63+2**56+2**7+2**0)
+
+class BoardCommand(Enum):
+    Hit_Red_PawnOnTarget            = 0
+    Hit_Blue_PawnOnTarget           = 1
+    Hit_Red_KnightOnTarget          = 2
+    Hit_Blue_KnightOnTarget         = 3
+    Upgrade_Blue_KnightOnTarget     = 4
+    Upgrade_Red_KnightOnTarget      = 5
+    Degrade_Blue_KnightOnTarget     = 6
+    Degrade_Red_KnightOnTarget      = 7
+    Move_Blue_Knight_no_Change      = 8
+    Move_Red_Knight_no_Change       = 9
+    Move_Blue_Pawn_no_Change        = 10
+    Move_Red_Pawn_no_Change         = 11
+    Cannot_Move                     = 12
+
+
+    

@@ -1,6 +1,6 @@
 import numpy as np
 from src.gamestate import*
-from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray
+from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray,NotAccessiblePos, UnvalidateMovesArray, BoardCommand
 from src.moveLib import MoveLib as mv
 
 class MoveGenerator:
@@ -20,17 +20,168 @@ class MoveGenerator:
         self._board = board
         
     def genMoves(self,player:Player):
-        
         #check if game is over
         #TODO
-        unvalidatedMoves = self._genUnvalidatedMoves(player)
+        unvalidatedMoves = self._genValidatedMoves(player)
         #TODO: Validate moves and filter them
+    def _validateMoves(self, player: Player, list: list[tuple[np.uint64,np.uint64]]):
+        """Checks moves if possible
+           Returns only possible moves
+
+        Args:
+            player (Player): please use model.py Player class
+            list[tuple[np.uint64,np.uint64]]): [(start, target)]
+
+        Returns:
+            list[Tuple[uint64,uint64]]
+        """
+        if(len(list)==0):
+            return []
+        validatedMoves = list()
+        if(player == Player.Red):
+            True
+            
         
-    def _genUnvalidatedMoves(self, player:Player): 
+        return validatedMoves
+    
+    def _startPosBelongsToPlayer(self,player: Player, pos: np.uint64):
+        """Double Check if startpos belongs to player
+
+        Args:
+            player (Player): use model.py
+            pos (np.uint64): position of Figure
+
+        Raises:
+            TypeError: if player is not of Type Player
+
+        Returns:
+            boolean: true if correct otherwise false
+        """
+        posBelongsToPlayer = False
+        if(player == Player.Blue):
+            if(self._board[GameState._ZARR_INDEX_B_PAWNS] & pos == pos or
+               self._board[GameState._ZARR_INDEX_B_KNIGHTS] & pos == pos):
+                posBelongsToPlayer = True
+        elif(player == Player.Red):
+            if(self._board[GameState._ZARR_INDEX_R_PAWNS] & pos == pos or
+               self._board[GameState._ZARR_INDEX_R_KNIGHTS] & pos == pos):
+                posBelongsToPlayer = True
+        else:
+            raise TypeError("player is not from Type Player")
+        return posBelongsToPlayer
+
+    def _checkTargetPos(self, player:Player, move: tuple):
+        """Checks the move if possible and return a Command for the Bitboard operation
+            Code needs to be restructured,
+            too many if else statements and if possible shortened.
+            
+        Args:
+            player (Player): use model.py - Class Player
+            move (tuple): (uint64, uint64, uint64): (start, target, bitmask)
+
+        Raises:
+            TypeError: if type of move is wrong
+            ValueError: if error in unvalidated movegeneration 
+
+        Returns:
+            list[Bordcommand]
+        """
+        
+        if(len(move)!=3):
+            print("len move", len(move))
+            print("move",move)
+            raise TypeError("move if from wrong Type. Should be (uint64,uint64,uint64): (start, target, bitmask)")
+        
+        start = move[0]
+        target = move[1]
+        bitmask = move[2]
+        if(start == target):
+            return [BoardCommand.Cannot_Move]
+        if(target & NotAccessiblePos == target):
+            raise ValueError("TargetPosition is on A1 or A8 or H1 or H8 (impossible), check how the moves are generated.")
+            
+        if(player == Player.Blue):
+            # Figure on start is a Pawn
+            if(start & self._board[GameState._ZARR_INDEX_B_PAWNS] 
+               == start):
+                #Case hit diagonal possible?
+                if(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or
+                   bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
+                    #on target is an enemy knight
+                    if(target & self._board[GameState._ZARR_INDEX_R_KNIGHTS] 
+                       == target):
+                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+                    #on target is only a enemy pawn        
+                    elif(target & ( self._board[GameState._ZARR_INDEX_R_PAWNS] & 
+                                    ~(self._board[GameState._ZARR_INDEX_R_KNIGHTS] |
+                                    self._board[GameState._ZARR_INDEX_B_KNIGHTS]) )
+                         == target):
+                        return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]
+                    else:
+                        return [BoardCommand.Cannot_Move]
+                else:
+                #standard move on free Target Position
+                    if(target & ~(  self._board[GameState._ZARR_INDEX_B_PAWNS]   | 
+                                    self._board[GameState._ZARR_INDEX_R_PAWNS]   | 
+                                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                    self._board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+                       == target):
+                        return [BoardCommand.Move_Blue_Pawn_no_Change]
+                    #Target not free, only possible if our pawn is on target
+                    elif(target & self._board[GameState._ZARR_INDEX_B_PAWNS] &
+                                   ~(self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                     self._board[GameState._ZARR_INDEX_R_KNIGHTS])
+                        == target ):
+                        return [BoardCommand.Upgrade_Blue_KnightOnTarget]
+                    #move on Target not possible
+                    else:    
+                        return [BoardCommand.Cannot_Move]
+            #Figure is Knight
+            elif(start &self._board[GameState._ZARR_INDEX_B_KNIGHTS] == start):
+                #Case: target pos not occupied
+                if(target & ~( self._board[GameState._ZARR_INDEX_B_PAWNS] |
+                               self._board[GameState._ZARR_INDEX_R_PAWNS] |
+                               self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                               self._board[GameState._ZARR_INDEX_R_KNIGHTS])
+                   == target):
+                    return [BoardCommand.Degrade_Blue_KnightOnTarget]
+                #Case: only our pawn is on target
+                elif(target & self._board[GameState._ZARR_INDEX_B_PAWNS] &
+                     ~(self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       self._board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
+                    return [BoardCommand.Move_Blue_Knight_no_Change]
+                #Case: only a enemy pawn is on target
+                elif(target & self._board[GameState._ZARR_INDEX_R_PAWNS] &
+                     ~(self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       self._board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
+                    return [BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Hit_Red_PawnOnTarget]
+                    
+                #Case: 2 figures are on target
+                    #on target our knight
+                elif(target & self._board[GameState._ZARR_INDEX_B_KNIGHTS]
+                     == target):
+                    return [BoardCommand.Cannot_Move]
+                    #on target enemy knight
+                elif(target & self._board[GameState._ZARR_INDEX_R_KNIGHTS] 
+                     == target):
+                    return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+                    
+    
+    def _genValidatedMoves(self, player:Player): 
+        """Generates all unvalidated Moves of Player Blue or Red
+
+        Args:
+            player (Player): Please use model.py Player class
+
+        Returns:
+            List[Tuple[np.uint64, np.uint64, list]]: [(startpos,targetpos, boardcommands)]
+        """
         pawnsPositions = self._getAllPawns(player)
         knightPositions = self._getAllKnights(player)
         filteredPositions = FilteredPositionsArray()
-        unvalidatedMoves = list()
+        validatedMoves = list()
         if(player == Player.Red):
             for bitmask in BIT_MASK_ARRAY_PAWN_RED:
                 filteredPositions.append((bitmask,self._filterPositions(player,pawnsPositions, bitmask)))
@@ -38,11 +189,28 @@ class MoveGenerator:
                 filteredPositions.append((bitmask, self._filterPositions(player, knightPositions, bitmask)))
             for (bm, filteredBits) in filteredPositions:
                 for bit in self._getBitPositions(filteredBits):
-                    unvalidatedMoves.append(self._getTarget(bit,bm))
-                
-        return unvalidatedMoves
+                    boardCommands = self._checkTargetPos(player, (*self._getTarget(bit,bm),bm))
+                    if(boardCommands != None):
+                        if(BoardCommand.Cannot_Move in boardCommands):
+                            continue
+                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))
+        elif(player == Player.Blue):
+            for bitmask in BIT_MASK_ARRAY_PAWN_BLUE:
+                filteredPositions.append((bitmask,self._filterPositions(player,pawnsPositions, bitmask)))
+            for bitmask in BIT_MASK_ARRAY_KNIGHT_BLUE:
+                filteredPositions.append((bitmask, self._filterPositions(player, knightPositions, bitmask)))
+            for (bm, filteredBits) in filteredPositions:
+                for bit in self._getBitPositions(filteredBits):
+                    boardCommands = self._checkTargetPos(player, (*self._getTarget(bit,bm),bm))
+                    if(boardCommands != None):
+                        if(BoardCommand.Cannot_Move in boardCommands):
+                            continue
+                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))        
+        else:
+            raise TypeError("player is not from Type Player")
+        return validatedMoves
     
-    def _getBitPositions(n: np.uint64):
+    def _getBitPositions(self,n: np.uint64):
         """ Returns Generator over the Bits of n
         THIS FUNC IS FROM SOURCE:
         https://stackoverflow.com/questions/8898807/pythonic-way-to-iterate-over-bits-of-integer
@@ -60,8 +228,11 @@ class MoveGenerator:
             filteredPos (np.uint64): SINGLE POSITION which can move onto direction described in Bitmask
             bitmask (Bitmask): The Bitmask in this function is used to determine the direction of the move
         Returns:
-            (Tuple(np.uint64, np.uint64): (startPosition, targetposition)"""
-
+            (Tuple(np.uint64, np.uint64): (startPosition, targetposition)
+            returns (0,0) if parameter filterPos= 0"""
+        if(filteredPos == 0):
+            return (np.uint64(0),np.uint64(0))
+        
         targetPosition = np.uint64(0)
         if(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT]):
             targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.PAWN_TO_LEFT]
@@ -168,12 +339,6 @@ class MoveGenerator:
             raise ValueError("Bitmask and choosed Player are wrong")
         return positions
         
-    def _validateMoves(list):
-        """ Filter the List
-            Only possible Moves should be in the list """
-            #TODO
-        return list
-    
     def _gameover(self):
         """Game is over if last Row is reached or
            no possible Moves
@@ -194,8 +359,9 @@ class MoveGenerator:
         print("current Board\n",GameState.fromBitBoardToMatrix(self._board,True))
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
     
-    def prettyPrintMoves(self, moves: list[tuple[np.uint64,np.uint64]]):
+    def prettyPrintMoves(self,moves: list):
         if(len(moves)>0):
-            print( mv.move(start,target) for (start,target) in moves )
+            print([(mv.move(start,target,3),bc) for start,target,bc in moves])
+            #print(moves)
         else:
-            raise ValueError("Something went wrong with parameter moves")
+            print([])
