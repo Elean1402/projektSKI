@@ -47,37 +47,37 @@ blue_k_left = np.uint64(0b000000000001111100111111001111110011111100111111001111
 # Shifts for moves
 # Pawns
 # Forward, left, right, hit left, hit right
-rpf, rpl, rpr, rphl, rphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8(9), np.uint8(7)
+bpf, bpl, bpr, bphl, bphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8(9), np.uint8(7)
 
 #Knights
 # left, forward left, right, forward right
-rkl, rkfl, rkr, rkfr = np.uint8(10), np.uint8(17), np.uint8(6), np.uint8(15)
+bkl, bkfl, bkr, bkfr = np.uint8(10), np.uint8(17), np.uint8(6), np.uint8(15)
 
 def blue_p_move_generation(source:np.uint64) :  
 	dests = []
 	blocked_squares = ~(red | blue_k) # Pawns unmovable squares
 	# forward
-	if (source & blue_p_forward) << rpf & blocked_squares: dests.append(source << rpf) 
+	if (source & blue_p_forward) << bpf & blocked_squares: dests.append(source << bpf) 
 	# left
-	if (source & blue_p_left) << rpl & blocked_squares: dests.append(source << rpl) 
+	if (source & blue_p_left) << bpl & blocked_squares: dests.append(source << bpl) 
 	# hit left
-	if (source & blue_p_hit_left) << rphl & red: dests.append(source << rphl) 
+	if (source & blue_p_hit_left) << bphl & red: dests.append(source << bphl) 
 	# hit right
-	if (source & blue_p_hit_right) << rphr & red: dests.append(source << rphr) 
+	if (source & blue_p_hit_right) << bphr & red: dests.append(source << bphr) 
 	# right
-	if (source & blue_p_right) >> rpr & blocked_squares: dests.append(source >> rpr) 
+	if (source & blue_p_right) >> bpr & blocked_squares: dests.append(source >> bpr) 
 	return dests
 
 def blue_k_move_generation(source:np.uint64): 
 	dests = []
 	# left
-	if (source & blue_k_left) << rkl & ~blue_k: dests.append(source << rkl) 
+	if (source & blue_k_left) << bkl & ~blue_k: dests.append(source << bkl) 
 	# forward_left
-	if (source & blue_k_forward_left) << rkfl & ~blue_k: dests.append(source << rkfl) 
+	if (source & blue_k_forward_left) << bkfl & ~blue_k: dests.append(source << bkfl) 
 	# right
-	if (source & blue_k_right) << rkr & ~blue_k: dests.append(source << rkr) 
+	if (source & blue_k_right) << bkr & ~blue_k: dests.append(source << bkr) 
 	# forward_right
-	if (source & blue_k_forward_right) << rkfr & ~blue_k: dests.append(source << rkfr) 
+	if (source & blue_k_forward_right) << bkfr & ~blue_k: dests.append(source << bkfr) 
 	return dests
 
 def blue_p_move_execution(source:np.uint64, dest:np.uint64):

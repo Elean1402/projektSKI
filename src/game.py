@@ -59,7 +59,7 @@ def blue_random_move_execution(moves): #  (index, source,[dest,dest,dest])
 
 def play(FEN_board=False, blue_turn=True):
 	if FEN_board:
-		init_board(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
+		init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True))
 	else:
 		init_board(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0))
 	print_state("Startpos")
@@ -190,7 +190,16 @@ def moves_to_string(moves):
 if __name__ == "__main__":
 	#init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
 	#print_state()
-	while(True):
-		play()
-		
+	test7 = "6/8/8/8/8/b0r06/r0r06/6 b"
+	b, player = test7.split(" ")
+	game = {"board": b,
+			"player": player,
+			"player1": True,
+			"player2": False,
+	}
+	play(game["board"])
+
+	# init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]),True))
+	# print(board.blue_generation())
+	# print_state()
 	#print(moves_to_string(board.red_generation()))
