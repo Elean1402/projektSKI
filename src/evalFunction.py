@@ -1,6 +1,6 @@
-from gamestate import GameState
-from model import *
-from moveLib import MoveLib
+from src.gamestate import GameState
+from src.model import *
+from src.moveLib import MoveLib
 from collections import Counter
 import numpy as np
 
@@ -116,7 +116,7 @@ class EvalFunction:
                 break
         return bool 
     
-    def _pieceSquareTable(self,startPos: np.uint64, targetmoves: list[np.uint64], board: list[np.uint64]):
+    def _pieceSquareTable(self,startPos: np.uint64, targetmoves: list[np.uint64], board: list[np.uint64], boardcommands: list[BoardCommand]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -134,25 +134,31 @@ class EvalFunction:
         #TODO
         #determine Figure: Pawn or Knight
         scoreList = ScoreListForMerging()
-        
+        targetmoves = [targetmoves]
         targetScores = Counter({})
         
-        if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & (~ board[GameState._ZARR_INDEX_B_KNIGHTS])):
+        if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & 
+           ~( board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS])):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Red][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
+                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Red][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
         elif (startPos & board[GameState._ZARR_INDEX_R_KNIGHTS]):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Red][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
-        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & (~ board[GameState._ZARR_INDEX_R_KNIGHTS])):
+                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Red][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
+        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & 
+             ~( board[GameState._ZARR_INDEX_R_KNIGHTS]|board[GameState._ZARR_INDEX_B_KNIGHTS])):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Blue][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
+                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Blue][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
         elif (startPos & board[GameState._ZARR_INDEX_B_KNIGHTS]):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Blue][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
+                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Blue][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
             
         if(len(targetScores) == 0):
             raise ValueError("Error in MoveList, please check Zuggenerator")
-        scoreList.append((startPos, targetScores))
+        scoreList.append((startPos, targetScores, boardcommands))
         self.__turnOptions(len(targetmoves))
             
                 
@@ -242,8 +248,8 @@ class EvalFunction:
         """Computes the total Score of current State
            MoveList only read once!
         Args:
-            moveList: list((int, np.uint64,list[np.uint64]))
-                    -> list(index, figure, movelist)
+            moveList: list((np.uint64, np.uint64,list[BoardCommand]))
+                    -> list(index, figure, BoardCommandlist)
                     The list from alpha/beta-generation() from Zuggenerator 
             board (list[np.uint64]): Bitboard
             
@@ -259,20 +265,26 @@ class EvalFunction:
         tempScore = ScoreListForMerging()
         totalScore = 0
         for index in moveList:
-            tempScore.append(self._pieceSquareTable(index[0],index[1], board))
+            tempScore.append(self._pieceSquareTable(index[0],index[1], board,index[2]))
             #TODO add some more Features
             
         #TODO
         totalScore += self._computeTurnOptions()
         totalScore += self._materialPoints(board)
         
-        print("tempscore:\n", tempScore)
+        #print("tempscore:\n", tempScore)
         #TODO Last processing
-        for (startpos,adict) in tempScore:
-            scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos]) for targetPos in adict])
+        for (startpos,adict,bc) in tempScore:
+            scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
         scoredList.sort()
         return scoredList
-        
+    
+    def prettyPrintScorelist(self,list:ScoredMoveList):
+        print("Scorelist:")
+        for s,t,v,u,z in list:
+            print((MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z))
+        #print([(MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z)for s,t,v,u,z in list])
+        print("")
 
     
         

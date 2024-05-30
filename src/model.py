@@ -1,5 +1,6 @@
 import numpy as np
 from enum import Enum
+from collections import Counter
 class ScoredMoveList(list):
     
     def append(self, item):
@@ -7,17 +8,20 @@ class ScoredMoveList(list):
             isinstance(item[0],np.uint64) and
             isinstance(item[1], np.uint64) and
             isinstance(item[2],int) and
-            isinstance(item[3],int)):
+            isinstance(item[3],int) and
+            isinstance(item[4], list)):
             super().append(item)
         elif(isinstance(item,list) and 
             isinstance(item[0], tuple) and
             isinstance(item[0][0],np.uint64) and
             isinstance(item[0][1], np.uint64) and
             isinstance(item[0][2],int) and
-            isinstance(item[0][3],int)):
+            isinstance(item[0][3],int) and
+            isinstance(item[0][4], list)):
             super().extend(item)
         else:
-            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int)]:\n item:", item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]))
+            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int)]:\n item:", 
+                            item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]), type(item[0][4]))
     
     def sort(self):
         """Sort List in ascending order by total score"""
@@ -46,16 +50,17 @@ class ScoreListForMerging(list):
         if(isinstance(item, list)):
              if(isinstance(item[0], tuple) and
                 isinstance(item[0][0], np.uint64) and
-                isinstance(item[0][1],dict)):
+                isinstance(item[0][1],dict) ):
                 super().extend(item)
                 
-        else:
-            if(isinstance(item, tuple) and
+        
+        elif(isinstance(item, tuple) and
                 isinstance(item[0], np.uint64) and
                 isinstance(item[1],dict)):
                 super().append(item)
-                
-        raise TypeError("item is not from type ScoredListForMerge: List( ( np.uint64, dict( { np.uint64: int } ) ) )")
+        
+        else:        
+            raise TypeError("item is not from type ScoredListForMerge: List( ( np.uint64, dict( { np.uint64: int } ) ) )", "item=",item," type of item=",type(item), " type of item[0]=",type(item[0]), "type of item[1]=", type(item[1]), "counter is instance of dict?=>", isinstance(item[1], Counter), "type(item[2])=Bordcommand?=>",isinstance(item[2], BoardCommand) )
         
     
     

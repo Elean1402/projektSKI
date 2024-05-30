@@ -1,10 +1,13 @@
 import numpy as np
 from src.gamestate import*
-from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray,NotAccessiblePos, UnvalidateMovesArray, BoardCommand
+from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray,NotAccessiblePos, BoardCommand
 from src.moveLib import MoveLib as mv
 
 class MoveGenerator:
     _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
+    _boardIsInitialized = False
+    _gameover = False
+    
     
     def __init__(self, board: list[np.uint64]):
         """ Must use Gamestate._ZARR_... constants as indices
@@ -15,6 +18,7 @@ class MoveGenerator:
         """
         #print("initialized board", board)
         self._board = board
+        self._boardIsInitialized = True
         
     def updateBoard(self,board:list[np.uint64]):
         self._board = board
@@ -33,9 +37,6 @@ class MoveGenerator:
         #TODO
         return self._genValidatedMoves(player)
         
-            
-        
-    
     def _startPosBelongsToPlayer(self,player: Player, pos: np.uint64):
         """Double Check if startpos belongs to player
 
@@ -244,7 +245,7 @@ class MoveGenerator:
                      == target):
                     return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]                
     
-    def _genValidatedMoves(self, player:Player): 
+    def _genValidatedMoves(self, player:Player)-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
         """Generates all unvalidated Moves of Player Blue or Red
 
         Args:
@@ -350,8 +351,7 @@ class MoveGenerator:
         if(targetPosition == 0):
             raise ValueError("Something went wrong with bit shifting")
         return (filteredPos,targetPosition)
-    
-    
+       
     def _getAllPawns(self, player:Player):
         """Gets all Pawns of player Blue or Red which can Move
         Arguments: player (Player): see model.py
@@ -422,12 +422,70 @@ class MoveGenerator:
         
         return False
     
-    def execSingleMove(self,move):
+    def execSingleMove(self,move: tuple):
+        """Executes single Move and updates the Board
+
+        Args:
+            move (tuple): (startpos: uint64, targetpos: uint64, moveScore: int, totalscore: int,  list[BoardCommands])
+
+        Raises:
+            ValueError: if Board not initialized
+            TypeError: if move is not from Class ScoredMoveList
+
+        Returns:
+            Array[uint64]: Copy of Bitboard
+        """
         #TODO check if Board is initialized
+        if(not self._boardIsInitialized):
+            raise ValueError("Board is not initialized!")
+        if(len(move)!= 4):
+            raise TypeError("move is not possibly a single item of ScoreMovelist")
+        
+        startpos = move[0]
+        targetpos = move[1]
+        boardCommands = move[4]
         #TODO exec Move
-        #TODO update Board
+        for bc in boardCommands:
+            bc = BoardCommand(bc)
+            match bc:
+                case BoardCommand.Hit_Red_PawnOnTarget: 
+                    self._board[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
+                case BoardCommand.Hit_Blue_PawnOnTarget: 
+                    self._board[GameState._ZARR_INDEX_B_PAWNS] &=  ~targetpos
+                case BoardCommand.Hit_Red_KnightOnTarget: 
+                    self._board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
+                case BoardCommand.Hit_Blue_KnightOnTarget: 
+                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] &=  ~targetpos
+                case BoardCommand.Upgrade_Blue_KnightOnTarget: 
+                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_B_PAWNS] &= ~ startpos
+                case BoardCommand.Upgrade_Red_KnightOnTarget: 
+                    self._board[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_R_PAWNS] &= ~ startpos
+                case BoardCommand.Degrade_Blue_KnightOnTarget:
+                    self._board[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] &= ~ startpos
+                case BoardCommand.Degrade_Red_KnightOnTarget: 
+                    self._board[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~ startpos
+                case BoardCommand.Move_Blue_Knight_no_Change:
+                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
+                case BoardCommand.Move_Red_Knight_no_Change:
+                    self._board[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
+                case BoardCommand.Move_Blue_Pawn_no_Change:
+                    self._board[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
+                case BoardCommand.Move_Red_Pawn_no_Change:
+                    self._board[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+                    self._board[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+                case _: True
         
         return self._board.copy()
+    
+    
+        
     
     def prettyPrintBoard(self):
         #print("internal board", self._board)
@@ -435,8 +493,11 @@ class MoveGenerator:
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
     
     def prettyPrintMoves(self,moves: list):
+        print("\nMoves generated from MoveGenerator:")
         if(len(moves)>0):
-            print([(mv.move(start,target,3),bc) for start,target,bc in moves])
-            #print(moves)
+            for start,target,bc in moves:
+                print((mv.move(start,target,3),bc))
+            #print([(mv.move(start,target,3),bc) for start,target,bc in moves])
+            print("")
         else:
             print([])

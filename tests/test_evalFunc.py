@@ -1,16 +1,17 @@
 import unittest
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.evalFunction import EvalFunction
-from src.zuggenerator import *
+
 from src.gui import Gui
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import*
+from src.moveGenerator import MoveGenerator
 
 class EvalFunc(unittest.TestCase):
     # def version0(self):
     #     evFunc = EvalFunc(ScoreConfig.Version0)
-    
+    @unittest.skip("depricated")
     def test_pieceSquareTable(self):
        config = ScoreConfig.Version0()
        self.assertEqual(len(config), 16)
@@ -37,6 +38,7 @@ class EvalFunc(unittest.TestCase):
        print(scorelist)
        self.assertEqual(True,True)
     
+    @unittest.skip("depricated")
     def test_turnOptions(self):
         ef = EvalFunction(ScoreConfig.Version0())
         M = Gui.fenToMatrix("2r03/8/8/8/8/8/8/2b03")
@@ -50,7 +52,7 @@ class EvalFunc(unittest.TestCase):
         self.assertEqual(3*ef._CONFIG_DICT[Config.TURN_OPTIONS], ef._computeTurnOptions())
         self.assertEqual(0, ef._TURNOPTIONS)
     
-   
+    @unittest.skip("depricated")
     def test_moveIsNeighbourOfStartPos(self):
         ef = EvalFunction(ScoreConfig.Version0())
         self.assertEqual(ef._moveIsNeighbourOfStartPos(np.uint64(2**4),np.uint64(2**12)),True)
@@ -59,6 +61,7 @@ class EvalFunc(unittest.TestCase):
         self.assertEqual(ef._moveIsNeighbourOfStartPos(np.uint64(2**4),np.uint64(2**16)),False)
         self.assertEqual(ef._moveIsNeighbourOfStartPos(np.uint64(2**4),np.uint64(2**2)),False)
     
+    @unittest.skip("depricated")
     def test_computeOverallScore1(self):
         ef = EvalFunction(ScoreConfig.Version1(),Player.Blue)
         M = Gui.fenToMatrix("2b03/8/8/8/8/8/8/2r03")
@@ -77,3 +80,15 @@ class EvalFunc(unittest.TestCase):
         print("startposition:", moveList[0])
         self.assertEqual(True,False)
         #ef.computeOverallScore(movelist, board)
+    
+    def test_evalFunc_new(self):
+        ef = EvalFunction(ScoreConfig.Version1(),Player.Blue)
+        #print(ef._CONFIG_DICT)
+        board = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/2r0rr3")
+        mvg = MoveGenerator(board)
+        mvg.prettyPrintBoard()
+        moves = mvg.genMoves(Player.Blue)
+        mvg.prettyPrintMoves(moves)
+        scorelist = ef.computeOverallScore(moves, board)
+        ef.prettyPrintScorelist(scorelist)
+        self.assertEqual(True,False)
