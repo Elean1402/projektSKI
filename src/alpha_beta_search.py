@@ -28,6 +28,9 @@ class AlphaBetaSearch:
 		self.game["bitboards"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
 		self.alpha = -float('inf')
 		self.beta = float('inf')
+		self.m = MoveLib()
+		self.efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
+		self.efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
 
 	def search(self):
 		"""
@@ -53,12 +56,10 @@ class AlphaBetaSearch:
 		Returns:
 			tuple: The maximum score and the corresponding move.
 		"""
-		m = MoveLib()
-		efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
 		if depth_left == 0:
 			return 2, move
 
-		scorelist = efblue.computeOverallScore(gen, board=game["bitboards"])
+		scorelist = self.efblue.computeOverallScore(gen, board=game["bitboards"])
 		best_score = alpha
 		best_move = None
 
@@ -89,12 +90,11 @@ class AlphaBetaSearch:
 		Returns:
 			tuple: The minimum score and the corresponding move.
 		"""
-		m = MoveLib()
-		efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
+		
 		if depth_left == 0:
 			return 3, move
 
-		scorelist = efred.computeOverallScore(gen, board=game["bitboard"])
+		scorelist = self.efred.computeOverallScore(gen, board=game["bitboard"])
 		best_score = beta
 		best_move = None
 
