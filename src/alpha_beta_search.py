@@ -5,7 +5,7 @@ from src.board import *
 from src.game import *
 from src.gui import *
 
-depth = 3
+depth = 5
 
 def alpha_beta_search(game: dict):
 	print(game["board"])
@@ -42,14 +42,14 @@ def alpha_beta_max(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
+		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k]
 		board.blue_move_execution(move[0], move[1])
 
 		print(f'Depth: {depth-depth_left+1}')
 		print_state("Blue")
 		input("Cont: ")
 
-		temp2 = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
+		temp2 = [board.red_p, board.red_k, board.blue_p, board.blue_k]
 		# print("before alpha_beta_min")
 		# print_state()
 		score = alpha_beta_min(alpha, beta, depth_left - 1, game, l, temp2)
@@ -99,7 +99,7 @@ def alpha_beta_min(alpha, beta, depth_left: int, game: dict, l, temp) -> int:
 	for i in range(len(scorelist)):
 
 		move = scorelist.pop()
-		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k].copy()
+		temp = [board.red_p, board.red_k, board.blue_p, board.blue_k]
 		board.red_move_execution(move[0], move[1])
 
 		print(f'Depth: {depth-depth_left+1}')

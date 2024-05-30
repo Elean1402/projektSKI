@@ -136,11 +136,11 @@ def print_state(Color=""):
 
 	if red_p==board.red_p: 
 		if red_k==board.red_k:
-			if blue_p | blue_k!=board.blue:
+			if red_p | red_k!=board.red:
 				print("red")
 				print_board(red_p | red_k)
 				print("board.red")
-				print_board(board.blue)
+				print_board(board.red)
 				raise Exception("red != board.red")		
 		else:
 			print("red_k")

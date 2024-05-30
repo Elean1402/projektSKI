@@ -214,6 +214,8 @@ def blue_move_execution(source:np.uint64, dest:np.uint64):
 def blue_takeback(source, dest, hit=False):
 	global blue_p, blue_k, blue, red_p, red_k, red
 	# delete dest
+
+
 	if blue_k & dest:
 		del l_blue_k[-1]
 		blue_k = blue_k ^ dest
@@ -228,17 +230,21 @@ def blue_takeback(source, dest, hit=False):
 	else:
 		l_blue_p.append(source)
 		blue_p = blue_p | source
+	
 
 	# hit (add red)
 	if hit:
 		if blue_k & dest:
-			l_red_k.append(source)
-			red_k = red_k | source
+			l_red_k.append(dest)
+			red_k = red_k | dest
 		else:
-			l_red_p.append(source)
-			red_p = red_p | source
+			l_red_p.append(dest)
+			red_p = red_p | dest
 		red = red_p | red_k
+		
+
 	blue = blue_p | blue_k
+	
 
 # RED
 # red pawn move bitboards
@@ -481,11 +487,11 @@ def red_takeback(source, dest, hit=False):
 	# hit (add red)
 	if hit:
 		if red_k & dest:
-			l_blue_k.append(source)
-			blue_k = blue_k | source
+			l_blue_k.append(dest)
+			blue_k = blue_k | dest
 		else:
-			l_blue_p.append(source)
-			blue_p = blue_p | source
+			l_blue_p.append(dest)
+			blue_p = blue_p | dest
 		blue = blue_p | blue_k
 	red = red_p | red_k
 
