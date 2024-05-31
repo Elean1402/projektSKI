@@ -36,15 +36,17 @@ class MoveGenerator:
         """
         #If the opponent cannot move, game is over
         #and only if the opponent has not a game end recognition for this case
-        if(self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] &
-           newboard[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS]
-           == self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] and
-           
-           self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] &
-           newboard[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS]
-           == self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] ):
-            gameOver[0]= DictMoveEntry.GAME_OVER_RED_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_BLUE_WINS
-            return None
+        #if(self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] &
+        #   newboard[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS]
+        #   == self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] and
+        #
+        #   self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] &
+        #   newboard[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS]
+        #   == self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] ):
+        #    gameOver[0]= DictMoveEntry.GAME_OVER_RED_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_BLUE_WINS
+        #    print("updated board is same")
+        #    raise ValueError
+        #    return None
         
         self._board = newboard
         print("updated Board:")
@@ -321,6 +323,7 @@ class MoveGenerator:
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
             
         gameOver[0] = DictMoveEntry.CONTINUE_GAME
+
         return validatedMoves
     
     def _getBitPositions(self,n: np.uint64):
@@ -461,14 +464,16 @@ class MoveGenerator:
             BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] 
             != 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS
-            
+            print("self pretty")
+            self.prettyPrintBoard(gameOver)
         
         elif((self._board[GameState._ZARR_INDEX_R_KNIGHTS] |
             self._board[GameState._ZARR_INDEX_R_PAWNS]) & 
             BitMaskDict[DictMoveEntry.GAME_OVER_RED_WINS] 
             != 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_RED_WINS
-        
+            print("self pretty")
+            self.prettyPrintBoard(gameOver)
     
     
     def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry]):
@@ -544,12 +549,12 @@ class MoveGenerator:
         
     
     def prettyPrintBoard(self,*gameOver:list[DictMoveEntry]):
-        #print("internal board", self._board)
+        print("internal board", self._board)
         print("current Board\n",GameState.fromBitBoardToMatrix(self._board,True))
         if(len(gameOver)!= 0):
             print("Game status:", gameOver[0])
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
-        
+
     
     def prettyPrintMoves(self,moves: list):
         print("\nMoves generated from MoveGenerator:")
@@ -560,3 +565,7 @@ class MoveGenerator:
             print("")
         else:
             print([])
+        True
+
+    def getBoard(self):
+        return self._board

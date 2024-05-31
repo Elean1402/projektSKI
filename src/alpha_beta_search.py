@@ -2,6 +2,7 @@ from evalFunction import *
 from gamestate import GameState
 from gui import Gui
 from scoreConfig_evalFunc import *
+from moveGenerator import MoveGenerator
 
 
 class AlphaBetaSearch:
@@ -25,12 +26,14 @@ class AlphaBetaSearch:
         """
         self.game = game
         self.depth = depth
-        self.game["bitboards"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+        self.game["bitboards"] = GameState.createBitBoardFromFEN(game["board"])
+        self.player = self.game["player"]
         self.alpha = -float('inf')
         self.beta = float('inf')
         self.m = MoveLib()
-        self.efblue = EvalFunction(ScoreConfig.Version1(), Player.Blue)
-        self.efred = EvalFunction(ScoreConfig.Version1(), Player.Red)
+        self.eval = EvalFunction(ScoreConfig.Version1(), self.player)
+        self.moveGen = MoveGenerator(self.game["bitboards"])
+        self.gameOver = [DictMoveEntry.CONTINUE_GAME]
 
     def search(self):
         """
@@ -39,7 +42,7 @@ class AlphaBetaSearch:
         Returns:
             str: The best move.
         """
-        best_score, best_move = self.alpha_beta_max(self.alpha, self.beta, self.depth, self.game, None)
+        best_score, best_move = self.alpha_beta_max(self.alpha, self.beta, self.depth, self.game, "A3-A4")
         return best_move
 
     def alpha_beta_max(self, alpha, beta, depth_left: int, game: dict, move: str):
@@ -56,17 +59,22 @@ class AlphaBetaSearch:
         Returns:
             tuple: The maximum score and the corresponding move.
         """
-        if depth_left == 0:
-            return 2, move
+        if self.gameOver != [DictMoveEntry.CONTINUE_GAME]:
+            best = self.eval.computeOverallScore(self.moveGen.genMoves(self.player, self.gameOver),
+                                                 board=game["bitboards"]).pop()
+            return best[3], move
 
-        scorelist = self.efblue.computeOverallScore(gen, board=game["bitboards"])
+        scorelist = self.eval.computeOverallScore(self.moveGen.genMoves(self.player, self.gameOver), board=game["bitboards"])
         best_score = alpha
         best_move = None
 
-        for i in range(len(scorelist)):
-            move = scorelist.pop()
-            # move execution
-            score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, game, move)
+        for move in reversed(scorelist):
+            new_dict = game.copy()
+            new_dict["bitboards"] = self.moveGen.execSingleMove(move, self.player, self.gameOver)
+            oldplayer = self.player
+            self.change_player(self.player)
+            score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_dict, move)
+            self.moveGen.updateBoard(game["bitboards"], oldplayer, self.gameOver)
             # retract move
             if score >= beta:
                 return beta, move  # fail hard beta-cutoff
@@ -91,17 +99,21 @@ class AlphaBetaSearch:
             tuple: The minimum score and the corresponding move.
         """
 
-        if depth_left == 0:
-            return 3, move
+        if self.gameOver != [DictMoveEntry.CONTINUE_GAME]:
+            best = self.eval.computeOverallScore(self.moveGen.genMoves(self.player, self.gameOver), board=game["bitboards"]).pop()
+            return best[3], move
 
-        scorelist = self.efred.computeOverallScore(gen, board=game["bitboard"])
+        scorelist = self.eval.computeOverallScore(self.moveGen.genMoves(self.player, self.gameOver), board=game["bitboards"])
         best_score = beta
         best_move = None
 
-        for i in range(len(scorelist)):
-            move = scorelist.pop()
-            # move execution
-            score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, game, move)
+        for move in reversed(scorelist):
+            new_dict = game.copy()
+            new_dict["bitboards"] = new_board = self.moveGen.execSingleMove(move, self.player, self.gameOver)
+            oldplayer = self.player
+            self.change_player(self.player)
+            score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_dict, move)
+            self.moveGen.updateBoard(game["bitboards"], oldplayer, self.gameOver)
             # retract move
             if score <= alpha:
                 return alpha, move  # fail hard alpha-cutoff
@@ -110,3 +122,6 @@ class AlphaBetaSearch:
                 best_move = move
 
         return beta, best_move
+
+    def change_player(self, player):
+        self.player = Player.Blue if player == Player.Red else Player.Red

@@ -157,7 +157,7 @@ class EvalFunction:
                  for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
             
         if(len(targetScores) == 0):
-            raise ValueError("Error in MoveList, please check Zuggenerator")
+            raise ValueError("Error in MoveList, please check Zuggenerator, targetmoves=", MoveLib.move(startPos,*targetmoves,3))
         scoreList.append((startPos, targetScores, boardcommands))
         self.__turnOptions(len(targetmoves))
             

@@ -19,7 +19,8 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/8/8/8/8/8/8/r05")
         mvG = MoveGenerator(BB)
-        list1 = mvG._genValidatedMoves(Player.Red)
+        gameOver = [DictMoveEntry.CONTINUE_GAME]
+        list1 = mvG._genValidatedMoves(Player.Red, gameOver)
         mvG.prettyPrintBoard()
         
         print(list1)
@@ -31,10 +32,11 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/r07/8/8/8/8/8/6")
         mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Red)
+        gameOver = [DictMoveEntry.CONTINUE_GAME]
+        list = mvG._genValidatedMoves(Player.Red, gameOver)
         mvG.prettyPrintBoard()
         mvG.prettyPrintMoves(list)
-        self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-B1","A2-B2"])
+        self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-B2"])
         
     def test_genValidatedMoves_3(self):
         """At this moment, only for red player functional"""

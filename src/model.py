@@ -239,4 +239,9 @@ class BoardCommand(Enum):
     Cannot_Move                     = 12
 
 
+GET_BOARD_INDEX = 0
+GET_PLAYER_INDEX = 1
+GET_FIRST_PLAYER_INDEX = 2
+GET_SECOND_PLAYER_INDEX = 3
+
     
