@@ -44,10 +44,11 @@ class JSONHandler:
 
 		# Add the new data to the existing data
 		for fen, moves in zip(fen_list, moves_list):
+			board, player = fen.split(' ')
 			data.append({
 				'type': fen_var.replace('FEN_', ''),  # Remove the 'FEN_' prefix
-				'board': fen,
-				'player': fen.split(' ')[1],
+				'board': board,
+				'player': player,
 				'moves': moves,
 				'bitboards': ''
 			})

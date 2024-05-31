@@ -4,7 +4,7 @@ from evalFunction import *
 from gamestate import *
 from gui import *
 from scoreConfig_evalFunc import *
-
+from moveGenerator import *
 
 class AlphaBetaSearch:
     """
@@ -20,7 +20,7 @@ class AlphaBetaSearch:
         self.max_time = max_time
         self.end_time = time.time() + self.max_time
         self.depth = 5
-        self.bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+        self.moveGen = MoveGenerator(GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True))
         self.alpha = -float('inf')
         self.beta = float('inf')
         self.move_lib = MoveLib()
@@ -81,7 +81,7 @@ class AlphaBetaSearch:
         if depth_left == 0:  # or game_over(game):
             return self.eval_func_blue.computeOverallScore(gen, board=game["bitboard"]), move
 
-        score_list = self.eval_func_red.computeOverallScore(gen, board=game["bitboard"])
+        score_list = self.eval_func_red.computeOverallScore(self.moveGen(), board=game["bitboard"])
         best_move = None
 
         for move in reversed(score_list):
