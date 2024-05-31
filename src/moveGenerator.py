@@ -6,7 +6,8 @@ from src.moveLib import MoveLib as mv
 class MoveGenerator:
     _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
     _boardIsInitialized = False
-    _gameover = False
+    #_gameover = False
+    #_WinnerIs = Player.NoOne
     
     
     def __init__(self, board: list[np.uint64]):
@@ -19,23 +20,54 @@ class MoveGenerator:
         #print("initialized board", board)
         self._board = board
         self._boardIsInitialized = True
+        print("Board init:")
+        self.prettyPrintBoard()
         
-    def updateBoard(self,board:list[np.uint64]):
-        self._board = board
+    def updateBoard(self,newboard:list[np.uint64], player : Player, gameOver: list[DictMoveEntry]):
+        """updates the Board and checks if new Board differs from actual board,
+           if not, then Game should be over because no move was executed
+
+        Args:
+            newboard (list[np.uint64]):
+            player (Player):
+            gameOver (list[DictmoveEntry]): DictMoveEntry.CONTINUE_GAME | DictMoveEntry.GAME_OVER_RED_WINS | DictMoveEntry.GAME_OVER_BLUE_WINS
+                    
+
+        """
+        #If the opponent cannot move, game is over
+        #and only if the opponent has not a game end recognition for this case
+        if(self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] &
+           newboard[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS]
+           == self._board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] and
+           
+           self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] &
+           newboard[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS]
+           == self._board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] ):
+            gameOver[0]= DictMoveEntry.GAME_OVER_RED_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_BLUE_WINS
+            return None
         
-    def genMoves(self,player:Player):
+        self._board = newboard
+        print("updated Board:")
+        self.prettyPrintBoard(gameOver)
+        gameOver[0] = DictMoveEntry.CONTINUE_GAME
+    
+    def genMoves(self,player:Player, gameOver: list[DictMoveEntry]):
         """Generates all possible Moves
-        
+           ATTENTION IF LIST IS EMPTY GAME OVER
 
         Args:
             player (Player): use model.py
+            gameOver (list[DictMoveEntry]): similiar to: OUT gameover. holds DictMoveEntry.CONTINUE | DictMoveEntry.GAME_OVER_BLUE_WINS | DictMoveEntry.GAME_OVER_RED_WINS
         Returns:
             list[Tuple[start,target,list[Boardcommands]]]
             if no possible Move empty list and this should lead into Gameover
         """
+        if( not isinstance(gameOver, list) or 
+           not isinstance(*gameOver, DictMoveEntry)):
+            raise TypeError("Please use for param. gameOver: e.g gameOver = [DictMoveEntry.CONTINUE]")
         #check if game is over
         #TODO
-        return self._genValidatedMoves(player)
+        return self._genValidatedMoves(player, gameOver)
         
     def _startPosBelongsToPlayer(self,player: Player, pos: np.uint64):
         """Double Check if startpos belongs to player
@@ -182,8 +214,8 @@ class MoveGenerator:
                  self._board[GameState._ZARR_INDEX_R_KNIGHTS]) 
                == start):
                 #Case hit diagonal possible?
-                if(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or
-                   bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
+                if(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or
+                   bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
                     #on target is an enemy knight
                     if(target & self._board[GameState._ZARR_INDEX_B_KNIGHTS] 
                        == target):
@@ -245,7 +277,7 @@ class MoveGenerator:
                      == target):
                     return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]                
     
-    def _genValidatedMoves(self, player:Player)-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
+    def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
         """Generates all unvalidated Moves of Player Blue or Red
 
         Args:
@@ -284,6 +316,11 @@ class MoveGenerator:
                     validatedMoves.append((*self._getTarget(bit,bm), boardCommands))        
         else:
             raise TypeError("player is not from Type Player")
+        
+        if(len(validatedMoves) == 0):
+            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            
+        gameOver[0] = DictMoveEntry.CONTINUE_GAME
         return validatedMoves
     
     def _getBitPositions(self,n: np.uint64):
@@ -414,32 +451,49 @@ class MoveGenerator:
             raise ValueError("Bitmask and choosed Player are wrong")
         return positions
         
-    def _gameover(self):
+    def _checkBoardIfGameOver(self, gameOver: list[DictMoveEntry]):
         """Game is over if last Row is reached or
            no possible Moves
-        Returns: Boolean: True for win else loose"""
-        #todo
+        Returns: Boolean: True for win else loose"""    
+        gameOver[0] = DictMoveEntry.CONTINUE_GAME
+        if((self._board[GameState._ZARR_INDEX_B_KNIGHTS] |
+            self._board[GameState._ZARR_INDEX_B_PAWNS]) & 
+            BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] 
+            != 0):
+            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS
+            
         
-        return False
+        elif((self._board[GameState._ZARR_INDEX_R_KNIGHTS] |
+            self._board[GameState._ZARR_INDEX_R_PAWNS]) & 
+            BitMaskDict[DictMoveEntry.GAME_OVER_RED_WINS] 
+            != 0):
+            gameOver[0] = DictMoveEntry.GAME_OVER_RED_WINS
+        
     
-    def execSingleMove(self,move: tuple):
-        """Executes single Move and updates the Board
+    
+    def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry]):
+        """Executes single Move and updates the Board and checks if Game Over
 
         Args:
             move (tuple): (startpos: uint64, targetpos: uint64, moveScore: int, totalscore: int,  list[BoardCommands])
-
+            player (Player): Red or Blue
+            gameOver (list[DictMoveEntry]): 
         Raises:
             ValueError: if Board not initialized
             TypeError: if move is not from Class ScoredMoveList
 
         Returns:
-            Array[uint64]: Copy of Bitboard
+            (Array[uint64]): Board
+            
         """
         #TODO check if Board is initialized
         if(not self._boardIsInitialized):
             raise ValueError("Board is not initialized!")
-        if(len(move)!= 4):
-            raise TypeError("move is not possibly a single item of ScoreMovelist")
+        #Can this happen? 
+        if(len(move)== 0):
+           print("move is empty, Game Over")
+           gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
+           return self._board.copy()
         
         startpos = move[0]
         targetpos = move[1]
@@ -482,15 +536,20 @@ class MoveGenerator:
                     self._board[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
                 case _: True
         
+        self._checkBoardIfGameOver(gameOver)
+        self.prettyPrintBoard(gameOver)
         return self._board.copy()
     
     
         
     
-    def prettyPrintBoard(self):
+    def prettyPrintBoard(self,*gameOver:list[DictMoveEntry]):
         #print("internal board", self._board)
         print("current Board\n",GameState.fromBitBoardToMatrix(self._board,True))
+        if(len(gameOver)!= 0):
+            print("Game status:", gameOver[0])
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
+        
     
     def prettyPrintMoves(self,moves: list):
         print("\nMoves generated from MoveGenerator:")

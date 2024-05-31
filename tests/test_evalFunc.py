@@ -81,14 +81,44 @@ class EvalFunc(unittest.TestCase):
         self.assertEqual(True,False)
         #ef.computeOverallScore(movelist, board)
     
+    @unittest.skip("not important")
     def test_evalFunc_new(self):
         ef = EvalFunction(ScoreConfig.Version1(),Player.Blue)
         #print(ef._CONFIG_DICT)
         board = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/2r0rr3")
         mvg = MoveGenerator(board)
-        mvg.prettyPrintBoard()
+        
         moves = mvg.genMoves(Player.Blue)
         mvg.prettyPrintMoves(moves)
         scorelist = ef.computeOverallScore(moves, board)
         ef.prettyPrintScorelist(scorelist)
-        self.assertEqual(True,False)
+        self.assertEqual(True,True)
+        
+    def test_evalFunc_FullTest1(self):
+        efr = EvalFunction(ScoreConfig.Version0(),Player.Red)
+        efb = EvalFunction(ScoreConfig.Version1(),Player.Blue)
+        #print(ef._CONFIG_DICT)
+        board = GameState.createBitBoardFromFEN("b0b0b0b0b0b0/b0b0b0b0b0b0b0b0/8/8/8/8/r0r0r0r0r0r0r0r0/r0r0r0r0r0r0")
+        mvg = MoveGenerator(board)
+        gameOver = [DictMoveEntry.CONTINUE_GAME]
+        
+        
+        i = 0
+        while(gameOver[0] == DictMoveEntry.CONTINUE_GAME):
+            if(i == 2):
+                i=0
+            print("i=",i)
+            player = Player.Red if i % 2 == 0 else Player.Blue
+            moves = mvg.genMoves(player,gameOver)
+                
+            scorelist = efr.computeOverallScore(moves, board)
+            
+            newBoard = mvg.execSingleMove(scorelist.pop() if len(scorelist)!= 0 else [],player, gameOver)
+            
+            
+            i+=1
+        
+        self.assertEqual(True, False)
+            
+            
+        

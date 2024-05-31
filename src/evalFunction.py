@@ -258,7 +258,11 @@ class EvalFunction:
             Ordering: Move with highest overall score at the end of the list.
             use pop() to get it   
         """
+        
+            
         scoredList = ScoredMoveList()
+        if( len(moveList) == 0):
+            return scoredList
         #ScoreListForMeging can be merged with other Dict -> Count(Dict)
         # so, that values are added on same keys
         # e.g. dictA + dictB 
@@ -277,14 +281,16 @@ class EvalFunction:
         for (startpos,adict,bc) in tempScore:
             scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
         scoredList.sort()
+        self.prettyPrintScorelist(scoredList)
         return scoredList
     
     def prettyPrintScorelist(self,list:ScoredMoveList):
-        print("Scorelist:")
-        for s,t,v,u,z in list:
-            print((MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z))
-        #print([(MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z)for s,t,v,u,z in list])
-        print("")
+        if(len(list) != 0):
+            print("Scorelist:")
+            for s,t,v,u,z in list:
+                print((MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z))
+            #print([(MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z)for s,t,v,u,z in list])
+            print("")
 
     
         
