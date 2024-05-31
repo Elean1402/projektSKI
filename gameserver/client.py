@@ -4,7 +4,7 @@ import os
 import sys
 import random
 from network import Network
-
+from game import Game
 
 pygame.font.init()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))

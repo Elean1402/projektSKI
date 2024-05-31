@@ -1,25 +1,26 @@
-from moveLib import *
-from evalFunction import *
-from scoreConfig_evalFunc import *
-from gui import *
-from gamestate import *
-from benchmark import *
-from model import *
 import time
+
+from evalFunction import *
+from gamestate import *
+from gui import *
+from scoreConfig_evalFunc import *
+
 
 class AlphaBetaSearch:
     """
     This class implements the Alpha-Beta Search algorithm for a given game.
     """
+
     def __init__(self, game: dict, max_time: float = 5.0):
         """
         The constructor for AlphaBetaSearch class.
         """
         self.game = game
+        self.start_time = time.time()
         self.max_time = max_time
         self.end_time = time.time() + self.max_time
         self.depth = 5
-        self.game["bitboard"] = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
+        self.bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]), True)
         self.alpha = -float('inf')
         self.beta = float('inf')
         self.move_lib = MoveLib()
@@ -30,11 +31,11 @@ class AlphaBetaSearch:
         """
         The function to start the Alpha-Beta Search.
         """
-        self.start_time = time.time()
+
         if use_iterative_deepening:
             return self._iterative_deepening_search()
         else:
-            _, best_move = self._alpha_beta_max(self.alpha, self.beta, self.depth, self.game, None)
+            _, best_move = self._alpha_beta_max(self.alpha, self.beta, self.depth, self.game)
             return best_move
 
     def _iterative_deepening_search(self):
@@ -42,7 +43,7 @@ class AlphaBetaSearch:
         depth = 1
 
         while True:
-            _, move = self._alpha_beta_max(self.alpha, self.beta, depth, self.game, None)
+            _, move = self._alpha_beta_max(self.alpha, self.beta, depth, self.game)
             if move is not None:
                 best_move = move
 
@@ -51,15 +52,14 @@ class AlphaBetaSearch:
 
             depth += 1
 
-
-    def _alpha_beta_max(self, alpha: float, beta: float, depth_left: int, game: dict, move: str):
+    def _alpha_beta_max(self, alpha: float, beta: float, depth_left: int, game: dict, move=""):
         """
         The function to find the maximum score and the corresponding move.
         """
-        if depth_left == 0:# or game_over(game):
-            return self.eval_func_blue.computeOverallScore(gen, board=game["bitboard"]), move
+        if depth_left == 0:  # or game_over(game):
+            return self.eval_func_blue.computeOverallScore(gen, board=self.bitboard), move
 
-        score_list = self.eval_func_blue.computeOverallScore(gen, board=game["bitboard"])
+        score_list = self.eval_func_blue.computeOverallScore(gen, board=self.bitboard)
         best_move = None
 
         for move in reversed(score_list):
@@ -74,11 +74,11 @@ class AlphaBetaSearch:
 
         return alpha, best_move
 
-    def _alpha_beta_min(self, alpha: float, beta: float, depth_left: int, game: dict, move: str):
+    def _alpha_beta_min(self, alpha: float, beta: float, depth_left: int, game: dict, move=""):
         """
         The function to find the minimum score and the corresponding move.
         """
-        if depth_left == 0:# or game_over(game):
+        if depth_left == 0:  # or game_over(game):
             return self.eval_func_blue.computeOverallScore(gen, board=game["bitboard"]), move
 
         score_list = self.eval_func_red.computeOverallScore(gen, board=game["bitboard"])
