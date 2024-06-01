@@ -11,7 +11,7 @@ test6 = "6/8/8/8/2r0b04/8/8/6 b"
 
 # Own tests
 test7 = "6/8/8/8/8/b0r06/r0rr06/6 b"
-board, player = test7.split(" ")
+board, player = test.split(" ")
 game = {"board": board,
 		"player": player,
 		"player1": True,

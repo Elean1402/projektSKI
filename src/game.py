@@ -66,10 +66,15 @@ def play(FEN_board=False, blue_turn=True):
 
 	#input()
 	while isOver() == "c":
+		print("moves")
 		if blue_turn:
-			source, dest = blue_random_move_execution(board.blue_generation())
+			moves = board.blue_generation()
+			print(moves)
+			source, dest = blue_random_move_execution(moves)
 		else:
-			source, dest = red_random_move_execution(board.red_generation())
+			moves = board.red_generation()
+			print(moves)
+			source, dest = red_random_move_execution(moves)
 
 		if blue_turn:
 			print_state("blue")
@@ -173,6 +178,13 @@ def print_state(Color=""):
 			s+="0"
 	s='\n'.join(s[i:i+8] for i in range(0, len(s), 8))
 	print(s.replace("R",RED+"K"+RESET).replace("B",BLUE+"K"+RESET).replace("r",RED+"P"+RESET).replace("b",BLUE+"P"+RESET))
+	print_board(blue_p)
+	print_board(blue_k)
+	print_board(red_p)
+	print_board(red_k)
+
+
+
 	print()
 
 
@@ -190,14 +202,104 @@ def moves_to_string(moves):
 if __name__ == "__main__":
 	#init_board(board.blue_p, board.blue_k, board.red_p, board.red_k)
 	#print_state()
-	test7 = "6/8/8/8/8/b0r06/r0r06/6 b"
-	b, player = test7.split(" ")
+
+	# simple figure
+	test = "6/br07/8/8/8/8/8/6 b"
+
+	# Blue Pawns
+	# test = "1b04/8/8/8/8/8/8/6 b"
+	# test = "8/r0b0r05/8/8/8/8/8/6 b"
+	# test = "6/8/8/8/8/b0r06/8/6 b"
+	# test = "6/8/8/8/8/6r0b0/8/6 b"
+	# test = "6/8/8/8/8/7b0/7r0/6 b"
+	# test = "6/8/8/8/8/8/7b0/6 b"
+	# test = "8/rr0b0rr05/8/8/8/8/8/6 b"
+	# test = "8/br0b0br05/8/8/8/8/8/6 b"
+
+	# test = "6/8/8/8/8/8/6b0b0/6 b"
+
+	# blue hits
+	# hit pawn
+	# test = "6/8/8/8/8/r0b0r05/r0r0r05/6 b"
+	# hit double red knight
+	# test = "6/8/8/8/8/rr0b0rr05/rr0rr0rr05/6 b"
+	# hit red blue knight
+	# test = "6/8/8/8/8/rr0b0rr05/br0rr0br05/6 b"
+
+	# Blue knights
+	# test = "6/2bb05/8/8/8/8/8/6 b"
+	# test = "6/2bb05/rr07/1r01b0/8/8/8/6 b"
+
+	# on r pawn?
+	# test = "6/bb07/8/1r06/8/8/8/6 b"
+
+	# on b pawn?
+	#test = "6/bb07/8/1b06/8/8/8/6 b"
+
+	# on rr knigth?
+	# test = "6/bb07/8/1rr06/8/8/8/6 b"
+
+	# on br knight?
+	#test = "6/bb07/8/1br06/8/8/8/6 b"
+
+	# on bb knigth?
+	#test = "6/bb07/8/1bb06/8/8/8/6 b"
+
+	############################################
+	# Red Pawns
+	# test = "8/8/8/8/8/8/b0r0b05/6 r"
+	# test = "6/7b0/7r0/8/8/8/8/6 r"
+	# test = "6/7r0/8/8/8/8/8/6 r"
+	# test = "8/rb0r0rb05/8/8/8/8/8/6 r"
+	# test = "8/bb0r0bb05/8/8/8/8/8/6 r"
+
+	# test = "6/6r0r0/8/8/8/8/8/6 r"
+
+	# Red hits
+	# hit pawn
+	# test = "6/b0b0b05/b0r0b05/8/8/8/8/6 r"
+	# hit double red knight
+	# test = "6/bb0bb0bb05/bb0r0bb05/8/8/8/8/6 r"
+	# hit red blue knight
+	# test = "6/rb0rb0bb05/rb0r0rb05/8/8/8/8/6 r"
+
+
+	# Red knights
+	# test = "6/8/8/8/8/8/2rr05/6 r"
+
+	# on b pawn?
+	# test = "6/8/8/8/1b06/8/rr07/6 r"
+
+	# on r pawn?
+	# test = "6/8/8/8/1r06/8/rr07/6 r"
+
+	# on bb knigth?
+	# test = "6/8/8/8/1bb06/8/rr07/6 r"
+
+	# on rb knight?
+	# test = "6/8/8/8/1rb06/8/rr07/6 r"
+
+	# on rr knigth?
+	# test = "6/8/8/8/1rr06/8/rr07/6 r"
+
+
+
+
+
+
+
+	b, player = test.split(" ")
 	game = {"board": b,
 			"player": player,
 			"player1": True,
 			"player2": False,
 	}
+	#For blue:
 	play(game["board"])
+
+	# For red: 
+	# play(game["board"],False)
+
 
 	# init_board(*GameState.createBitBoardFrom(Gui.fenToMatrix(game["board"]),True))
 	# print(board.blue_generation())

@@ -82,24 +82,36 @@ def blue_k_move_generation(source:np.uint64):
 
 def blue_p_move_execution(source:np.uint64, dest:np.uint64):
 	global blue_p, blue_k, blue, red_p, red_k, red
-	# try:
-		# delete source Position 
+	# print_board(dest)
+	# print_board(red_k)
+	# print_board(red_k & dest)
+
+	# delete source Position 
 	l_blue_p.remove(source)
 	blue_p = blue_p ^ source
-	# except:
-	# 	print("------------------------- Exception -------------------------")
-	# 	print("source")
-	# 	print_board(source)
-	# 	print("dest")
-	# 	print_board(dest)
-	# 	print_state()
-	# 	raise Exception("blue_p_move_exeution")
+
+	# on red_k -> hit & knight
+	if dest & red_k:
+		# remove red knight
+		
+		red_k = red_k ^ dest
+		l_red_k.remove(dest)
+
+		# add blue knigth
+		blue_k = blue_k | dest
+		l_blue_k.append(dest)
+
+		# new red
+		red = red_p | red_k
+		stack.append((source, dest, True))
+
 	# on blue_p -> knight
-	if dest & blue_p:
+	elif dest & blue_p:
 		# add blue knight
 		blue_k = blue_k | dest
 		l_blue_k.append(dest)
 		stack.append((source, dest))
+
 
 	# on red_p -> hit
 	elif dest & red_p:
@@ -111,20 +123,6 @@ def blue_p_move_execution(source:np.uint64, dest:np.uint64):
 		blue_p = blue_p | dest
 		l_blue_p.append(dest)
 		
-		# new red
-		red = red_p | red_k
-		stack.append((source, dest, True))
-
-	# on red_k -> hit & knight
-	elif dest & red_k:
-		# remove red knight
-		red_k = red_k ^ dest
-		l_red_k.remove(dest)
-
-		# add blue knigth
-		blue_k = blue_k | dest
-		l_blue_k.append(dest)
-
 		# new red
 		red = red_p | red_k
 		stack.append((source, dest, True))
@@ -145,14 +143,10 @@ def blue_k_move_execution(source:np.uint64, dest:np.uint64):
 	blue_k = blue_k ^ source
 	l_blue_k.remove(source)
 
-	# on blue_p -> knight
-	if dest & blue_p:
-		# add blue knight
-		blue_k = blue_k ^ dest
-		l_blue_k.append(dest)
+	
 	
 	# on red_k -> hit & knight
-	elif dest & red_k:
+	if dest & red_k:
 		# remove red knight
 		red_k = red_k ^ dest
 		l_red_k.remove(dest)
@@ -164,6 +158,13 @@ def blue_k_move_execution(source:np.uint64, dest:np.uint64):
 		# new red
 		red = red_p | red_k
 		stack.append((source, dest, True))
+
+	# on blue_p -> knight
+	elif dest & blue_p:
+		# add blue knight
+		blue_k = blue_k ^ dest
+		l_blue_k.append(dest)
+		stack.append((source, dest))
 
 
 
@@ -187,6 +188,7 @@ def blue_k_move_execution(source:np.uint64, dest:np.uint64):
 		# add blue pawn
 		blue_p = blue_p | dest
 		l_blue_p.append(dest)
+		stack.append((source, dest))
 	
 	# new blue
 	blue = blue_p | blue_k
@@ -213,9 +215,18 @@ def blue_move_execution(source:np.uint64, dest:np.uint64):
 
 def blue_takeback(source, dest, hit=False):
 	global blue_p, blue_k, blue, red_p, red_k, red
+
+	# hit (add red)
+	if hit:
+		if blue_k & dest:
+			l_red_k.append(dest)
+			red_k = red_k | dest
+		else:
+			l_red_p.append(dest)
+			red_p = red_p | dest
+		red = red_p | red_k
+
 	# delete dest
-
-
 	if blue_k & dest:
 		del l_blue_k[-1]
 		blue_k = blue_k ^ dest
@@ -231,16 +242,6 @@ def blue_takeback(source, dest, hit=False):
 		l_blue_p.append(source)
 		blue_p = blue_p | source
 	
-
-	# hit (add red)
-	if hit:
-		if blue_k & dest:
-			l_red_k.append(dest)
-			red_k = red_k | dest
-		else:
-			l_red_p.append(dest)
-			red_p = red_p | dest
-		red = red_p | red_k
 		
 
 	blue = blue_p | blue_k
@@ -326,27 +327,34 @@ def red_k_move_generation(source:np.uint64): # no pre-validation needed
 def red_p_move_execution(source:np.uint64, dest:np.uint64):
 	global blue_p, blue_k, blue, red_p, red_k, red
 
-	# try:
 	# delete source Position 
 	l_red_p.remove(source)
 	red_p = red_p ^ source
 
-	# except:
-	# 	print("------------------------- Exception -------------------------")
-	# 	print("source")
-	# 	print_board(source)
-	# 	print("dest")
-	# 	print_board(dest)
-	# 	print_state()
-	# 	raise Exception("red_p_move_exeution")
+
+
+	# on blue_k -> hit & knight
+	if dest & blue_k:
+		# remove blue knight
+		blue_k = blue_k ^ dest
+		l_blue_k.remove(dest)
+
+		# add red knight
+		red_k = red_k | dest
+		l_red_k.append(dest)
+		
+		# new blue
+		blue = blue_p | blue_k
+		stack.append((source, dest, True))
+
 	
+		
 	# on red_p -> knight
-	if dest & red_p:
+	elif dest & red_p:
 		# add blue knight
 		red_k = red_k | dest
 		l_red_k.append(dest)
 		stack.append((source, dest))
-
 
 	# on blue_p -> hit
 	elif dest & blue_p:
@@ -358,21 +366,6 @@ def red_p_move_execution(source:np.uint64, dest:np.uint64):
 		red_p = red_p | dest
 		l_red_p.append(dest)
 
-		# new blue
-		blue = blue_p | blue_k
-		stack.append((source, dest, True))
-
-	
-	# on blue_k -> hit & knight
-	elif dest & blue_k:
-		# remove blue knight
-		blue_k = blue_k ^ dest
-		l_blue_k.remove(dest)
-
-		# add red knight
-		red_k = red_k | dest
-		l_red_k.append(dest)
-		
 		# new blue
 		blue = blue_p | blue_k
 		stack.append((source, dest, True))
@@ -394,16 +387,9 @@ def red_k_move_execution(source:np.uint64, dest:np.uint64):
 	red_k = red_k ^ source
 	l_red_k.remove(source)
 	
-	# on red_p -> knight
-	if dest & red_p:
-		# add red knight
-		red_k = red_k ^ dest
-		l_red_k.append(dest)
-		stack.append((source, dest))
-
 	
 	# on blue_k -> hit & knight
-	elif dest & blue_k:
+	if dest & blue_k:
 		# remove blue knight
 		blue_k = blue_k ^ dest
 		l_blue_k.remove(dest)
@@ -415,6 +401,13 @@ def red_k_move_execution(source:np.uint64, dest:np.uint64):
 		# new blue
 		blue = blue_p | blue_k
 		stack.append((source, dest, True))
+
+	# on red_p -> knight
+	elif dest & red_p:
+		# add red knight
+		red_k = red_k ^ dest
+		l_red_k.append(dest)
+		stack.append((source, dest))
 
 
 
@@ -468,6 +461,17 @@ def red_move_execution(source:np.uint64, dest:np.uint64):
 		
 def red_takeback(source, dest, hit=False):
 	global blue_p, blue_k, blue, red_p, red_k, red
+
+	# hit (add blue)
+	if hit:
+		if red_k & dest:
+			l_blue_k.append(dest)
+			blue_k = blue_k | dest
+		else:
+			l_blue_p.append(dest)
+			blue_p = blue_p | dest
+		blue = blue_p | blue_k
+
 	# delete dest
 	if red_k & dest:
 		del l_red_k[-1]
@@ -484,15 +488,7 @@ def red_takeback(source, dest, hit=False):
 		l_red_p.append(source)
 		red_p = red_p | source
 
-	# hit (add red)
-	if hit:
-		if red_k & dest:
-			l_blue_k.append(dest)
-			blue_k = blue_k | dest
-		else:
-			l_blue_p.append(dest)
-			blue_p = blue_p | dest
-		blue = blue_p | blue_k
+
 	red = red_p | red_k
 
 
