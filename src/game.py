@@ -1,7 +1,7 @@
-import src.board as board
-from src.moveLib import MoveLib
-from src.gamestate import GameState
-from src.gui import Gui
+import board as board
+from moveLib import MoveLib
+from gamestate import GameState
+from gui import Gui
 import random
 import numpy as np
 

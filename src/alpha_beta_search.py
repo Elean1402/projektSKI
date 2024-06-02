@@ -1,9 +1,9 @@
-from src.evalFunction import *
-from src.gameserver import *
-from src.scoreConfig_evalFunc import *
-from src.board import *
-from src.game import *
-from src.gui import *
+from evalFunction import *
+from gameserver import *
+from scoreConfig_evalFunc import *
+from board import *
+from game import *
+from gui import *
 
 depth = 5
 

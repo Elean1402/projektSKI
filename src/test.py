@@ -3,7 +3,7 @@ import zuggenerator as gen
 from moveLib import *
 from evalFunction import *
 import random
-from src.scoreConfig_evalFunc import ScoreConfig
+from scoreConfig_evalFunc import ScoreConfig
 
 class MinimaxABAgent:
 	"""

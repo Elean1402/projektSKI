@@ -1,11 +1,11 @@
 import unittest
-from src.scoreConfig_evalFunc import ScoreConfig
-from src.evalFunction import EvalFunction
-from src.zuggenerator import *
-from src.gui import Gui
-from src.gamestate import GameState
-from src.model import *
-from src.moveLib import*
+from scoreConfig_evalFunc import ScoreConfig
+from evalFunction import EvalFunction
+from zuggenerator import *
+from gui import Gui
+from gamestate import GameState
+from model import *
+from moveLib import*
 
 class EvalFunc(unittest.TestCase):
     # def version0(self):

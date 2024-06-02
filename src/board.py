@@ -1,5 +1,5 @@
 import numpy as np
-from src.game import print_state
+from game import print_state
 
 """
 for import use:

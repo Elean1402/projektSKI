@@ -1,6 +1,6 @@
 import unittest
 #import logging
-from src.gui import*
+from gui import*
 
 class FenStringLib(unittest.TestCase):
     #@unittest.skip("hier gibts noch fehler")

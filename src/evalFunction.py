@@ -1,6 +1,6 @@
-from src.gamestate import GameState
-from src.model import *
-from src.moveLib import MoveLib
+from gamestate import GameState
+from model import *
+from moveLib import MoveLib
 from collections import Counter
 import numpy as np
 

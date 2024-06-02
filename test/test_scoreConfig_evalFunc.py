@@ -1,5 +1,5 @@
 import unittest
-from src.scoreConfig_evalFunc import ScoreConfig
+from scoreConfig_evalFunc import ScoreConfig
  
 class ScoreConfig_evalFunc(unittest.TestCase):
     def test_reversePsqT(self):

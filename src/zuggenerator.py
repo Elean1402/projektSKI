@@ -1,9 +1,9 @@
 import numpy as np
 import random
-from src.moveLib import MoveLib
-from src.gamestate import GameState
-from src.gui import Gui
-from src.benchmark import benchmark
+from moveLib import MoveLib
+from gamestate import GameState
+from gui import Gui
+from benchmark import benchmark
 
 
 
@@ -11,44 +11,44 @@ from src.benchmark import benchmark
 # Initialisation
 ######################################################################################################
 
-alpha_turn = True
+blue_turn = True
 
 
-# Alpha pawns
-alpha_p = np.uint64(0b0111111001111110) #panws start position
+# blue pawns
+blue_p = np.uint64(0b0111111001111110) #panws start position
 
-# Alpha knights
-alpha_k = np.uint64(0) #knights start position
+# blue knights
+blue_k = np.uint64(0) #knights start position
 
-# Alpha
-alpha = alpha_p | alpha_k
-
-
-# Beta pawns
-beta_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000) #pawns start position
-
-#Beta knights
-beta_k = np.uint64(0) #knights start position
-
-# Beta
-beta = beta_p | beta_k
-
-l_alpha_k, l_alpha_p, l_beta_k, l_beta_p = [],[],[],[]
+# blue
+blue = blue_p | blue_k
 
 
+# red pawns
+red_p = np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000) #pawns start position
 
-def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta, l_alpha_k, l_alpha_p, l_beta_k, l_beta_p,list_alpha_p,list_alpha_k,list_beta_p,list_beta_k
-	l_alpha_k, l_alpha_p, l_beta_k, l_beta_p =  [],[],[],[]
-	alpha_p = alpha_pawns
-	alpha_k = alpha_knights
-	alpha = alpha_p | alpha_k
+#red knights
+red_k = np.uint64(0) #knights start position
 
-	beta_p = beta_pawns
-	beta_k = beta_knights
-	beta = beta_p | beta_knights
+# red
+red = red_p | red_k
 
-	for board, figure_list in zip((alpha_p, alpha_k, beta_p, beta_k),(l_alpha_p,l_alpha_k,l_beta_p,l_beta_k)):
+l_blue_k, l_blue_p, l_red_k, l_red_p = [],[],[],[]
+
+
+
+def init_position(red_pawns, red_knights, blue_pawns, blue_knights):
+	global blue_p, blue_k, blue, red_p, red_k, red, l_blue_k, l_blue_p, l_red_k, l_red_p,list_blue_p,list_blue_k,list_red_p,list_red_k
+	l_blue_k, l_blue_p, l_red_k, l_red_p =  [],[],[],[]
+	blue_p = blue_pawns
+	blue_k = blue_knights
+	blue = blue_p | blue_k
+
+	red_p = red_pawns
+	red_k = red_knights
+	red = red_p | red_knights
+
+	for board, figure_list in zip((blue_p, blue_k, red_p, red_k),(l_blue_p,l_blue_k,l_red_p,l_red_k)):
 		for bit in range(64):
 			if board & (np.uint64(1 << bit)):
 				figure_list.append(np.uint64(1 << bit))
@@ -56,7 +56,7 @@ def init_position(beta_pawns, beta_knights, alpha_pawns, alpha_knights):
 
 
 
-	#return alpha_p, l_alpha_p, alpha_k, l_alpha_k, alpha, beta_p, l_beta_p, beta_k,l_beta_k, beta
+	#return blue_p, l_blue_p, blue_k, l_blue_k, blue, red_p, l_red_p, red_k,l_red_k, red
 
 ######################################################################################################
 # Other
@@ -73,7 +73,7 @@ R7 = np.uint64(0b000000001111111100000000000000000000000000000000000000000000000
 R8 = np.uint64(0b1111111100000000000000000000000000000000000000000000000000000000)
 def rating(player = 1):
 	rating = 0
-	for p in alpha_p:
+	for p in l_blue_p:
 		if p & R1: rating +=1
 		elif p & R2: rating +=2
 		elif p & R3: rating +=3
@@ -83,7 +83,7 @@ def rating(player = 1):
 		elif p & R7: rating +=7
 		elif p & R8: rating +=10000
 
-	for p in beta_p:
+	for p in l_red_p:
 		if p & R1: rating -=10000
 		elif p & R2: rating -=7
 		elif p & R3: rating -=6
@@ -93,7 +93,7 @@ def rating(player = 1):
 		elif p & R7: rating -=2
 		elif p & R8: rating -=1
 
-	for k in alpha_k:
+	for k in l_blue_k:
 		if k & R1: rating +=1
 		elif k & R2: rating +=2
 		elif k & R3: rating +=3
@@ -103,7 +103,7 @@ def rating(player = 1):
 		elif k & R7: rating +=7
 		elif k & R8: rating +=10000
 
-	for k in beta_k:
+	for k in l_red_k:
 		if k & R1: rating -=10000
 		elif k & R2: rating -=7
 		elif k & R3: rating -=6
@@ -116,63 +116,63 @@ def rating(player = 1):
 	return rating
 
 
-alpha_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
-beta_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
+blue_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
+red_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
 
 def isOver():
-	if alpha & alpha_on_ground_row:
-		# print_board(alpha)
-		# print_board(alpha_on_ground_row)
-		# print_board(alpha & alpha_on_ground_row)
-		return "Alpha Won"	# alpha won
-	elif beta & beta_on_ground_row:
-		return "Beta Won" # beta won
+	if blue & blue_on_ground_row:
+		# print_board(blue)
+		# print_board(blue_on_ground_row)
+		# print_board(blue & blue_on_ground_row)
+		return "blue Won"	# blue won
+	elif red & red_on_ground_row:
+		return "red Won" # red won
 	return "c"	# continue
 
 def moves_to_string(moves):
 	return [MoveLib.move(source,dest,mode=3) for source,dests in moves for dest in dests]
 	
 def play(FEN_board=False):
-	global alpha_turn
+	global blue_turn
 	if FEN_board:
 		init_position(GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board)))
 	else:
-		init_position(beta_p, beta_k, alpha_p, alpha_k)
+		init_position(red_p, red_k, blue_p, blue_k)
 	game = []
 	print_state("Startpos")
 	input()
 	while isOver() == "c":
-		if alpha_turn:
-			source, dest = alpha_random_move_execution(alpha_generation())
+		if blue_turn:
+			source, dest = blue_random_move_execution(blue_generation())
 		else:
-			source, dest = beta_random_move_execution(beta_generation())
+			source, dest = red_random_move_execution(red_generation())
 		game.append(MoveLib.move(source,dest,mode=3))
-		if alpha_turn:
-			print_state("Alpha")
+		if blue_turn:
+			print_state("blue")
 		else:
-			print_state("Beta")
-		alpha_turn = not alpha_turn
+			print_state("red")
+		blue_turn = not blue_turn
 		input()
 	print(isOver())
 
 ######################################################################################################
-# ALPHA
+# blue
 ######################################################################################################
 
-# Alpha pawn move bitboards
-alpha_p_forward = np.uint64(0b0000000001111110111111111111111111111111111111111111111111111111)
-alpha_p_right = np.uint64(0b0000000011111110111111101111111011111110111111101111111011111100)
-alpha_p_left = np.uint64(0b0000000001111111011111110111111101111111011111110111111100111111)
+# blue pawn move bitboards
+blue_p_forward = np.uint64(0b0000000001111110111111111111111111111111111111111111111111111111)
+blue_p_right = np.uint64(0b0000000011111110111111101111111011111110111111101111111011111100)
+blue_p_left = np.uint64(0b0000000001111111011111110111111101111111011111110111111100111111)
 
-# Alpha pawn hit bitboards
-alpha_p_hit_right = np.uint64(0b0000000011111100111111101111111011111110111111101111111011111110)
-alpha_p_hit_left = np.uint64(0b0000000000111111011111110111111101111111011111110111111101111111)
+# blue pawn hit bitboards
+blue_p_hit_right = np.uint64(0b0000000011111100111111101111111011111110111111101111111011111110)
+blue_p_hit_left = np.uint64(0b0000000000111111011111110111111101111111011111110111111101111111)
 
-# Alpha knights move/hit bitboards
-alpha_k_forward_right = np.uint64(0b0000000000000000111111001111111011111110111111101111111011111110)
-alpha_k_right = np.uint64(0b0000000011111000111111001111110011111100111111001111110011111100)
-alpha_k_forward_left = np.uint64(0b0000000000000000001111110111111101111111011111110111111101111111)
-alpha_k_left = np.uint64(0b0000000000011111001111110011111100111111001111110011111100111111)
+# blue knights move/hit bitboards
+blue_k_forward_right = np.uint64(0b0000000000000000111111001111111011111110111111101111111011111110)
+blue_k_right = np.uint64(0b0000000011111000111111001111110011111100111111001111110011111100)
+blue_k_forward_left = np.uint64(0b0000000000000000001111110111111101111111011111110111111101111111)
+blue_k_left = np.uint64(0b0000000000011111001111110011111100111111001111110011111100111111)
 
 # Shifts for moves
 # Pawns
@@ -185,198 +185,198 @@ akl, akfl, akr, akfr = np.uint8(10), np.uint8(17), np.uint8(6), np.uint8(15)
 
 
 
-def alpha_p_move_generation(source:np.uint64): # after pre-validation wheather source can move (being below knight)
+def blue_p_move_generation(source:np.uint64): # after pre-validation wheather source can move (being below knight)
 	dests = []
 
 	# Pawns unmovable squares
-	blocked_squares = ~(beta | alpha_k)
+	blocked_squares = ~(red | blue_k)
 
 	# forward
-	if (source & alpha_p_forward) << apf & blocked_squares:
+	if (source & blue_p_forward) << apf & blocked_squares:
 		dests.append(source << apf) 
 
 	# left
-	if (source & alpha_p_left) << apl & blocked_squares:
+	if (source & blue_p_left) << apl & blocked_squares:
 		dests.append(source << apl) 
 	
 	# hit left
-	if (source & alpha_p_hit_left) << aphl & beta:
+	if (source & blue_p_hit_left) << aphl & red:
 		dests.append(source << aphl) 
 
 	# hit right
-	if (source & alpha_p_hit_right) << aphr & beta:
+	if (source & blue_p_hit_right) << aphr & red:
 		dests.append(source << aphr) 
 
 	# right
-	if (source & alpha_p_right) >> apr & blocked_squares:
+	if (source & blue_p_right) >> apr & blocked_squares:
 		dests.append(source >> apr) 
 	
 	return dests
 	
-def alpha_k_move_generation(source:np.uint64): # no pre-validation needed
+def blue_k_move_generation(source:np.uint64): # no pre-validation needed
 	dests = []
 
 	# left
-	if (source & alpha_k_left) << akl & ~alpha_k:
+	if (source & blue_k_left) << akl & ~blue_k:
 		dests.append(source << akl) 
 
 	# forward_left
-	if (source & alpha_k_forward_left) << akfl & ~alpha_k:
+	if (source & blue_k_forward_left) << akfl & ~blue_k:
 		dests.append(source << akfl) 
 
 	# right
-	if (source & alpha_k_right) << akr & ~alpha_k:
+	if (source & blue_k_right) << akr & ~blue_k:
 		dests.append(source << akr) 
 
 	# forward_right
-	if (source & alpha_k_forward_right) << akfr & ~alpha_k:
+	if (source & blue_k_forward_right) << akfr & ~blue_k:
 		dests.append(source << akfr) 
 
 	return dests
 
-def alpha_p_move_execution(source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+def blue_p_move_execution(source:np.uint64, dest:np.uint64):
+	global blue_p, blue_k, blue, red_p, red_k, red
 
 	# delete source Position 
-	alpha_p = alpha_p ^ source
-	l_alpha_p.remove(source)
+	blue_p = blue_p ^ source
+	l_blue_p.remove(source)
 	
-	# on alpha_p -> knight
-	if dest & alpha_p:
-		# add alpha knight
-		alpha_k = alpha_k | dest
-		l_alpha_k.append(dest)
+	# on blue_p -> knight
+	if dest & blue_p:
+		# add blue knight
+		blue_k = blue_k | dest
+		l_blue_k.append(dest)
 
-	# on beta_p -> hit
-	elif dest & beta_p:
-		# remove beta pawn
-		beta_p = beta_p ^ dest
-		l_beta_p.remove(dest)
+	# on red_p -> hit
+	elif dest & red_p:
+		# remove red pawn
+		red_p = red_p ^ dest
+		l_red_p.remove(dest)
 
-		# move alpha pawn
-		alpha_p = alpha_p | dest
-		l_alpha_p.append(dest)
+		# move blue pawn
+		blue_p = blue_p | dest
+		l_blue_p.append(dest)
 		
-		# new beta
-		beta = beta_p | beta_k
+		# new red
+		red = red_p | red_k
 
-	# on beta_k -> hit & knight
-	elif dest & beta_k:
-		# remove beta knight
-		beta_k = beta_k ^ dest
-		l_beta_k.remove(dest)
+	# on red_k -> hit & knight
+	elif dest & red_k:
+		# remove red knight
+		red_k = red_k ^ dest
+		l_red_k.remove(dest)
 
-		# add alpha knigth
-		alpha_k = alpha_k | dest
-		l_alpha_k.append(dest)
+		# add blue knigth
+		blue_k = blue_k | dest
+		l_blue_k.append(dest)
 
-		# new beta
-		beta = beta_p | beta_k
+		# new red
+		red = red_p | red_k
 
 	# simple move
 	else: 
-		# move alpha pawn
-		alpha_p = alpha_p | dest
-		l_alpha_p.append(dest)
+		# move blue pawn
+		blue_p = blue_p | dest
+		l_blue_p.append(dest)
 	
-	#new alpha
-	alpha = alpha_p | alpha_k
+	#new blue
+	blue = blue_p | blue_k
 
-def alpha_k_move_execution(source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+def blue_k_move_execution(source:np.uint64, dest:np.uint64):
+	global blue_p, blue_k, blue, red_p, red_k, red
 	# delete source Position 
-	alpha_k = alpha_k ^ source
-	l_alpha_k.remove(source)
+	blue_k = blue_k ^ source
+	l_blue_k.remove(source)
 
-	# on alpha_p -> knight
-	if dest & alpha_p:
-		# add alpha knight
-		alpha_k = alpha_k ^ dest
-		l_alpha_k.append(dest)
+	# on blue_p -> knight
+	if dest & blue_p:
+		# add blue knight
+		blue_k = blue_k ^ dest
+		l_blue_k.append(dest)
 	
-	# on beta_k -> hit & knight
-	elif dest & beta_k:
-		# remove beta knight
-		beta_k = beta_k ^ dest
-		l_beta_k.remove(dest)
+	# on red_k -> hit & knight
+	elif dest & red_k:
+		# remove red knight
+		red_k = red_k ^ dest
+		l_red_k.remove(dest)
 
-		# add alpha knight
-		alpha_k = alpha_k | dest
-		l_alpha_k.append(dest)
+		# add blue knight
+		blue_k = blue_k | dest
+		l_blue_k.append(dest)
 
-		# new beta
-		beta = beta_p | beta_k
+		# new red
+		red = red_p | red_k
 
 
-	# on beta_p -> hit & pawn
-	elif dest & beta_p:
-		# remove beta pawn
-		beta_p = beta_p ^ dest
-		l_beta_p.remove(dest)
+	# on red_p -> hit & pawn
+	elif dest & red_p:
+		# remove red pawn
+		red_p = red_p ^ dest
+		l_red_p.remove(dest)
 		
-		# add alpha pawn
-		alpha_p = alpha_p | dest
-		l_alpha_p.append(dest)
+		# add blue pawn
+		blue_p = blue_p | dest
+		l_blue_p.append(dest)
 		
-		# new beta
-		beta = beta_p | beta_k
+		# new red
+		red = red_p | red_k
 
 	# simple move -> pawn
 	else: 
-		# add alpha pawn
-		alpha_p = alpha_p | dest
-		l_alpha_p.append(dest)
+		# add blue pawn
+		blue_p = blue_p | dest
+		l_blue_p.append(dest)
 	
-	# new alpha
-	alpha = alpha_p | alpha_k
+	# new blue
+	blue = blue_p | blue_k
 
 
 
-def alpha_random_move_execution(moves): #  (index, source,[dest,dest,dest])
+def blue_random_move_execution(moves): #  (index, source,[dest,dest,dest])
 	fig = random.choice(moves)
 	move = random.choice(fig[1])
-	if fig[0] & alpha_k:
-		alpha_k_move_execution(fig[0],move)
+	if fig[0] & blue_k:
+		blue_k_move_execution(fig[0],move)
 	else:
-		alpha_p_move_execution(fig[0],move)
+		blue_p_move_execution(fig[0],move)
 	return fig[0], move
 
-def alpha_hits():
-	return (alpha_k >> akl) | (alpha_k >> akfl) | (alpha_k >> akr) | (alpha_k >> akfr) | (alpha_p >> aphl) | (alpha_p >> aphr)
+def blue_hits():
+	return (blue_k >> akl) | (blue_k >> akfl) | (blue_k >> akr) | (blue_k >> akfr) | (blue_p >> aphl) | (blue_p >> aphr)
 
-def alpha_generation():
+def blue_generation():
 	moves = []
-	precon = ~(alpha_k | beta_k)
-	for source in l_alpha_p:	
+	precon = ~(blue_k | red_k)
+	for source in l_blue_p:	
 		if source & precon:   #pre-validation (pawn under knight)
-			fig_moves = alpha_p_move_generation(source)
+			fig_moves = blue_p_move_generation(source)
 			if len(fig_moves):
 				moves.append((source, fig_moves))
 	
-	for source in l_alpha_k:
-		fig_moves = alpha_k_move_generation(source)
+	for source in l_blue_k:
+		fig_moves = blue_k_move_generation(source)
 		if len(fig_moves):
 			moves.append((source, fig_moves))
 	return moves
 
 ######################################################################################################
-# BETA
+# red
 ######################################################################################################
 
-# Beta pawn move bitboards
-beta_p_forward = np.uint64(0b1111111111111111111111111111111111111111111111110111111000000000)
-beta_p_left = np.uint64(0b0011111101111111011111110111111101111111011111110111111100000000)
-beta_p_right = np.uint64(0b1111110011111110111111101111111011111110111111101111111000000000)
+# red pawn move bitboards
+red_p_forward = np.uint64(0b1111111111111111111111111111111111111111111111110111111000000000)
+red_p_left = np.uint64(0b0011111101111111011111110111111101111111011111110111111100000000)
+red_p_right = np.uint64(0b1111110011111110111111101111111011111110111111101111111000000000)
 
-# Beta pawn hit bitboards
-beta_p_hit_right = np.uint64(0b1111111111111110111111101111111011111110111111101111110000000000)
-beta_p_hit_left = np.uint64(0b1111111101111111011111110111111101111111011111110011111100000000)
+# red pawn hit bitboards
+red_p_hit_right = np.uint64(0b1111111111111110111111101111111011111110111111101111110000000000)
+red_p_hit_left = np.uint64(0b1111111101111111011111110111111101111111011111110011111100000000)
 
-# Beta knights move/hit bitboards
-beta_k_forward_right = np.uint64(0b1111111011111110111111101111111011111110111111000000000000000000)
-beta_k_right = np.uint64(0b1111110011111100111111001111110011111100111111001111100000000000)
-beta_k_forward_left = np.uint64(0b0111111101111111011111110111111101111111001111110000000000000000)
-beta_k_left = np.uint64(0b0011111100111111001111110011111100111111001111110001111100000000)
+# red knights move/hit bitboards
+red_k_forward_right = np.uint64(0b1111111011111110111111101111111011111110111111000000000000000000)
+red_k_right = np.uint64(0b1111110011111100111111001111110011111100111111001111100000000000)
+red_k_forward_left = np.uint64(0b0111111101111111011111110111111101111111001111110000000000000000)
+red_k_left = np.uint64(0b0011111100111111001111110011111100111111001111110001111100000000)
 
 
 # Shifts for moves
@@ -390,177 +390,177 @@ bpf, bpl, bpr, bphl, bphr = np.uint8(8), np.uint8(1), np.uint8(1), np.uint8(7), 
 bkl, bkfl, bkr, bkfr = np.uint8(6), np.uint8(15), np.uint8(10), np.uint8(17)
 
 
-def beta_p_move_generation(source:np.uint64):	# after pre-validation wheather source can move (being below knight
+def red_p_move_generation(source:np.uint64):	# after pre-validation wheather source can move (being below knight
 	dests = []
 	# Pawns unmovable squares
-	blocked_squares = ~(alpha | beta_k)
+	blocked_squares = ~(blue | red_k)
 
 	# forward
-	if (source & beta_p_forward) >> bpf & blocked_squares:
+	if (source & red_p_forward) >> bpf & blocked_squares:
 		dests.append(source >> bpf) 
 
 	# left
-	if (source & beta_p_left) << bpl & blocked_squares:
+	if (source & red_p_left) << bpl & blocked_squares:
 		dests.append(source << bpl) 
 
 	# right
-	if (source & beta_p_right) >> bpr & blocked_squares:
+	if (source & red_p_right) >> bpr & blocked_squares:
 		dests.append(source >> bpr) 
 
 	# hit left
-	if (source & beta_p_hit_left) >> bphl & alpha:
+	if (source & red_p_hit_left) >> bphl & blue:
 		dests.append(source >> bphl) 
 
 	# hit right
-	if (source & alpha_p_hit_right) >> bphr & alpha:
+	if (source & blue_p_hit_right) >> bphr & blue:
 		dests.append(source >> bphr) 
 	
 	return dests
 
-def beta_k_move_generation(source:np.uint64): # no pre-validation needed
+def red_k_move_generation(source:np.uint64): # no pre-validation needed
 
 	dests = []
 
 	# left
-	if (source & beta_k_left) >> bkl & ~beta_k:
+	if (source & red_k_left) >> bkl & ~red_k:
 		dests.append(source >> bkl) 
 
 	# forward_left
-	if (source & beta_k_forward_left) >> bkfl & ~beta_k:
+	if (source & red_k_forward_left) >> bkfl & ~red_k:
 		dests.append(source >> bkfl) 
 
 	# right
-	if (source & beta_k_right) >> bkr & ~beta_k:
+	if (source & red_k_right) >> bkr & ~red_k:
 		dests.append(source >> bkr) 
 
 	# forward_left
-	if (source & beta_k_forward_right) >> bkfr & ~beta_k:
+	if (source & red_k_forward_right) >> bkfr & ~red_k:
 		dests.append(source >> bkfr) 
 
 	return dests
 
-def beta_p_move_execution(source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+def red_p_move_execution(source:np.uint64, dest:np.uint64):
+	global blue_p, blue_k, blue, red_p, red_k, red
 
 	# delete source Position 
-	beta_p = beta_p ^ source
-	l_beta_p.remove(source)
+	red_p = red_p ^ source
+	l_red_p.remove(source)
 	
-	# on beta_p -> knight
-	if dest & beta_p:
-		# add alpha knight
-		beta_k = beta_k | dest
-		l_beta_k.append(dest)
+	# on red_p -> knight
+	if dest & red_p:
+		# add blue knight
+		red_k = red_k | dest
+		l_red_k.append(dest)
 
-	# on alpha_p -> hit
-	elif dest & alpha_p:
-		# remove alpha pawn
-		alpha_p = alpha_p ^ dest
-		l_alpha_p.remove(dest)
+	# on blue_p -> hit
+	elif dest & blue_p:
+		# remove blue pawn
+		blue_p = blue_p ^ dest
+		l_blue_p.remove(dest)
 
-		# move beta pawn 
-		beta_p = beta_p | dest
-		l_beta_p.append(dest)
+		# move red pawn 
+		red_p = red_p | dest
+		l_red_p.append(dest)
 
-		# new alpha
-		alpha = alpha_p | alpha_k
+		# new blue
+		blue = blue_p | blue_k
 	
-	# on alpha_k -> hit & knight
-	elif dest & alpha_k:
-		# remove alpha knight
-		alpha_k = alpha_k ^ dest
-		l_alpha_k.remove(dest)
+	# on blue_k -> hit & knight
+	elif dest & blue_k:
+		# remove blue knight
+		blue_k = blue_k ^ dest
+		l_blue_k.remove(dest)
 
-		# add beta knight
-		beta_k = beta_k | dest
-		l_beta_k.append(dest)
+		# add red knight
+		red_k = red_k | dest
+		l_red_k.append(dest)
 		
-		# new alpha
-		alpha = alpha_p | alpha_k
+		# new blue
+		blue = blue_p | blue_k
 
 	# simple move
 	else: 
-		beta_p = beta_p | dest
-		l_beta_p.append(dest)
+		red_p = red_p | dest
+		l_red_p.append(dest)
 	
-	# new beta
-	beta = beta_p | beta_k
+	# new red
+	red = red_p | red_k
 
-def beta_k_move_execution(source:np.uint64, dest:np.uint64):
-	global alpha_p, alpha_k, alpha, beta_p, beta_k, beta
+def red_k_move_execution(source:np.uint64, dest:np.uint64):
+	global blue_p, blue_k, blue, red_p, red_k, red
 	# delete source Position 
-	beta_k = beta_k ^ source
-	l_beta_k.remove(source)
+	red_k = red_k ^ source
+	l_red_k.remove(source)
 	
-	# on beta_p -> knight
-	if dest & beta_p:
-		# add beta knight
-		beta_k = beta_k ^ dest
-		l_beta_k.append(dest)
+	# on red_p -> knight
+	if dest & red_p:
+		# add red knight
+		red_k = red_k ^ dest
+		l_red_k.append(dest)
 	
-	# on alpha_k -> hit & knight
-	elif dest & alpha_k:
-		# remove alpha knight
-		alpha_k = alpha_k ^ dest
-		l_alpha_k.remove(dest)
+	# on blue_k -> hit & knight
+	elif dest & blue_k:
+		# remove blue knight
+		blue_k = blue_k ^ dest
+		l_blue_k.remove(dest)
 
-		# add beta knight
-		beta_k = beta_k | dest
-		l_beta_k.append(dest)
+		# add red knight
+		red_k = red_k | dest
+		l_red_k.append(dest)
 
-		# new alpha
-		alpha = alpha_p | alpha_k
+		# new blue
+		blue = blue_p | blue_k
 
 
-	# on alpha_p -> hit & pawn
-	elif dest & alpha_p:
-		# remove alpha pawn
-		alpha_p = alpha_p ^ dest
-		l_alpha_p.remove(dest)
+	# on blue_p -> hit & pawn
+	elif dest & blue_p:
+		# remove blue pawn
+		blue_p = blue_p ^ dest
+		l_blue_p.remove(dest)
 		
-		# add beta pawn
-		beta_p = beta_p | dest
-		l_beta_p.append(dest)
+		# add red pawn
+		red_p = red_p | dest
+		l_red_p.append(dest)
 		
-		# new alpha
-		alpha = alpha_p | alpha_k
+		# new blue
+		blue = blue_p | blue_k
 
 
 	# simple move -> pawn
 	else: 
-		# add beta pawn
-		beta_p = beta_p | dest
-		l_beta_p.append(dest)
+		# add red pawn
+		red_p = red_p | dest
+		l_red_p.append(dest)
 	
-	# new beta
-	beta = beta_p | beta_k
+	# new red
+	red = red_p | red_k
 
-def beta_generation():
+def red_generation():
 	moves = []
-	precon = ~(alpha_k | beta_k)
-	for source in l_beta_p:	
+	precon = ~(blue_k | red_k)
+	for source in l_red_p:	
 		if source & precon:   #pre-validation (pawn under knight)
-			fig_moves = beta_p_move_generation(source)
+			fig_moves = red_p_move_generation(source)
 			if len(fig_moves):
 				moves.append((source, fig_moves))
 	
-	for source in l_beta_k:
-		fig_moves = beta_k_move_generation(source)
+	for source in l_red_k:
+		fig_moves = red_k_move_generation(source)
 		if len(fig_moves):
 			moves.append((source, fig_moves))
 	return moves
 
-def beta_random_move_execution(moves):
+def red_random_move_execution(moves):
 	fig = random.choice(moves)
 	move = random.choice(fig[1])
-	if fig[0] & beta_k:
-		beta_k_move_execution(fig[0],move)
+	if fig[0] & red_k:
+		red_k_move_execution(fig[0],move)
 	else:
-		beta_p_move_execution(fig[0],move)
+		red_p_move_execution(fig[0],move)
 	return fig[0], move
 	
-def beta_hits():
-	return (beta_k >> bkl) | (beta_k >> bkfl) | (beta_k >> bkr) | (beta_k >> bkfr) | (beta_p >> bphl) | (beta_p >> bphr)
+def red_hits():
+	return (red_k >> bkl) | (red_k >> bkfl) | (red_k >> bkr) | (red_k >> bkfr) | (red_p >> bphl) | (red_p >> bphr)
 
 #########################################################################################################
 # Tests
@@ -584,67 +584,67 @@ def print_state(Color=""):
 	
 	red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
 
-	for p in l_alpha_p: red_p = red_p ^ p
-	for k in l_alpha_k: red_k = red_k ^ k
-	for p in l_beta_p: blue_p = blue_p ^ p
-	for k in l_beta_k: blue_k = blue_k ^ k
+	for p in l_blue_p: red_p = red_p ^ p
+	for k in l_blue_k: red_k = red_k ^ k
+	for p in l_red_p: blue_p = blue_p ^ p
+	for k in l_red_k: blue_k = blue_k ^ k
 
-	print("alpha")
+	print("blue")
 	print_board(red_p | red_k)
 	print()
-	print("beta")
+	print("red")
 	print_board(blue_p | blue_k)
 
-	#print(f"Number of alpha Pawns: {len(l_alpha_p)}");print_board(alpha_p)
-	#print("l_alpha_p")
-	#for p in l_alpha_p:print_board(p);print()
+	#print(f"Number of blue Pawns: {len(l_blue_p)}");print_board(blue_p)
+	#print("l_blue_p")
+	#for p in l_blue_p:print_board(p);print()
 
-	#print(f"Number of alpha Knights: {len(l_alpha_k)}");print_board(alpha_k)
-	#for k in l_alpha_k:print_board(k);print()
+	#print(f"Number of blue Knights: {len(l_blue_k)}");print_board(blue_k)
+	#for k in l_blue_k:print_board(k);print()
 
-	#print(f"Number of beta Pawns: {len(l_beta_p)}");print_board(beta_p)
-	#print("l_beta_p")
-	#for p in l_beta_p:print_board(p);print()
+	#print(f"Number of red Pawns: {len(l_red_p)}");print_board(red_p)
+	#print("l_red_p")
+	#for p in l_red_p:print_board(p);print()
 
-	#print(f"Number of beta Knights {len(l_beta_k)}");print_board(beta_k)
-	# for k in l_beta_k:print_board(k);print()
+	#print(f"Number of red Knights {len(l_red_k)}");print_board(red_k)
+	# for k in l_red_k:print_board(k);print()
 
 
 
-#beta_random_move_execution(beta_generation())
-#alpha_random_move_execution(alpha_generation())
+#red_random_move_execution(red_generation())
+#blue_random_move_execution(blue_generation())
 #print_state()
-#init_position(beta_p, beta_k, alpha_p, alpha_k)
-#print(moves_to_string(alpha_generation()))
+#init_position(red_p, red_k, blue_p, blue_k)
+#print(moves_to_string(blue_generation()))
 
 
 # import time
 if __name__ == "__main__":
-	#init_position(beta_p, beta_k, alpha_p, alpha_k)
+	#init_position(red_p, red_k, blue_p, blue_k)
 	# print_bitboards()
-	# for p in l_beta_p:
+	# for p in l_red_p:
 	# 	print_board(p)
 	play()
-	#init_position(beta_p, beta_k, alpha_p, alpha_k)
-	#benchmark(alpha_left)
-	#benchmark(alpha_right)
-	#benchmark(alpha_generation)
-	# benchmark(alpha_generation_list1)
+	#init_position(red_p, red_k, blue_p, blue_k)
+	#benchmark(blue_left)
+	#benchmark(blue_right)
+	#benchmark(blue_generation)
+	# benchmark(blue_generation_list1)
 
 
 
 
 	# start_time = time.time()
 	# for _ in range(1000000):
-	# 	l_alpha_p = l_alpha_p << apf
+	# 	l_blue_p = l_blue_p << apf
 	# vectorized_time = time.time() - start_time
 
 
 
 	# start_time = time.time()
 	# for _ in range(1000000):
-	# 	for i,v in enumerate(l_alpha_p):
-	# 		l_alpha_p[i] = v << apf
+	# 	for i,v in enumerate(l_blue_p):
+	# 		l_blue_p[i] = v << apf
 	# iterative_time = time.time() - start_time
 
 	# print("Vectorized operation time:", vectorized_time)

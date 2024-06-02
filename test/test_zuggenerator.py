@@ -1,7 +1,7 @@
 import unittest
 
-from src.benchmark import *
-from src.zuggenerator import *
+from benchmark import *
+from zuggenerator import *
 
 
 class TestZuggenerator(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
-from src.gamestate import*
-from src.gui import*
+from gamestate import*
+from gui import*
 import itertools
 
 class BitBoardLib(unittest.TestCase):
