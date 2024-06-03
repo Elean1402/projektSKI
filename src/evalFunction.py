@@ -246,7 +246,7 @@ class EvalFunction:
         #print("MaterialPoints:", rp,rk,bp,bk)
         return rp+rk-bp-bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp+bk-rp-rk
     
-    def computeOverallScore(self, moveList: list, board:list[np.uint64]):
+    def computeOverallScore(self, moveList: list, board:list[np.uint64],print= False):
         """Computes the total Score of current State
            MoveList only read once!
         Args:
@@ -284,7 +284,8 @@ class EvalFunction:
         for (startpos,adict,bc) in tempScore:
             scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
         scoredList.sort()
-        self.prettyPrintScorelist(scoredList)
+        if(print):
+            self.prettyPrintScorelist(scoredList)
         return scoredList
     
     def _computeActualPositionalPoints(self, board: list[np.uint64]):

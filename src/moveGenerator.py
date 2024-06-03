@@ -473,7 +473,7 @@ class MoveGenerator:
         
     
     
-    def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
+    def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], print= False):
         """Executes single Move and updates the Board and checks if Game Over
 
         Args:
@@ -539,7 +539,8 @@ class MoveGenerator:
                 case _: True
         
         self.checkBoardIfGameOver(gameOver,board)
-        self.prettyPrintBoard(board,gameOver)
+        if(print == True):
+            self.prettyPrintBoard(board,gameOver)
         return board.copy()
     
     
