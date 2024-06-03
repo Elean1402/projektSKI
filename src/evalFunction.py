@@ -264,7 +264,9 @@ class EvalFunction:
             
         scoredList = ScoredMoveList()
         if( len(moveList) == 0):
-            return scoredList
+            totalScore += self._materialPoints(board)
+            totalScore += self._computeActualPositionalPoints(board)
+            return scoredList.append(0,0,0,totalScore,[])
         #ScoreListForMeging can be merged with other Dict -> Count(Dict)
         # so, that values are added on same keys
         # e.g. dictA + dictB 

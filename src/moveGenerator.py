@@ -319,6 +319,7 @@ class MoveGenerator:
         
         if(len(validatedMoves) == 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            return validatedMoves
             
         gameOver[0] = DictMoveEntry.CONTINUE_GAME
         return validatedMoves
@@ -540,6 +541,7 @@ class MoveGenerator:
         
         self.checkBoardIfGameOver(gameOver,board)
         if(print == True):
+            print("move executed, new Board ist:\n")
             self.prettyPrintBoard(board,gameOver)
         return board.copy()
     

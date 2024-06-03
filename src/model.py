@@ -20,7 +20,7 @@ class ScoredMoveList(list):
             isinstance(item[0][4], list)):
             super().extend(item)
         else:
-            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int)]:\n item:", 
+            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int, list)]:\n item:", 
                             item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]), type(item[0][4]))
     
     def sort(self):
@@ -30,8 +30,8 @@ class ScoredMoveList(list):
     def __init__(self,*args):
         """Specific list type for scoring
 
-        Type: List[(np.uint64, np.uint64,int,int)]
-            ->List[(FromPos, TargetPos,MoveScore, TotalscoreAfterMove)]
+        Type: List[(np.uint64, np.uint64,int,int,list)]
+            ->List[(FromPos, TargetPos,MoveScore, TotalscoreAfterMove,BoardCommands)]
         """
         if(len(args)>0):
             self.append(args)

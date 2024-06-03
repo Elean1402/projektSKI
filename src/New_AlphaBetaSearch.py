@@ -86,8 +86,32 @@ class AlphaBetaSearch:
                 break
             
             ## Measure Time
+            alpha = self._ALPHA_INIT
+            beta = self._BETA_INIT
+            scoreWithMoveAlpha = (alpha, ())
+            scoreWithMoveBeta = (beta, ())
             if(self._testmodus):
-                self._alpha_beta(self._ALPHA_INIT, self._BETA_INIT, depth+1,self._max_player, newboard, bestMove )
+                
+                moveList = self._moveGen.genMoves(self._my_color_is,self._gameover, self._board)
+                scoredMoveList = self._eval.computeOverallScore(moveList, self._board,True)
+                if(len(scoredMoveList)==0):
+                    self._totalGameOver = DictMoveEntry.GAME_OVER_RED_WINS if self._my_color_is == Player.Red else Player.Blue
+                
+                for moveItem in scoredMoveList:
+                    
+                    score  = self._alpha_beta(self._ALPHA_INIT, self._BETA_INIT, depth+1,self._max_player, newboard, bestMove, self._my_color_is)
+                    if(self._max_player == self._my_color_is):
+                        temp = max(scoreWithMoveAlpha[0], score)
+                        if(temp != scoreWithMoveAlpha[0]):
+                            scoreWithMoveAlpha[0] = temp
+                            scoreWithMoveAlpha[1] = moveItem
+                    else:
+                        temp = min(scoreWithMoveBeta[0],score)
+                        if(temp != scoreWithMoveBeta[0]):
+                            scoreWithMoveBeta[0] =temp
+                            scoreWithMoveBeta[1] = moveItem
+                        
+                        
             ## Measure Time ??
             
             ##TODO exec Best Move
@@ -106,7 +130,7 @@ class AlphaBetaSearch:
     
 
    
-    def _alpha_beta(self, alpha:int, beta:int, depth: int | float,maxPlayer: Player, board: list[np.uint64], bestMoveStack: list, playersTurn:Player):
+    def _alpha_beta(self, alpha:int, beta:int, depth: int | float,maxPlayer: Player, board: list[np.uint64], bestMoveStack: list, myColor: Player):
         """Alpha Beta Search
             THE BASIS CODE OF THIS FUNCTION IS NOT FROM THE LECTURE,
             SOURCE: https://www.youtube.com/watch?v=l-hh51ncgDI&ab_channel=SebastianLague
@@ -118,71 +142,87 @@ class AlphaBetaSearch:
             board (list[np.uint64]): bitboard array
             maxPlayer (Player): beginning Player
         """
+        
         cboard = board.copy()
+        changedColor = self.change_player(myColor)
         if (depth <= 0 or self._gameover[0] != DictMoveEntry.CONTINUE_GAME):
             # no time left or game_over
             # return score, move ?
-            lastMove = bestMoveStack.pop()
-            return (lastMove[3],(lastMove[1],lastMove[2]))
+            totalscore = self._eval.computeOverallScore([],board)
+            return totalscore
         
-        if(self._max_player == self._my_color_is):
+        if(self._max_player == myColor):
             maxScore = self._ALPHA_INIT
             
             #best move at the beginning at the list
             # moveList = self._moveGen.genMoves(self._my_color_is,self._gameover, cboard)
-            moveList = self._moveGen.genMoves(self._my_color_is,self._gameover, cboard)
-            lastMove = 0
+            
+            #case: enemy moved with effect: game end
+            self._moveGen.checkBoardIfGameOver(self._gameover,board)
+            
+            if(self._gameover != DictMoveEntry.CONTINUE_GAME):
+                return maxScore
+            moveList = self._moveGen.genMoves(myColor,self._gameover, cboard)
+            if(len(moveList)==0):
+                return maxScore
+            
             if(self._testmodus):
-                if(len(moveList) ==0):
-                    return (maxScore,None)
+                    
                 scoredMoveList = self._eval.computeOverallScore(moveList, cboard,True)
                 
                 for moveItem in scoredMoveList:
-                    bestMoveStack.append(moveItem)
-                    newBoard = self._moveGen.execSingleMove(moveItem, self._my_color_is, self._gameover,cboard,True)
+                    
+                    newBoard = self._moveGen.execSingleMove(moveItem, myColor, self._gameover,cboard,True)
                     
                     self._moveGen.checkBoardIfGameOver(self._gameover,newBoard)
                     if(self._gameover[0] != DictMoveEntry.CONTINUE_GAME):
                       
-                       return (moveItem[3],(moveItem[0],moveItem[1]))
+                       return moveItem[3]
                     
-                    retVal = self._alpha_beta(alpha,beta, depth-1,maxPlayer, newBoard,bestMoveStack)
+                    retVal = self._alpha_beta(alpha,beta, depth-1,maxPlayer, newBoard,changedColor )
                     
-                    maxScore = max(maxScore,retVal[3])
-                    alpha = max(alpha, retVal[3])
+                    maxScore = max(maxScore,retVal)
+                    alpha = max(alpha, retVal)
                     
                     if( beta <= alpha):
                         break
-                    lastMove= bestMoveStack.pop()
-
-            return (maxScore,(lastMove[0],lastMove[1]))
+                   
+            return maxScore
         else:
             minScore = self._BETA_INIT
+            changedColor = self.change_player(myColor)
             
+            #case: enemy moved with effect: game end
+            self._moveGen.checkBoardIfGameOver(self._gameover,board)
+            
+            if(self._gameover != DictMoveEntry.CONTINUE_GAME):
+                return maxScore
             #best move at the beginning at the list
-            moveList = self._moveGen.genMoves(self._my_color_is,self._gameover, cboard)
-            lastMove = 0
+            moveList = self._moveGen.genMoves(myColor,self._gameover, cboard)
+            if(len(moveList)==0):
+                return maxScore
+            
             if(self._testmodus):
-                if(len(moveList) ==0):
-                    return (minScore,None)
+                
                 scoredMoveList = self._eval.computeOverallScore(moveList, cboard)
+                
                 for moveItem in scoredMoveList:
-                    bestMoveStack.append(moveItem)
-                    newBoard = self._moveGen.execSingleMove(moveItem, self._my_color_is, self._gameover,cboard)
+                    
+                    newBoard = self._moveGen.execSingleMove(moveItem, myColor, self._gameover,cboard)
                     
                     self._moveGen.checkBoardIfGameOver(self._gameover,newBoard)
                     if(self._gameover[0] != DictMoveEntry.CONTINUE_GAME):
-                       return (moveItem[3], (moveItem[0],moveItem[1]))
+                       return moveItem[3]
                       
-                    retVal = self._alpha_beta(alpha,beta, depth-1,maxPlayer, newBoard,bestMoveStack)
+                    retVal = self._alpha_beta(alpha,beta, depth-1,maxPlayer, newBoard,changedColor)
                     
                     minScore = min(minScore,retVal[0])
                     alpha = min(beta, retVal[0])
                     
                     if( beta <= alpha):
                         break
-                    lastMove =bestMoveStack.pop()
-            return (minScore,(lastMove[0],lastMove[1]))
+                    
+            return minScore
             
                 
             
@@ -191,7 +231,7 @@ class AlphaBetaSearch:
     
 
     def change_player(self, player):
-        self.player = Player.Blue if player == Player.Red else Player.Red
+        return Player.Blue if player == Player.Red else Player.Red
         
     def _convertPlayerString(self,pstr: str):
         return Player.Red if pstr == "r" else Player.Blue
