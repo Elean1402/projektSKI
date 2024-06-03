@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
 import sys
-
+from src.gui import Gui
 
 minimum_version = (3,12)
 if sys.version_info < minimum_version:
@@ -28,6 +28,22 @@ class GameState:
     
     
     figureStack = {_ARR_INDEX_R:1, _ARR_INDEX_B:4, _ARR_INDEX_RR:2, _ARR_INDEX_RB:5, _ARR_INDEX_BB:8, _ARR_INDEX_BR:3}
+    
+    @classmethod
+    def createBitBoardFromFEN(self,fen:str):
+        """Creates Bitboard from FEN String
+            **NEED TO BE IMPLEMENTED FOR
+            PERFORMANCE ***
+        Args:
+            fen (str): FEN
+
+        Returns:
+            list[np.uint64]: Bitboard
+        """
+        #TODO
+        M = Gui.fenToMatrix(fen)
+        BB = GameState.createBitBoardFrom(M,True)
+        return BB
     
     @classmethod
     def createBitBoardFrom(self,matrix:np.ndarray,mode=False):
