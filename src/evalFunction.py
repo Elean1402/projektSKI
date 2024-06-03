@@ -1,11 +1,13 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import MoveLib
 from collections import Counter
 from src.moveGenerator import MoveGenerator
 import numpy as np
-from itertools import chain
-from more_itertools import ilen
+
+
 
 
 class EvalFunction:
@@ -256,15 +258,17 @@ class EvalFunction:
             board (list[np.uint64]): Bitboard
             
         Returns:
-            List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int)
+            List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int, BoardCommandlist: list[BoardCommand])
             Ordering: Move with highest overall score at the beginning of the list.
-               
+            If no move is possible, then return [(0,0,0,totalScore,[])]
         """
         
             
         scoredList = ScoredMoveList()
         if( len(moveList) == 0):
-            return scoredList
+            totalScore += self._materialPoints(board)
+            totalScore += self._computeActualPositionalPoints(board)
+            return scoredList.append(0,0,0,totalScore,[])
         #ScoreListForMeging can be merged with other Dict -> Count(Dict)
         # so, that values are added on same keys
         # e.g. dictA + dictB 
@@ -337,4 +341,5 @@ class EvalFunction:
             print("")
 
     
+            
         

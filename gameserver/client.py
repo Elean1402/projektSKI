@@ -1,3 +1,4 @@
+
 import pygame
 import json
 import os
@@ -8,8 +9,8 @@ from game import Game
 
 pygame.font.init()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from alpha_beta_search import generate_moves
-from zuggenerator import *
+from src.new_alpha import *
+
 
 
 def main():
@@ -43,7 +44,7 @@ def main():
 			# allow to only give input, when it is your turn
 			if player == 0 and game["player1"] or player == 1 and game["player2"]:
 				print("New Board: " + game["board"])
-				response = random.choice(moves_to_string(generate_moves(game)))
+				response = "" #TODO: here alpha beta search should be called
 				data = json.dumps(response)
 				n.send(data)
 				last_action_time = pygame.time.get_ticks()  # Reset the timer after taking an action

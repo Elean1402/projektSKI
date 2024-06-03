@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
 from src.gamestate import*
 from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray,NotAccessiblePos, BoardCommand
@@ -319,6 +321,7 @@ class MoveGenerator:
         
         if(len(validatedMoves) == 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            return validatedMoves
             
         gameOver[0] = DictMoveEntry.CONTINUE_GAME
         return validatedMoves
@@ -457,7 +460,7 @@ class MoveGenerator:
         """Game is over if last Row is reached or
            no possible Moves
         Returns: Boolean: True for win else loose"""    
-        gameOver[0] = DictMoveEntry.CONTINUE_GAME
+       
         if((board[GameState._ZARR_INDEX_B_KNIGHTS] |
             board[GameState._ZARR_INDEX_B_PAWNS]) & 
             BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] 
@@ -473,7 +476,7 @@ class MoveGenerator:
         
     
     
-    def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], print= False):
+    def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], printB: bool = False):
         """Executes single Move and updates the Board and checks if Game Over
 
         Args:
@@ -488,6 +491,7 @@ class MoveGenerator:
             (Array[uint64]): Board
             
         """
+        boardCopy = board.copy()
         #TODO check if Board is initialized
         # if(not boardIsInitialized):
         #     raise ValueError("Board is not initialized!")
@@ -495,7 +499,7 @@ class MoveGenerator:
         if(len(move)== 0):
            print("move is empty, Game Over")
            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
-           return board.copy()
+           return boardCopy
         
         startpos = move[0]
         targetpos = move[1]
@@ -505,43 +509,44 @@ class MoveGenerator:
             bc = BoardCommand(bc)
             match bc:
                 case BoardCommand.Hit_Red_PawnOnTarget: 
-                    board[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
                 case BoardCommand.Hit_Blue_PawnOnTarget: 
-                    board[GameState._ZARR_INDEX_B_PAWNS] &=  ~targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_PAWNS] &=  ~targetpos
                 case BoardCommand.Hit_Red_KnightOnTarget: 
-                    board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
                 case BoardCommand.Hit_Blue_KnightOnTarget: 
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] &=  ~targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &=  ~targetpos
                 case BoardCommand.Upgrade_Blue_KnightOnTarget: 
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-                    board[GameState._ZARR_INDEX_B_PAWNS] &= ~ startpos
+                    boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~ startpos
                 case BoardCommand.Upgrade_Red_KnightOnTarget: 
-                    board[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
-                    board[GameState._ZARR_INDEX_R_PAWNS] &= ~ startpos
+                    boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~ startpos
                 case BoardCommand.Degrade_Blue_KnightOnTarget:
-                    board[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] &= ~ startpos
+                    boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~ startpos
                 case BoardCommand.Degrade_Red_KnightOnTarget: 
-                    board[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
-                    board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~ startpos
+                    boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~ startpos
                 case BoardCommand.Move_Blue_Knight_no_Change:
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
+                    boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
                 case BoardCommand.Move_Red_Knight_no_Change:
-                    board[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
-                    board[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
+                    boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
                 case BoardCommand.Move_Blue_Pawn_no_Change:
-                    board[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-                    board[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
+                    boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
                 case BoardCommand.Move_Red_Pawn_no_Change:
-                    board[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
-                    board[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+                    boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+                    boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
                 case _: True
         
-        self.checkBoardIfGameOver(gameOver,board)
-        if(print == True):
-            self.prettyPrintBoard(board,gameOver)
-        return board.copy()
+        self.checkBoardIfGameOver(gameOver,boardCopy)
+        if(printB == True):
+            print("move executed, new Board ist:\n")
+            self.prettyPrintBoard(boardCopy,gameOver)
+        return boardCopy.copy()
     
     
         

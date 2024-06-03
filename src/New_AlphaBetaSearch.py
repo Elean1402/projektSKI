@@ -1,13 +1,13 @@
 import copy
 import time
 
-from src.evalFunction import *
-from src.gamestate import *
-from src.gui import *
-from src.scoreConfig_evalFunc import *
-from src.moveGenerator import MoveGenerator
-from src.moveLib import *
-from src.model import *
+from evalFunction import *
+from gamestate import *
+from gui import *
+from scoreConfig_evalFunc import *
+from moveGenerator import MoveGenerator
+from moveLib import *
+from model import *
 
 class AlphaBetaSearch:
     """
@@ -76,9 +76,6 @@ class AlphaBetaSearch:
             #Server needs to wait until its our turn
             
             #waiting...
-            
-            #TODO update Board (opponents move)
-            #self._board = xxxx
             
             #TODO CHECK if GAME OVER
             self._moveGen.checkBoardIfGameOver(self._totalGameOver,newboard)

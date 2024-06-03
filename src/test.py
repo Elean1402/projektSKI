@@ -1,7 +1,8 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import time
-import zuggenerator as gen
-from moveLib import *
-from evalFunction import *
+from src.moveLib import *
+from src.evalFunction import *
 import random
 from src.scoreConfig_evalFunc import ScoreConfig
 

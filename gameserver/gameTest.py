@@ -1,5 +1,5 @@
-import sys
-sys.path.append("..")
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from src.model import*
 from src.New_AlphaBetaSearch import AlphaBetaSearch
 test = "6/8/8/8/8/4b03/4r0r02/6 b"
