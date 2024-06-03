@@ -1,6 +1,6 @@
 import unittest
 from src.scoreConfig_evalFunc import ScoreConfig
- 
+from src.model import *
 class ScoreConfig_evalFunc(unittest.TestCase):
     def test_reversePsqT(self):
         testcase = {    
@@ -23,3 +23,11 @@ class ScoreConfig_evalFunc(unittest.TestCase):
         print("testcase:\n", ScoreConfig.reversePsqT(testcase))
         print("targetcase:\n",target)
         self.assertEqual(ScoreConfig.reversePsqT(testcase),target)
+    
+    def test_reversePsqT2(self):
+       config1 = ScoreConfig.Version1(Player.Blue)
+     
+       #print(ScoreConfig.Version1())
+       print(config1[Config.PIECESQUARE_TABLE_PAWN_Blue])
+       print(config1[Config.PIECESQUARE_TABLE_KNIGHT_Blue])
+       self.assertEqual(True, False) 

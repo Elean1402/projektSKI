@@ -24,8 +24,8 @@ class ScoredMoveList(list):
                             item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]), type(item[0][4]))
     
     def sort(self):
-        """Sort List in ascending order by total score"""
-        super().sort(key=lambda x: x[3])
+        """Sort List in descending order by total score"""
+        super().sort(key=lambda x: x[3],reverse=True)
         return self
     def __init__(self,*args):
         """Specific list type for scoring
@@ -88,6 +88,7 @@ class Config(Enum):
     PIECESQUARE_TABLE_KNIGHT_Blue ="PIECESQUARE_TABLE_KNIGHT_Blue"
     PIECESQUARE_TABLE_PAWN_Red ="PIECESQUARE_TABLE_PAWN_Red"
     PIECESQUARE_TABLE_KNIGHT_Red ="PIECESQUARE_TABLE_KNIGHT_Red"
+    MaxPlayer = "MaxPlayer"
 
 class Player(Enum):
     """ Blue (Bottom) = Alpha?? (from Zuggenerator)
@@ -237,6 +238,12 @@ class BoardCommand(Enum):
     Move_Blue_Pawn_no_Change        = 10
     Move_Red_Pawn_no_Change         = 11
     Cannot_Move                     = 12
+    
+class GameServerModel(Enum):
+    FEN_BOARD = 0
+    CURRENT_PLAYER_STRING = 1
+    PLAYER1 = 2
+    PLAYER2 = 3
 
 
     

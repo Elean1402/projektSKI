@@ -95,28 +95,31 @@ class EvalFunc(unittest.TestCase):
         self.assertEqual(True,True)
         
     def test_evalFunc_FullTest1(self):
-        efr = EvalFunction(ScoreConfig.Version0(),Player.Red)
-        efb = EvalFunction(ScoreConfig.Version1(),Player.Blue)
+        ef = EvalFunction(ScoreConfig.Version1(Player.Red))
+        
         #print(ef._CONFIG_DICT)
-        board = GameState.createBitBoardFromFEN("b0b0b0b0b0b0/b0b0b0b0b0b0b0b0/8/8/8/8/r0r0r0r0r0r0r0r0/r0r0r0r0r0r0")
+        board = GameState.createBitBoardFromFEN("6/8/8/8/2r0b04/8/8/6")
         mvg = MoveGenerator(board)
         gameOver = [DictMoveEntry.CONTINUE_GAME]
         
         
         i = 0
+        z= 0
         while(gameOver[0] == DictMoveEntry.CONTINUE_GAME):
+        #while(z <= 10):
             if(i == 2):
                 i=0
             print("i=",i)
             player = Player.Red if i % 2 == 0 else Player.Blue
-            moves = mvg.genMoves(player,gameOver)
+            moves = mvg.genMoves(player,gameOver,board)
                 
-            scorelist = efr.computeOverallScore(moves, board)
+            scorelist = ef.computeOverallScore(moves, board)
             
-            newBoard = mvg.execSingleMove(scorelist.pop() if len(scorelist)!= 0 else [],player, gameOver)
-            
-            
+            newBoard = mvg.execSingleMove(scorelist[0] if len(scorelist)!= 0 else [],player, gameOver, board)
+            board = newBoard
+            #mvg.up
             i+=1
+            z+=1
         
         self.assertEqual(True, False)
             
