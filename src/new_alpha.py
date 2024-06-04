@@ -18,6 +18,7 @@ class AlphaBetaSearch:
 		self.moveLib = MoveLib()
 		self.game = game
 		self.player = self.game[GET_PLAYER_INDEX]
+		self.opponent = Player.Red if self.player == Player.Blue else Player.Blue
 		self.eval = EvalFunction(ScoreConfig.Version1(self.player))
 		self.gameover =   [DictMoveEntry.CONTINUE_GAME]
 		self.totalGameOver = [DictMoveEntry.CONTINUE_GAME]
@@ -61,20 +62,13 @@ class AlphaBetaSearch:
 		self.player = Player.Blue
 			
 		bitboard = bitboard_copy.copy()
+		moves = self.moveGen.genMoves(self.player, self.gameover, bitboard)
 		self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
-		if self.gameover[0] != DictMoveEntry.CONTINUE_GAME or  depthleft == 0:
-			etc = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-			points = self.eval.computeOverallScore(etc, bitboard)[0][3]
+		if self.gameover[0] != DictMoveEntry.CONTINUE_GAME or  depthleft == 0 or len(moves) == 0:
+			points = self.eval.computeOverallScore(moves, bitboard)[0][3]
 			return points, None
 			
-		
-		moves = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-		if len(moves) == 0:
-			etc = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-			points = self.eval.computeOverallScore(etc, bitboard)[0][3]
-			return points, None
-		else:
-			scorelist = self.eval.computeOverallScore(moves, bitboard, False)
+		scorelist = self.eval.computeOverallScore(moves, bitboard, False)
 		best_move = None
 		for move in scorelist:
 			temp_move = move
@@ -96,22 +90,12 @@ class AlphaBetaSearch:
 	def alphaBetaMin(self, alpha, beta, depthleft, bitboard_copy, start_time):
 		self.player = Player.Red
 		bitboard = bitboard_copy.copy()
+		moves = self.moveGen.genMoves(self.opponent, self.gameover, bitboard)
 		self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
-		if(self.gameover[0] != DictMoveEntry.CONTINUE_GAME) or depthleft == 0:
-			etc = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-			points = self.eval.computeOverallScore(etc, bitboard)[0][3]
-			
+		if self.gameover[0] != DictMoveEntry.CONTINUE_GAME or  depthleft == 0 or len(moves) == 0:
+			points = self.eval.computeOverallScore(moves, bitboard)[0][3]
 			return points, None
-		
-
-		moves = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-		if len(moves) == 0:
-			etc = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-			points = self.eval.computeOverallScore(etc, bitboard)[0][3]
-			
-			return points, None
-		else:
-			scorelist = self.eval.computeOverallScore(moves, bitboard, False)
+		scorelist = self.eval.computeOverallScore(moves, bitboard, False)
 		best_move = None
 		for move in scorelist:
 			temp_move = move
