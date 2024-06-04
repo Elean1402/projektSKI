@@ -10,7 +10,8 @@ test3 = "6/8/8/8/8/8/8/b05 b"
 test4 = "6/8/8/8/8/8/8/r05 b"
 test5 = "6/8/8/8/1r01b04/8/8/6 b"
 test6 = "6/8/8/8/2r0b04/8/8/6 b"
-board, player = test.split(" ")
+test7 = "6/8/8/8/1r0b0r04/2r05/8/6 b"
+board, player = test7.split(" ")
 game = {GameServerModel.FEN_BOARD: board,
 		GameServerModel.CURRENT_PLAYER_STRING : player,
 		GameServerModel.PLAYER1: True,
