@@ -15,7 +15,7 @@ class Benchmark:
         Example: Benchmark.benchmark(lambda: my_function('arg1_value', 'arg2_value'), 'my_function', 'fen_string')
         """
         with open("benchmark.txt", "a") as txt:
-            zug_time = min(repeat(func_with_args, number=1000, repeat=1))
+            zug_time = min(repeat(func_with_args, number=1, repeat=1000))
             if fen:
                 txt.write(f'{func_name} für {fen} ist {zug_time}s (min aus 1000 Zügen) \n')
             else:
