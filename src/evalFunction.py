@@ -1,11 +1,13 @@
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import MoveLib
 from collections import Counter
 from src.moveGenerator import MoveGenerator
 import numpy as np
-from itertools import chain
-from more_itertools import ilen
+#from itertools import chain
+#from more_itertools import ilen
 
 
 class EvalFunction:
@@ -246,7 +248,7 @@ class EvalFunction:
         #print("MaterialPoints:", rp,rk,bp,bk)
         return rp+rk-bp-bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp+bk-rp-rk
     
-    def computeOverallScore(self, moveList: list, board:list[np.uint64],print= False):
+    def computeOverallScore(self, moveList: list, board:list[np.uint64],printList= False, returnSortedList= True)-> ScoredMoveList:
         """Computes the total Score of current State
            MoveList only read once!
         Args:
@@ -263,15 +265,16 @@ class EvalFunction:
         
             
         scoredList = ScoredMoveList()
+        totalScore = 0
         if( len(moveList) == 0):
             totalScore += self._materialPoints(board)
             totalScore += self._computeActualPositionalPoints(board)
-            return scoredList.append(0,0,0,totalScore,[])
+            return scoredList.append((np.uint64(0),np.uint64(0),int(0),int(totalScore),[]))
         #ScoreListForMeging can be merged with other Dict -> Count(Dict)
         # so, that values are added on same keys
         # e.g. dictA + dictB 
         tempScore = ScoreListForMerging()
-        totalScore = 0
+        
         for index in moveList:
             tempScore.append(self._pieceSquareTable(index[0],index[1], board,index[2]))
             #TODO add some more Features
@@ -283,11 +286,18 @@ class EvalFunction:
         #print("totalscore :", totalScore)
         #print("tempscore:\n", tempScore)
         #TODO Last processing
+        
         for (startpos,adict,bc) in tempScore:
             scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
-        scoredList.sort()
-        if(print):
+        
+        if(returnSortedList):
+            scoredList.sort()
+        
+        
+        
+        if(printList):
             self.prettyPrintScorelist(scoredList)
+            print(scoredList)
         return scoredList
     
     def _computeActualPositionalPoints(self, board: list[np.uint64]):

@@ -1,4 +1,6 @@
 import numpy as np
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import*
 from src.model import Player,BitMaskDict, DICT_MOVE, DictMoveEntry,BIT_MASK_ARRAY_KNIGHT_BLUE,BIT_MASK_ARRAY_KNIGHT_RED,BIT_MASK_ARRAY_PAWN_BLUE,BIT_MASK_ARRAY_PAWN_RED,FilteredPositionsArray,NotAccessiblePos, BoardCommand
 from src.moveLib import MoveLib as mv
@@ -454,7 +456,7 @@ class MoveGenerator:
         return positions
     
     @classmethod
-    def checkBoardIfGameOver(self,gameOver: list[DictMoveEntry],board: list[np.uint64]):
+    def checkBoardIfGameOver(self,gameOver: list[DictMoveEntry],board: list[np.uint64],printBoard= True):
         """Game is over if last Row is reached or
            no possible Moves
         Returns: Boolean: True for win else loose"""    
@@ -472,6 +474,8 @@ class MoveGenerator:
             != 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_RED_WINS
         
+        if((gameOver[0] != DictMoveEntry.CONTINUE_GAME) & printBoard):
+            self.prettyPrintBoard(self, board,gameOver)
     
     
     def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], printB: bool = False):
@@ -481,14 +485,13 @@ class MoveGenerator:
             move (tuple): (startpos: uint64, targetpos: uint64, moveScore: int, totalscore: int,  list[BoardCommands])
             player (Player): Red or Blue
             gameOver (list[DictMoveEntry]): 
-        Raises:
-            ValueError: if Board not initialized
-            TypeError: if move is not from Class ScoredMoveList
+            board (list[np.uint64]): _description_
+            printB (bool, optional): _description_. Defaults to False.
 
         Returns:
-            (Array[uint64]): Board
-            
+             (Array[uint64]): Copy of Board
         """
+       
         boardCopy = board.copy()
         #TODO check if Board is initialized
         # if(not boardIsInitialized):
@@ -544,7 +547,7 @@ class MoveGenerator:
         if(printB == True):
             print("move executed, new Board ist:\n")
             self.prettyPrintBoard(boardCopy,gameOver)
-        return boardCopy.copy()
+        return boardCopy
     
     
         

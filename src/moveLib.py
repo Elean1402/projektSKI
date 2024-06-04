@@ -1,7 +1,7 @@
 
 import numpy as np
-import sys
-import os
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Füge das Verzeichnis src zum Python-Pfad hinzu
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))

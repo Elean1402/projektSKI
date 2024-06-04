@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
-import sys
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gui import Gui
 
 minimum_version = (3,12)
