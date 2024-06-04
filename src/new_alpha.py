@@ -16,7 +16,7 @@ GET_BOARD_INDEX = 0
 class TimeExceeded(Exception):
     pass
 class AlphaBetaSearch:
-	def __init__(self, game, time_limit=30):
+	def __init__(self, game, time_limit=2):
 		self.moveLib = MoveLib()
 		self.game = game
 		self.player = self.game[GET_PLAYER_INDEX]
@@ -33,7 +33,7 @@ class AlphaBetaSearch:
 		self.alpha = -float('inf')
 		self.beta = float('inf')
 	
-	def search(self, iterative_deepening=True):
+	def search(self, iterative_deepening=False):
 		
 		try:
 			if iterative_deepening:
@@ -44,7 +44,7 @@ class AlphaBetaSearch:
 					result, temp_move = self.alphaBetaMax(self.alpha, self.beta, depth, self.bitboards)
 					if temp_move is not None:
 						self.best_move = temp_move
-					self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
+					self.moveGen.checkBoardIfGameOver(self.gameover,self.bitboards)
 					if self.total_gameover or time.time() - self.start_time > self.time_limit:
 						break
 					depth += 2
@@ -118,27 +118,30 @@ class AlphaBetaSearch:
 		self.player = state[1]
 		bitboard = state[0]
 		moves = self.moveGen.genMoves(self.player, self.gameover, bitboard)
-		points = self.eval.computeOverallScore(moves, bitboard)[0][3]
-		Benchmark.benchmark(lambda: self.eval.computeOverallScore(moves, bitboard), 'computeOverallScore', '1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b')
+		score = self.eval.computeOverallScore(moves, bitboard)[0]
+		
+		Benchmark.benchmark(lambda: score, 'computeOverallScore', '1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b')
+		return score
+		
 
-def search(state):
+def search(input_dict):
 	m = MoveLib()
+	fen, player = input_dict["board"].split(" ")
+	player = Player.Blue if player == "b" else Player.Red
+	bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
+	state = [bitboard, player, True, False]
 	search_instance = AlphaBetaSearch(state)
-	result = search_instance.search()
-	if result is not None:
-					result = [m.BitsToPosition(result[0]),
-							m.BitsToPosition(result[1])]
-    
-	print(result, "result")
-	return result
 	
+	result = search_instance.search()
+	if result is None:
+		result = [0, 0]
+	result = [m.BitsToPosition(result[0]), m.BitsToPosition(result[1])]
+	result = "-".join(result)
+	print(result)
+	return result
 	
 
 
 if __name__ == '__main__':
-	test7 = "3b0b01/8/1b0b01b0b02/2r01b01b01/8/2rr2r02/1r06/2r03 r"
-	fen, player = test7.split(" ")
-	player = Player.Blue if player == "b" else Player.Red
-	bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
-	gameArray = [bitboard, player, True, False]
-	search(gameArray)
+	input_dict = {"board": "1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b"}
+	search(input_dict)
