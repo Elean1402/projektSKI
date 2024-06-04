@@ -463,21 +463,18 @@ class MoveGenerator:
            no possible Moves
         Returns: Boolean: True for win else loose"""    
        
-        if((board[GameState._ZARR_INDEX_B_KNIGHTS] |
-            board[GameState._ZARR_INDEX_B_PAWNS]) & 
-            BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] 
-            != 0):
+        if( ((board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_B_PAWNS]) & BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] != 0)  or (board[GameState._ZARR_INDEX_R_KNIGHTS] |
+            board[GameState._ZARR_INDEX_R_PAWNS])==0 ):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS
             
         
-        elif((board[GameState._ZARR_INDEX_R_KNIGHTS] |
-            board[GameState._ZARR_INDEX_R_PAWNS]) & 
-            BitMaskDict[DictMoveEntry.GAME_OVER_RED_WINS] 
-            != 0):
+        elif( ((board[GameState._ZARR_INDEX_R_KNIGHTS] | board[GameState._ZARR_INDEX_R_PAWNS]) & BitMaskDict[DictMoveEntry.GAME_OVER_RED_WINS] != 0) or (board[GameState._ZARR_INDEX_B_KNIGHTS] |
+            board[GameState._ZARR_INDEX_B_PAWNS])==0 ) :
             gameOver[0] = DictMoveEntry.GAME_OVER_RED_WINS
         
         if((gameOver[0] != DictMoveEntry.CONTINUE_GAME) & printBoard):
-            self.prettyPrintBoard(self, board,gameOver)
+            print("Game Over")
+            #self.prettyPrintBoard(self, board,gameOver)
     
     
     def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], printB: bool = False):
@@ -545,7 +542,7 @@ class MoveGenerator:
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
                 case _: True
         
-        self.checkBoardIfGameOver(gameOver,boardCopy)
+        self.checkBoardIfGameOver(gameOver,boardCopy,printB)
         if(printB == True):
             print("move executed, new Board ist:\n")
             self.prettyPrintBoard(boardCopy,gameOver)
@@ -559,6 +556,7 @@ class MoveGenerator:
         print("current Board\n",GameState.fromBitBoardToMatrix(board,True))
         if(len(gameOver)!= 0):
             print("Game status:", gameOver[0])
+            #raise ValueError("stop")
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
         
     
