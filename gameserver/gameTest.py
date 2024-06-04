@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import sys,os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-=======
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
->>>>>>> aef12a7648f5784e3cfc5a06bff31c58f288686d
 from src.model import*
 from src.abs_for_internal_usage import AlphaBetaSearch
 test = "6/8/8/8/8/4b03/4r0r02/6 b"
