@@ -135,22 +135,16 @@ class MoveLib:
         #     case _: return None 
         return retVal
     @classmethod         
-    def BitsToPosition(self,value:np.uint64):
-        row = 1
-        col = 0
-        tmp = value
-        while(tmp >=2):
-            tmp = tmp >> np.uint64(1)
-            col+=1
-            if(col == 8):
-               col = 0
-               row +=1 
-            
-            
-        
-        retCol = ""
-        try:
-            retCol =self._bitColDict[col]
-        except:
-            print("Error at BitsToPosition")
+
+    def BitsToPosition(self, value: np.uint64):
+        # Convert np.uint64 to Python int and compute the position of the set bit
+        pos = int(value).bit_length() - 1
+
+        # Compute the row and column
+        row = pos // 8 + 1
+        col = pos % 8
+
+        # Convert the column to a letter
+        retCol = self._bitColDict[col]
+
         return retCol + str(row)

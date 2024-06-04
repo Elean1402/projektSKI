@@ -28,64 +28,55 @@ class AlphaBetaSearch:
 		self.moveGen = MoveGenerator(self.bitboards)
 		self.best_move = None
 		self.time_limit = time_limit 
+		self.start_time = time.time()
 		self.bestMoves = []
 		self.alpha = -float('inf')
 		self.beta = float('inf')
 	
-	def search(self, iterative_deepening=False):
-		start_time = time.time()
+	def search(self, iterative_deepening=True):
+		
 		try:
 			if iterative_deepening:
-				print("Iterative Deepening")
-				depth = 1
+				
+				depth = 2
 				while True:
-					result, temp_move = self.alphaBetaMax(self.alpha, self.beta, depth, self.bitboards, start_time)
+					print("Iterative Deepening", depth)
+					result, temp_move = self.alphaBetaMax(self.alpha, self.beta, depth, self.bitboards)
 					if temp_move is not None:
-						self.best_move = [self.moveLib.BitsToPosition(temp_move[0]),
-											self.moveLib.BitsToPosition(temp_move[1])]
-						print("Best Move: ", self.best_move)
+						self.best_move = temp_move
 					self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
-					if self.total_gameover or time.time() - start_time > self.time_limit:
+					if self.total_gameover or time.time() - self.start_time > self.time_limit:
 						break
-					print("Depth: ", depth)
-					depth += 1
+					depth += 2
 			else:
-				start_time = time.time()
 				alpha = -float('inf')
 				beta = float('inf')
-				print(self.bitboards)
-				result, temp_move = self.alphaBetaMax(alpha, beta, 4, self.bitboards, start_time)
-				print("Result: ", result)
+				result, temp_move = self.alphaBetaMax(alpha, beta, 4, self.bitboards)
 				if temp_move is not None:
-					self.best_move = [self.moveLib.BitsToPosition(temp_move[0]),
-										self.moveLib.BitsToPosition(temp_move[1])]
+					self.best_move = temp_move
 		except TimeExceeded:
 			pass
 		return self.best_move
 
 
-	def alphaBetaMax(self, alpha, beta, depthleft, bitboard_copy, start_time):
-
-			
+	def alphaBetaMax(self, alpha, beta, depthleft, bitboard_copy):
 		bitboard = bitboard_copy.copy()
 		moves = self.moveGen.genMoves(self.player, self.gameover, bitboard)
 		self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
 		if self.gameover[0] != DictMoveEntry.CONTINUE_GAME or  depthleft == 0 or len(moves) == 0:
 			if self.gameover[0] != DictMoveEntry.CONTINUE_GAME:
-				print("Gameover", self.gameover[0])
 				self.total_gameover = True
 			points = self.eval.computeOverallScore(moves, bitboard)[0][3]
-			Benchmark.benchmark(lambda: self.eval.computeOverallScore(moves, bitboard), 'computeOverallScore', '1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b')
 			return points, None
 			
 		scorelist = self.eval.computeOverallScore(moves, bitboard, False)
 		best_move = None
 		for move in scorelist:
-			if time.time() - start_time > self.time_limit:
+			if time.time() - self.start_time > self.time_limit:
 				raise TimeExceeded()
 			
 			newBoard = self.moveGen.execSingleMove(move, self.player, self.gameover,bitboard,False)
-			score, _ = self.alphaBetaMin(alpha, beta, depthleft - 1, newBoard, start_time)
+			score, _ = self.alphaBetaMin(alpha, beta, depthleft - 1, newBoard)
 
 			if score >= beta:
 				return beta, best_move
@@ -96,24 +87,24 @@ class AlphaBetaSearch:
 		return alpha, best_move
 
 
-	def alphaBetaMin(self, alpha, beta, depthleft, bitboard_copy, start_time):
+	def alphaBetaMin(self, alpha, beta, depthleft, bitboard_copy):
 		bitboard = bitboard_copy.copy()
 		moves = self.moveGen.genMoves(self.opponent, self.gameover, bitboard)
 		self.moveGen.checkBoardIfGameOver(self.gameover,bitboard)
 		if self.gameover[0] != DictMoveEntry.CONTINUE_GAME or  depthleft == 0 or len(moves) == 0:
 			if self.gameover[0] != DictMoveEntry.CONTINUE_GAME:
-				print("Gameover", self.gameover[0])
 				self.total_gameover = True
+
 			points = self.eval.computeOverallScore(moves, bitboard)[0][3]
 			return points, None
 		scorelist = self.eval.computeOverallScore(moves, bitboard, False)
 		best_move = None
 		for move in scorelist:
-			if time.time() - start_time > self.time_limit:
+			if time.time() - self.start_time > self.time_limit:
 				raise TimeExceeded()
 			
 			newBoard = self.moveGen.execSingleMove(move, self.opponent, self.gameover,bitboard, False)
-			score, _ = self.alphaBetaMax(alpha, beta, depthleft - 1, newBoard, start_time)
+			score, _ = self.alphaBetaMax(alpha, beta, depthleft - 1, newBoard)
 
 			if score <= alpha:
 				
@@ -131,15 +122,21 @@ class AlphaBetaSearch:
 		Benchmark.benchmark(lambda: self.eval.computeOverallScore(moves, bitboard), 'computeOverallScore', '1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b')
 
 def search(state):
+	m = MoveLib()
 	search_instance = AlphaBetaSearch(state)
-	result = search_instance.test(state)
-	#Benchmark.benchmark(lambda: search_instance.search(), 'search', '1b01b01b0/1b06/3b04/8/4b0r02/2b03r01/3r0r03/r03r01 b')
-	print("result", result)
+	result = search_instance.search()
+	if result is not None:
+					result = [m.BitsToPosition(result[0]),
+							m.BitsToPosition(result[1])]
+    
+	print(result, "result")
 	return result
+	
+	
 
 
 if __name__ == '__main__':
-	test7 = "b0b01bb2/6b01/3bb4/4b0b02/3r04/3r04/1r0r05/1r0rrrr2 b"
+	test7 = "3b0b01/8/1b0b01b0b02/2r01b01b01/8/2rr2r02/1r06/2r03 r"
 	fen, player = test7.split(" ")
 	player = Player.Blue if player == "b" else Player.Red
 	bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
