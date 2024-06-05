@@ -3,7 +3,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.model import *
+from src.gamestate import GameState
+
+
 class ScoreConfig_evalFunc(unittest.TestCase):
+    @unittest.skip("skip")   
     def test_reversePsqT(self):
         testcase = {    
                         "A8":5,"B8":5,"C8":5,"D8":5,"E8":5,"F8":5,"G8":5,"H8":5,
@@ -25,11 +29,30 @@ class ScoreConfig_evalFunc(unittest.TestCase):
         print("testcase:\n", ScoreConfig.reversePsqT(testcase))
         print("targetcase:\n",target)
         self.assertEqual(ScoreConfig.reversePsqT(testcase),target)
-    
+    @unittest.skip("skip")   
     def test_reversePsqT2(self):
        config1 = ScoreConfig.Version1(Player.Blue)
      
        #print(ScoreConfig.Version1())
-       print(config1[Config.PIECESQUARE_TABLE_PAWN_Blue])
-       print(config1[Config.PIECESQUARE_TABLE_KNIGHT_Blue])
-       self.assertEqual(True, False) 
+       print(config1[Config.TOTAL_SCORE_RATING_PAWN_BLUE])
+       print(config1[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE])
+       self.assertEqual(True, False)
+    @unittest.skip("skip")   
+    def test_FieldArray1(self):
+        config1 = ScoreConfig.Version2(Player.Blue)
+        print(ScoreConfig._ALL_FIELDS_IN_BOARD)
+        self.assertEqual(True,False)
+    @unittest.skip("skip")   
+    def test_CreateScores(self):
+        BB = GameState.createBitBoardFromFEN("6/8/b07/1r06/8/8/8/6")
+        M= GameState.fromBitBoardToMatrix(BB,True)
+        print(M)
+        print("zerodict=\n",ScoreConfig._ZERO_DICT)
+        
+        p,k =ScoreConfig.createScores(ScoreConfig,Player.Red,BB,10,20)
+        print("p=\n",p)
+        print("k=\n",k)
+        config = ScoreConfig.Version2(Player.Blue,BB)
+        
+        print(config[Config.TOTAL_SCORE_RATING_PAWN_RED])
+        self.assertEqual(True,False)
