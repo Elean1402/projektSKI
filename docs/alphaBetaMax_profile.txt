@@ -1,0 +1,113 @@
+Profile results for alphaBetaMax:
+         12771883 function calls (12734695 primitive calls) in 5.021 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   406862    0.598    0.000    0.808    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:362(_getTarget)
+   129943    0.585    0.000    1.318    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:124(_scoreRating)
+   249276    0.325    0.000    0.500    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:114(_checkTargetPos)
+    12270    0.259    0.000    0.284    0.000 /Users/elean/Documents/GitHub/projektSKI/src/scoreConfig_evalFunc.py:25(reversePsqT)
+    24540    0.244    0.000    0.264    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/collections/__init__.py:823(__add__)
+     7442    0.237    0.000    1.882    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:284(_genValidatedMoves)
+   574473    0.195    0.000    0.195    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:331(getBitPositions)
+   259886    0.176    0.000    0.271    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:30(append)
+  1498301    0.175    0.000    0.266    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/enum.py:1267(__hash__)
+  1785789    0.164    0.000    0.241    0.000 {built-in method builtins.isinstance}
+   129943    0.142    0.000    0.142    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:93(_moveIsNeighbourOfStartPos)
+   343779    0.139    0.000    0.169    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveLib.py:137(BitsToPosition)
+   333506    0.112    0.000    0.291    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/collections/__init__.py:669(update)
+    12270    0.104    0.000    0.238    0.000 /Users/elean/Documents/GitHub/projektSKI/src/scoreConfig_evalFunc.py:223(createScores)
+     6135    0.101    0.000    2.761    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:254(computeOverallScore)
+   249276    0.098    0.000    0.098    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:76(_startPosBelongsToPlayer)
+   203563    0.094    0.000    0.266    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/collections/__init__.py:595(__init__)
+  1498301    0.091    0.000    0.091    0.000 {built-in method builtins.hash}
+  1012111    0.070    0.000    0.070    0.000 {built-in method builtins.len}
+     6135    0.065    0.000    0.180    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:308(_computeActualPositionalPoints)
+     6135    0.062    0.000    0.884    0.000 /Users/elean/Documents/GitHub/projektSKI/src/scoreConfig_evalFunc.py:162(Version2)
+    66978    0.058    0.000    0.115    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:397(_filterPositions)
+    66978    0.055    0.000    0.086    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:179(append)
+   406862    0.053    0.000    0.053    0.000 {method 'get' of 'dict' objects}
+    14883    0.052    0.000    0.058    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:438(checkBoardIfGameOver)
+37210/7442    0.044    0.000    0.098    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:789(recurser)
+   308966    0.042    0.000    0.077    0.000 <frozen abc>:117(__instancecheck__)
+   129943    0.040    0.000    0.056    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:5(append)
+   316408    0.038    0.000    0.038    0.000 {method 'update' of 'dict' objects}
+   308966    0.035    0.000    0.035    0.000 {built-in method _abc._abc_instancecheck}
+   354507    0.035    0.000    0.035    0.000 {function FilteredPositionsArray.append at 0x11dd5efc0}
+   343779    0.030    0.000    0.030    0.000 {method 'bit_length' of 'int' objects}
+   259886    0.023    0.000    0.023    0.000 {method 'extend' of 'list' objects}
+   6245/1    0.021    0.000    5.021    5.021 /Users/elean/Documents/GitHub/projektSKI/src/minmax.py:73(alphaBetaMax)
+     6135    0.020    0.000    0.907    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:171(_updateConfig)
+   136078    0.020    0.000    0.029    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:54(__init__)
+     6135    0.018    0.000    0.035    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:232(_materialPoints)
+     6135    0.018    0.000    0.025    0.000 {function ScoredMoveList.sort at 0x11dd5ea20}
+    77660    0.017    0.000    0.029    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:344(<lambda>)
+   129943    0.016    0.000    0.016    0.000 /Users/elean/Documents/GitHub/projektSKI/src/evalFunction.py:78(__turnOptions)
+     7442    0.016    0.000    0.059    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:1223(__init__)
+    74990    0.016    0.000    0.028    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:345(<lambda>)
+     7442    0.016    0.000    0.203    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:523(_array2string)
+    14884    0.016    0.000    0.016    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+    65638    0.015    0.000    0.026    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:351(<lambda>)
+     7441    0.015    0.000    0.053    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:459(execSingleMove)
+    29768    0.014    0.000    0.040    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:753(_extendLine_pretty)
+  1197/21    0.014    0.000    5.020    0.239 /Users/elean/Documents/GitHub/projektSKI/src/minmax.py:99(alphaBetaMin)
+    29768    0.014    0.000    0.020    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:739(_extendLine)
+     7442    0.013    0.000    0.084    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:452(_get_format_function)
+     7442    0.011    0.000    0.246    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:561(array2string)
+    14884    0.011    0.000    0.029    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/fromnumeric.py:71(_wrapreduction)
+     7442    0.009    0.000    0.216    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:506(wrapper)
+    71406    0.008    0.000    0.008    0.000 {method 'items' of 'dict' objects}
+    36927    0.008    0.000    0.014    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:359(<lambda>)
+     7442    0.008    0.000    0.015    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:64(_make_options_dict)
+    34956    0.008    0.000    0.014    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:358(<lambda>)
+   129943    0.007    0.000    0.007    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:15(<lambda>)
+    29768    0.007    0.000    0.007    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:1231(__call__)
+     7442    0.007    0.000    0.007    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:376(_getAllPawns)
+     7442    0.006    0.000    0.006    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:403(_get_formatdict)
+     7442    0.006    0.000    1.889    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:58(genMoves)
+     7442    0.006    0.000    0.006    0.000 {built-in method builtins.locals}
+    12270    0.006    0.000    0.006    0.000 {built-in method numpy.arange}
+    24540    0.006    0.000    0.006    0.000 {method 'count' of 'str' objects}
+    21499    0.005    0.000    0.009    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:354(<lambda>)
+    14884    0.005    0.000    0.005    0.000 {method 'copy' of 'numpy.ndarray' objects}
+    23046    0.005    0.000    0.009    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:355(<lambda>)
+    23080    0.005    0.000    0.009    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:352(<lambda>)
+    29768    0.004    0.000    0.004    0.000 {method 'splitlines' of 'str' objects}
+     7442    0.004    0.000    0.021    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/fromnumeric.py:2692(max)
+     7442    0.004    0.000    0.250    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:1595(_array_str_implementation)
+    24540    0.004    0.000    0.004    0.000 {built-in method builtins.bin}
+    16688    0.004    0.000    0.007    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:346(<lambda>)
+     7442    0.003    0.000    0.015    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/fromnumeric.py:2836(min)
+     7442    0.003    0.000    0.102    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:780(_formatArray)
+    14102    0.003    0.000    0.006    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:353(<lambda>)
+    14884    0.003    0.000    0.003    0.000 {built-in method builtins.max}
+     7442    0.003    0.000    0.062    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/arrayprint.py:410(<lambda>)
+     6135    0.003    0.000    0.028    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:13(sort)
+     8065    0.003    0.000    0.004    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/enum.py:726(__call__)
+     7441    0.002    0.000    0.002    0.000 {built-in method time.time}
+    10459    0.002    0.000    0.004    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:356(<lambda>)
+    22326    0.002    0.000    0.002    0.000 {built-in method builtins.issubclass}
+     7442    0.002    0.000    0.002    0.000 {method 'format' of 'str' objects}
+     7483    0.002    0.000    0.003    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:357(<lambda>)
+     8065    0.001    0.000    0.001    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/enum.py:1129(__new__)
+     7442    0.001    0.000    0.001    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:389(_getAllKnights)
+     7442    0.001    0.000    0.001    0.000 {method 'rstrip' of 'str' objects}
+     7442    0.001    0.000    0.001    0.000 {method 'discard' of 'set' objects}
+     7442    0.001    0.000    0.001    0.000 {method 'add' of 'set' objects}
+     7442    0.001    0.000    0.001    0.000 {method 'copy' of 'dict' objects}
+     7442    0.001    0.000    0.002    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:171(__init__)
+     6135    0.001    0.000    0.001    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:17(__init__)
+     7442    0.001    0.000    0.001    0.000 {built-in method numpy.asarray}
+     7442    0.001    0.000    0.001    0.000 {built-in method _thread.get_ident}
+     7442    0.001    0.000    0.001    0.000 {built-in method builtins.id}
+     7442    0.001    0.000    0.001    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/fromnumeric.py:2687(_max_dispatcher)
+     7442    0.001    0.000    0.001    0.000 /Users/elean/Documents/GitHub/projektSKI/venv/lib/python3.12/site-packages/numpy/core/fromnumeric.py:2831(_min_dispatcher)
+      110    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:349(<lambda>)
+      104    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:350(<lambda>)
+      100    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:347(<lambda>)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    5.021    5.021 /Users/elean/Documents/GitHub/projektSKI/src/minmax.py:214(<lambda>)
+       20    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:348(<lambda>)
+
+

@@ -1,0 +1,35 @@
+Platform: Mac(ARM)
+CPU: Apple M1 Pro
+RAM: 16GB
+Programmiersprache: Python
+Zustandsrepräsentation: Bitboard
+
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 0.7643493330106139s (min aus 1000 Zügen) 
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 ist 0.13323987502371892s (min aus 1000 Zügen) 
+
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 ist 9.568233540980145s (min aus 1000 Zügen) 
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 ist 9.5320580410189s (min aus 1000 Zügen) 
+ 
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 ist 9.608552334015258s (min aus 1000 Zügen) 
+minimaxSearch4 für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 120.00033587496728s (min aus 1000 Zügen) 
+minimaxSearch2 für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 0.8250199999893084s (min aus 1000 Zügen) 
+minimaxSearch2 für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 0.789142332971096s (min aus 1000 Zügen) 
+minimaxSearch4 für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 119.99757766601397s (min aus 1000 Zügen) 
+minimaxSearch3 für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r ist 25.888016957964282s (min aus 1000 Zügen) 
+AlphaBeta für b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 ist 2.555351792019792s (min aus 1000 Zügen) 
+minimaxSearch2 für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 b ist 0.2896999589866027s (min aus 1000 Zügen) 
+minimaxSearch2 für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 b ist 0.3076204579556361s (min aus 1000 Zügen) 
+AlphaBeta für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 ist 0.3090053329942748s (min aus 1000 Zügen) 
+minimaxSearch2 für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 b ist 0.36386679200222716s (min aus 1000 Zügen) 
+AlphaBeta für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 ist 0.29793187498580664s (min aus 1000 Zügen) 
+minimaxSearch2 für 3bb2/b02b02b01/3b02bbb0/1b06/1r0r02r01r0/6r01/5r0r0r0/6 b ist 0.3100599590106867s (min aus 1000 Zügen) 
+
+minimaxSearch2 für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b ist 0.1912348329788074s (min aus 1000 Zügen) 
+AlphaBeta für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 ist 0.27989962499123067s (min aus 1000 Zügen) 
+AlphaBeta für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 ist 0.054403208021540195s (min aus 1000 Zügen) 
+minimaxSearch2 für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b ist 0.18469675001688302s (min aus 1000 Zügen) 
+AlphaBeta für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 ist 0.04297416703775525s (min aus 1000 Zügen) 
+minimaxSearch3 für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b ist 2.5022550420253538s (min aus 1000 Zügen) 
+AlphaBeta für 2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 ist 0.23650887503754348s (min aus 1000 Zügen) 
+
+
