@@ -2,26 +2,13 @@ import numpy as np
 from enum import Enum
 from collections import Counter
 class ScoredMoveList(list):
-    
     def append(self, item):
-        if (isinstance(item, tuple) and
-            isinstance(item[0],np.uint64) and
-            isinstance(item[1], np.uint64) and
-            isinstance(item[2],int) and
-            isinstance(item[3],int) and
-            isinstance(item[4], list)):
-            super().append(item)
-        elif(isinstance(item,list) and 
-            isinstance(item[0], tuple) and
-            isinstance(item[0][0],np.uint64) and
-            isinstance(item[0][1], np.uint64) and
-            isinstance(item[0][2],int) and
-            isinstance(item[0][3],int) and
-            isinstance(item[0][4], list)):
+        if isinstance(item, list):
             super().extend(item)
+        elif isinstance(item, tuple):
+            super().append(item)
         else:
-            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int, list)]:\n item:", 
-                            item, "\nitem type:", type(item), type(item[0]), type(item[0][0]),type(item[0][1]), type(item[0][2]),type(item[0][3]), type(item[0][4]))
+            raise TypeError("item is not from type ScoredMoveList: List[(np.uint64, np.uint64,int,int, list)]")
     
     def sort(self):
         """Sort List in descending order by total score"""

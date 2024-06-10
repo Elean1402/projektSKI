@@ -279,9 +279,9 @@ class MoveGenerator:
                     #on target enemy knight
                 elif(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
                      == target):
-                    return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]                
-    
-    def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry],board: list[np.uint64])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
+                    return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]
+
+    def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry],board: list[np.uint64])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]:
         """Generates all unvalidated Moves of Player Blue or Red
 
         Args:
@@ -317,17 +317,17 @@ class MoveGenerator:
                     if(boardCommands != None):
                         if(BoardCommand.Cannot_Move in boardCommands):
                             continue
-                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))        
+                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))
         else:
             raise TypeError("player is not from Type Player")
-        
+
         if(len(validatedMoves) == 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
             return validatedMoves
-            
+
         gameOver[0] = DictMoveEntry.CONTINUE_GAME
         return validatedMoves
-    
+
     @classmethod
     def getBitPositions(self,n: np.uint64):
         """ Returns Generator over the Bits of n
@@ -340,59 +340,37 @@ class MoveGenerator:
             yield b
             n^=b
     
+    BITMASK_OPERATIONS = {
+        BitMaskDict[DictMoveEntry.PAWN_TO_LEFT]: lambda x: x << DICT_MOVE[DictMoveEntry.PAWN_TO_LEFT],
+        BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT]: lambda x: x >> DICT_MOVE[DictMoveEntry.PAWN_TO_RIGHT],
+        BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM],
+        BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_LEFT],
+        BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_RIGHT],
+        BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT],
+        BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT],
+        BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP],
+        BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_LEFT],
+        BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_RIGHT],
+        BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT],
+        BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT],
+        BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT],
+        BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]: lambda x: x >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT],
+        BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT],
+        BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]: lambda x: x << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT],
+    }
+
     def _getTarget(self, filteredPos: np.uint64, bitmask:np.uint64):
-        """ Gets target field of concerned  bitmask
-            ***Need to be optimized via dict which holds a function to make bit shifting***
-        Arguments:
-            filteredPos (np.uint64): SINGLE POSITION which can move onto direction described in Bitmask
-            bitmask (Bitmask): The Bitmask in this function is used to determine the direction of the move
-        Returns:
-            (Tuple(np.uint64, np.uint64): (startPosition, targetposition)
-            returns (0,0) if parameter filterPos= 0"""
         if(filteredPos == 0):
             return (np.uint64(0),np.uint64(0))
-        
-        targetPosition = np.uint64(0)
-        if(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.PAWN_TO_LEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.PAWN_TO_RIGHT]
-        
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM]
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_LEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_RIGHT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]
-        
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP]
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_LEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_RIGHT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]
-        
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
-            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]
-        
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]
-        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
-            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]
-        else:
+
+        operation = self.BITMASK_OPERATIONS.get(bitmask)
+        if operation is None:
             raise ValueError("bitmask not recognized, please check Bitmask class or bitmask value")
+
+        targetPosition = operation(filteredPos)
         if(targetPosition == 0):
             raise ValueError("Something went wrong with bit shifting")
+
         return (filteredPos,targetPosition)
        
     def _getAllPawns(self, player:Player, board: list[np.uint64]):
@@ -458,11 +436,12 @@ class MoveGenerator:
         return positions
     
     @classmethod
-    def checkBoardIfGameOver(self,gameOver: list[DictMoveEntry],board: list[np.uint64],printBoard= True):
+    def checkBoardIfGameOver(self,gameOver: list[DictMoveEntry],board: list[np.uint64],printBoard= False):
         """Game is over if last Row is reached or
            no possible Moves
-        Returns: Boolean: True for win else loose"""    
-       
+        Returns: Boolean: True for win else loose"""  
+        if printBoard:  
+            self.prettyPrintBoard(self, board,gameOver)
         if( ((board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_B_PAWNS]) & BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS] != 0)  or (board[GameState._ZARR_INDEX_R_KNIGHTS] |
             board[GameState._ZARR_INDEX_R_PAWNS])==0 ):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS
@@ -474,7 +453,7 @@ class MoveGenerator:
         
         if((gameOver[0] != DictMoveEntry.CONTINUE_GAME) & printBoard):
             print("Game Over")
-            #self.prettyPrintBoard(self, board,gameOver)
+            self.prettyPrintBoard(self, board,gameOver)
     
     
     def execSingleMove(self,move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64], printB: bool = False):
@@ -500,32 +479,31 @@ class MoveGenerator:
            print("move is empty, Game Over")
            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
            return boardCopy
-        
         startpos = move[0]
         targetpos = move[1]
-        boardCommands = move[4]
+        boardCommands = move[2]
         #TODO exec Move
         for bc in boardCommands:
             bc = BoardCommand(bc)
             match bc:
-                case BoardCommand.Hit_Red_PawnOnTarget: 
+                case BoardCommand.Hit_Red_PawnOnTarget:
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
-                case BoardCommand.Hit_Blue_PawnOnTarget: 
+                case BoardCommand.Hit_Blue_PawnOnTarget:
                     boardCopy[GameState._ZARR_INDEX_B_PAWNS] &=  ~targetpos
-                case BoardCommand.Hit_Red_KnightOnTarget: 
+                case BoardCommand.Hit_Red_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
-                case BoardCommand.Hit_Blue_KnightOnTarget: 
+                case BoardCommand.Hit_Blue_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &=  ~targetpos
-                case BoardCommand.Upgrade_Blue_KnightOnTarget: 
+                case BoardCommand.Upgrade_Blue_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
                     boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~ startpos
-                case BoardCommand.Upgrade_Red_KnightOnTarget: 
+                case BoardCommand.Upgrade_Red_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~ startpos
                 case BoardCommand.Degrade_Blue_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
                     boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~ startpos
-                case BoardCommand.Degrade_Red_KnightOnTarget: 
+                case BoardCommand.Degrade_Red_KnightOnTarget:
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
                     boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~ startpos
                 case BoardCommand.Move_Blue_Knight_no_Change:
@@ -541,7 +519,7 @@ class MoveGenerator:
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
                     boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
                 case _: True
-        
+
         self.checkBoardIfGameOver(gameOver,boardCopy,printB)
         if(printB == True):
             print("move executed, new Board ist:\n")

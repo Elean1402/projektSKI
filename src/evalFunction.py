@@ -41,7 +41,7 @@ class EvalFunction:
             player : from model.py use Player enum class. Defaults to Player.Red.
         """
         #TODO
-        
+
         #Bitte config nur aus scoreConfig_evalFunc.py verwenden
         if (len(self._CONFIG_DICT) != len(config)):
             raise ValueError("Configs do not have same size")
@@ -141,36 +141,36 @@ class EvalFunction:
         scoreList = ScoreListForMerging()
         targetmoves = [targetmoves]
         targetScores = Counter({})
-      
+
         if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & ~( board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_RED][MoveLib.BitsToPosition(key)] 
+                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_RED][MoveLib.BitsToPosition(key)]
                  for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
         elif (startPos & board[GameState._ZARR_INDEX_R_KNIGHTS] != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_KNIGHT_RED][MoveLib.BitsToPosition(key)] 
-                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
-        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & 
+                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_KNIGHT_RED][MoveLib.BitsToPosition(key)]
+                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
+        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] &
              ~( board[GameState._ZARR_INDEX_R_KNIGHTS]|board[GameState._ZARR_INDEX_B_KNIGHTS]) != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_PAWN_BLUE][MoveLib.BitsToPosition(key)] 
+                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_PAWN_BLUE][MoveLib.BitsToPosition(key)]
                  for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
         elif (startPos & board[GameState._ZARR_INDEX_B_KNIGHTS] != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE][MoveLib.BitsToPosition(key)] 
+                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE][MoveLib.BitsToPosition(key)]
                  for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
-            
+
         if(len(targetScores) == 0):
             raise ValueError("Error in MoveList, please check Zuggenerator, move=", MoveLib.move(startPos, targetmoves[0],3))
         scoreList.append((startPos, targetScores, boardcommands))
         self.__turnOptions(len(targetmoves))
-            
-                
+
+
         return scoreList
-    
+
     def _updateConfig(self,player:Player, board:list[np.uint64]):
         updatedConf = self._CONFIG_DICT[Config.CONFIGVERSION](self._CONFIG_DICT[Config.MaxPlayer],player,board)
-        self._CONFIG_DICT = updatedConf 
+        self._CONFIG_DICT = updatedConf
     
     def __protectedFigures(self, board:list[np.uint64]):
         """Scores for protected figures
@@ -248,7 +248,7 @@ class EvalFunction:
         rp = bin(board[GameState._ZARR_INDEX_R_PAWNS] & (~board[GameState._ZARR_INDEX_B_KNIGHTS]))[2:].count("1")*self._CONFIG_DICT[Config.MAT_PAWN]
         #count Red Knights
         rk = bin(board[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")*self._CONFIG_DICT[Config.MAT_KNIGHT]
-        print("config MaxPlayer:", self._CONFIG_DICT[Config.MaxPlayer])
+        #print("config MaxPlayer:", self._CONFIG_DICT[Config.MaxPlayer])
         return rp+rk-bp-bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp+bk-rp-rk
     
     def computeOverallScore(self, moveList: list, board:list[np.uint64],printList= False, returnSortedList= True )-> ScoredMoveList:
@@ -257,16 +257,16 @@ class EvalFunction:
         Args:
             moveList: list((np.uint64, np.uint64,list[BoardCommand]))
                     -> list(index, figure, BoardCommandlist)
-                    The list from alpha/beta-generation() from Zuggenerator 
+                    The list from alpha/beta-generation() from Zuggenerator
             board (list[np.uint64]): Bitboard
-            
+
         Returns:
             List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int, BoardCommandlist: list[BoardCommand])
             Ordering: Move with highest overall score at the beginning of the list.
             If no move is possible, then return [(0,0,0,totalScore,[])]
         """
-        
-            
+
+
         scoredList = ScoredMoveList()
         totalScore = 0
         if( len(moveList) == 0):
@@ -274,16 +274,16 @@ class EvalFunction:
             totalScore += self._computeActualPositionalPoints(board)
             scoredList.append((np.uint64(0),np.uint64(0),int(0),int(totalScore),[]))
             return scoredList
-          
+
         tempScore = ScoreListForMerging()
-        
+
         #Update config to get new scores according to board
         self._updateConfig(self._CONFIG_DICT[Config.Player],board)
-        
+
         for index in moveList:
             tempScore.append(self._scoreRating(index[0],index[1], board,index[2]))
             #TODO add some more Features
-            
+
         #TODO
         #totalScore += self._computeTurnOptions()
         totalScore += self._materialPoints(board)
@@ -291,20 +291,20 @@ class EvalFunction:
         #print("totalscore :", totalScore)
         #print("tempscore:\n", tempScore)
         #TODO Last processing
-        
+
         for (startpos,adict,bc) in tempScore:
             scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
-        
+
         if(returnSortedList):
             scoredList.sort()
-        
-        
-        
+
+
+
         if(printList):
             self.prettyPrintScorelist(scoredList)
             #print(scoredList)
         return scoredList
-    
+
     def _computeActualPositionalPoints(self, board: list[np.uint64]):
         positionPointsMax = 0
         positionPointsMin = 0
