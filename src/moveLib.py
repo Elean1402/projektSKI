@@ -152,14 +152,15 @@ class MoveLib:
         #     case _: return None 
         return retVal
 
+
     @classmethod
     def BitsToPosition(self, value: np.uint64):
-        # Convert np.uint64 to Python int and compute the position of the set bit
+    # Convert np.uint64 to Python int and compute the position of the set bit
         pos = int(value).bit_length() - 1
 
-        # Compute the row and column
-        row = pos // 8 + 1
-        col = pos % 8
+        # Compute the row and column using bitwise operations
+        row = (pos >> 3) + 1
+        col = pos & 7
 
         # Convert the column to a letter
         retCol = self._bitColDict[col]

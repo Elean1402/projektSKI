@@ -222,20 +222,20 @@ class AlphaBetaSearch:
 
 
 def call(state):
-
+    moveGen = MoveGenerator(state["bitboards"])
     search_instance = AlphaBetaSearch(state)
-    depth = 4
+    depth = 6
     # next_move = search_instance.search(iterative_deepening=False, time_limit=20, minimax=False, depth=depth)
     # out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
     # print(out)
-    # print(search_instance.play(iterative_deepening=False))
-    Benchmark.profile(lambda: search_instance.search(iterative_deepening=True, time_limit=20, minimax=False, depth=depth), 'alphaBetaMax')
+    #
+    Benchmark.profile(lambda: search_instance.search(iterative_deepening=False, time_limit=20, minimax=False, depth=depth), 'alphaBetaMax')
     # Benchmark.profile(lambda: moveGen.genMoves(player, [DictMoveEntry.CONTINUE_GAME], bitboard), 'genMoves')
     # Benchmark.benchmark(lambda: moveGen.genMoves(player, [DictMoveEntry.CONTINUE_GAME], bitboard), 'genMoves', repetitions=10000)
 
 
 if __name__ == '__main__':
-    input_dict = {"board": "'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"}
+    input_dict = {"board": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"}
     fen, player = input_dict["board"].split(" ")
     player = Player.Blue if player == "b" else Player.Red
     bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
