@@ -22,38 +22,9 @@ class MoveGenerator:
         Args:
             board (list[np.uint64]): Bitboard Array of length 4
         """
-        # print("initialized board", board)
-        # board = board
-        # boardIsInitialized = True
+
         print("Board init:")
         self.prettyPrintBoard(board)
-
-    # def updateBoard(self,newboard:list[np.uint64], player : Player, gameOver: list[DictMoveEntry]):
-    #     """updates the Board and checks if new Board differs from actual board,
-    #        if not, then Game should be over because no move was executed
-
-    #     Args:
-    #         newboard (list[np.uint64]):
-    #         player (Player):
-    #         gameOver (list[DictmoveEntry]): DictMoveEntry.CONTINUE_GAME | DictMoveEntry.GAME_OVER_RED_WINS | DictMoveEntry.GAME_OVER_BLUE_WINS
-
-    #     """
-    #     #If the opponent cannot move, game is over
-    #     #and only if the opponent has not a game end recognition for this case
-    #     if(board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] &
-    #        newboard[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS]
-    #        == board[GameState._ZARR_INDEX_B_KNIGHTS if player == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS] and
-
-    #        board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] &
-    #        newboard[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS]
-    #        == board[GameState._ZARR_INDEX_B_PAWNS if player == Player.Red else GameState._ZARR_INDEX_R_PAWNS] ):
-    #         gameOver[0]= DictMoveEntry.GAME_OVER_RED_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_BLUE_WINS
-    #         return None
-
-    #     board = newboard
-    #     print("updated Board:")
-    #     self.prettyPrintBoard(gameOver)
-    #     gameOver[0] = DictMoveEntry.CONTINUE_GAME
 
     def genMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
         """Generates all possible Moves
@@ -132,105 +103,137 @@ class MoveGenerator:
                 "TargetPosition is on A1 or A8 or H1 or H8 (impossible), check how the moves are generated.")
         if not self._startPosBelongsToPlayer(player, start, board):
             raise ValueError("Startposition does not belong to player", player, ", check also Bitboards")
+
+        # Store the results of bitwise operations in variables
+        board_pawns = board[GameState._ZARR_INDEX_B_PAWNS]
+        board_knights = board[GameState._ZARR_INDEX_B_KNIGHTS]
+        board_r_knights = board[GameState._ZARR_INDEX_R_KNIGHTS]
+        board_r_pawns = board[GameState._ZARR_INDEX_R_PAWNS]
+
         if player == Player.Blue:
             # Figure on start is a Pawn
-            if (start & board[GameState._ZARR_INDEX_B_PAWNS] & ~(
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == start):
+            if (start & board_pawns & ~(board_knights | board_r_knights) == start):
                 # Case hit diagonal possible?
                 if (bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or bitmask == BitMaskDict[
                     DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
                     # on target is an enemy knight
-                    if target & board[GameState._ZARR_INDEX_R_KNIGHTS] == target:
+                    if target & board_r_knights == target:
                         return [BoardCommand.Hit_Red_KnightOnTarget, BoardCommand.Move_Blue_Knight_no_Change]
                     # on target is only a enemy pawn
-                    elif (target & (board[GameState._ZARR_INDEX_R_PAWNS] & ~(
-                            board[GameState._ZARR_INDEX_R_KNIGHTS] | board[
-                        GameState._ZARR_INDEX_B_KNIGHTS])) == target):
+                    elif (target & (board_r_pawns & ~(board_knights)) == target):
                         return [BoardCommand.Hit_Red_PawnOnTarget, BoardCommand.Move_Blue_Pawn_no_Change]
                     else:
                         return [BoardCommand.Cannot_Move]
                 else:
                     # standard move on free Target Position
-                    if (target & ~(board[GameState._ZARR_INDEX_B_PAWNS] | board[GameState._ZARR_INDEX_R_PAWNS] | board[
-                        GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+                    if (target & ~(board_pawns | board_r_pawns | board_knights | board_r_knights) == target):
                         return [BoardCommand.Move_Blue_Pawn_no_Change]
                     # Target not free, only possible if our pawn is on target
-                    elif (target & board[GameState._ZARR_INDEX_B_PAWNS] & ~(
-                            board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+                    elif (target & board_pawns & ~(board_knights | board_r_knights) == target):
                         return [BoardCommand.Upgrade_Blue_KnightOnTarget]
                     # move on Target not possible
                     else:
                         return [BoardCommand.Cannot_Move]
             # Figure is Knight
-            elif start & board[GameState._ZARR_INDEX_B_KNIGHTS] == start:
+            elif start & board_knights == start:
                 # Case: target pos not occupied
-                if (target & ~(board[GameState._ZARR_INDEX_B_PAWNS] | board[GameState._ZARR_INDEX_R_PAWNS] | board[
-                    GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+                if (target & ~(board_pawns | board_r_pawns | board_knights | board_r_knights) == target):
                     return [BoardCommand.Degrade_Blue_KnightOnTarget]
                 # Case: only our pawn is on target
-                elif (target & board[GameState._ZARR_INDEX_B_PAWNS] & ~(
-                        board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+                elif (target & board_pawns & ~(board_knights | board_r_knights) == target):
                     return [BoardCommand.Move_Blue_Knight_no_Change]
                 # Case: only a enemy pawn is on target
-                elif (target & board[GameState._ZARR_INDEX_R_PAWNS] & ~(
-                        board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+                elif (target & board_r_pawns & ~(board_knights | board_r_knights) == target):
                     return [BoardCommand.Hit_Red_PawnOnTarget, BoardCommand.Degrade_Blue_KnightOnTarget]
 
                 # Case: 2 figures are on target
                 # on target our knight
-                elif target & board[GameState._ZARR_INDEX_B_KNIGHTS] == target:
+                elif target & board_knights == target:
                     return [BoardCommand.Cannot_Move]  # on target enemy knight
-                elif target & board[GameState._ZARR_INDEX_R_KNIGHTS] == target:
+                elif target & board_r_knights == target:
                     return [BoardCommand.Hit_Red_KnightOnTarget, BoardCommand.Move_Blue_Knight_no_Change]
+
         elif player == Player.Red:
+
             # Figure on start is a Pawn
-            if (start & board[GameState._ZARR_INDEX_R_PAWNS] & ~(
-                    board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == start):
+
+            if (start & board_r_pawns & ~(board_knights | board_r_knights) == start):
+
                 # Case hit diagonal possible?
+
                 if (bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or bitmask == BitMaskDict[
+
                     DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
+
                     # on target is an enemy knight
-                    if target & board[GameState._ZARR_INDEX_B_KNIGHTS] == target:
+
+                    if target & board_knights == target:
+
                         return [BoardCommand.Hit_Blue_KnightOnTarget, BoardCommand.Move_Red_Knight_no_Change]
-                    # on target is only a enemy pawn
-                    elif (target & (board[GameState._ZARR_INDEX_B_PAWNS] & ~(
-                            board[GameState._ZARR_INDEX_R_KNIGHTS] | board[
-                        GameState._ZARR_INDEX_B_KNIGHTS])) == target):
+
+                    # on target is only an enemy pawn
+
+                    elif (target & (board_pawns & ~(board_knights)) == target):
+
                         return [BoardCommand.Hit_Blue_PawnOnTarget, BoardCommand.Move_Red_Pawn_no_Change]
+
                     else:
+
                         return [BoardCommand.Cannot_Move]
+
                 else:
+
                     # standard move on free Target Position
-                    if (target & ~(board[GameState._ZARR_INDEX_R_PAWNS] | board[GameState._ZARR_INDEX_B_PAWNS] | board[
-                        GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+
+                    if (target & ~(board_pawns | board_r_pawns | board_knights | board_r_knights) == target):
+
                         return [BoardCommand.Move_Red_Pawn_no_Change]
+
                     # Target not free, only possible if our pawn is on target
-                    elif (target & board[GameState._ZARR_INDEX_R_PAWNS] & ~(
-                            board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+
+                    elif (target & board_r_pawns & ~(board_knights | board_r_knights) == target):
+
                         return [BoardCommand.Upgrade_Red_KnightOnTarget]
+
                     # move on Target not possible
+
                     else:
+
                         return [BoardCommand.Cannot_Move]
+
             # Figure is Knight
-            elif start & board[GameState._ZARR_INDEX_R_KNIGHTS] == start:
+
+            elif start & board_r_knights == start:
+
                 # Case: target pos not occupied
-                if (target & ~(board[GameState._ZARR_INDEX_B_PAWNS] | board[GameState._ZARR_INDEX_R_PAWNS] | board[
-                    GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+
+                if (target & ~(board_pawns | board_r_pawns | board_knights | board_r_knights) == target):
+
                     return [BoardCommand.Degrade_Red_KnightOnTarget]
+
                 # Case: only our pawn is on target
-                elif (target & board[GameState._ZARR_INDEX_R_PAWNS] & ~(
-                        board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+
+                elif (target & board_r_pawns & ~(board_knights | board_r_knights) == target):
+
                     return [BoardCommand.Move_Red_Knight_no_Change]
-                # Case: only a enemy pawn is on target
-                elif (target & board[GameState._ZARR_INDEX_B_PAWNS] & ~(
-                        board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) == target):
+
+                # Case: only an enemy pawn is on target
+
+                elif (target & board_pawns & ~(board_knights | board_r_knights) == target):
+
                     return [BoardCommand.Hit_Blue_PawnOnTarget, BoardCommand.Degrade_Red_KnightOnTarget]
 
+
                 # Case: 2 figures are on target
+
                 # on target our knight
-                elif target & board[GameState._ZARR_INDEX_R_KNIGHTS] == target:
+
+                elif target & board_r_knights == target:
+
                     return [BoardCommand.Cannot_Move]  # on target enemy knight
-                elif target & board[GameState._ZARR_INDEX_B_KNIGHTS] == target:
+
+                elif target & board_knights == target:
+
                     return [BoardCommand.Hit_Blue_KnightOnTarget, BoardCommand.Move_Red_Knight_no_Change]
 
     def _genValidatedMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]) -> list[
