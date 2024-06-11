@@ -1,0 +1,35 @@
+Profile results for :
+         791 function calls in 0.000 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       44    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:103(_checkTargetPos)
+       69    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:329(_getTarget)
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:236(_genValidatedMoves)
+       53    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:285(getBitPositions)
+      180    0.000    0.000    0.000    0.000 /opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/enum.py:1267(__hash__)
+       44    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:75(_startPosBelongsToPlayer)
+        9    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:213(append)
+      180    0.000    0.000    0.000    0.000 {built-in method builtins.hash}
+        9    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:361(_filterPositions)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:58(genMoves)
+       34    0.000    0.000    0.000    0.000 {function FilteredPositionsArray.append at 0x12f115940}
+       55    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+       14    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:310(<lambda>)
+       14    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:298(<lambda>)
+       38    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+       12    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:297(<lambda>)
+        8    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:326(<lambda>)
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/minmax.py:195(<lambda>)
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:338(_getAllPawns)
+        6    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:324(<lambda>)
+        4    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:316(<lambda>)
+        4    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:312(<lambda>)
+        4    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:314(<lambda>)
+        3    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:318(<lambda>)
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/model.py:206(__init__)
+        1    0.000    0.000    0.000    0.000 /Users/elean/Documents/GitHub/projektSKI/src/moveGenerator.py:353(_getAllKnights)
+
+

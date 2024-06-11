@@ -334,10 +334,7 @@ class MoveGenerator:
         if filteredPos == 0:
             return np.uint64(0), np.uint64(0)
 
-        operation = self.BITMASK_OPERATIONS[bitmask]
-        targetPosition = operation(filteredPos)
-
-        return filteredPos, targetPosition
+        return filteredPos, self.BITMASK_OPERATIONS[bitmask](filteredPos)
 
     def _getAllPawns(self, player: Player, board: list[np.uint64]):
         """Gets all Pawns of player Blue or Red which can Move
