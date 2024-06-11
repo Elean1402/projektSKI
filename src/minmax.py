@@ -49,7 +49,7 @@ class AlphaBetaSearch:
                     if temp_move is not None:
                         self.best_move = temp_move
                     self.moveGen.checkBoardIfGameOver(self.gameover, self.bitboards)
-                    if self.total_gameover or time.time() - self.start_time > self.time_limit or depth > 4:
+                    if self.total_gameover or time.time() - self.start_time > self.time_limit:
                         break
                     depth += 1
             else:
@@ -229,13 +229,13 @@ def call(state):
     # out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
     # print(out)
     # print(search_instance.play(iterative_deepening=False))
-    Benchmark.profile(lambda: search_instance.search(iterative_deepening=False, time_limit=20, minimax=False, depth=depth), 'alphaBetaMax')
+    Benchmark.profile(lambda: search_instance.search(iterative_deepening=True, time_limit=20, minimax=False, depth=depth), 'alphaBetaMax')
     # Benchmark.profile(lambda: moveGen.genMoves(player, [DictMoveEntry.CONTINUE_GAME], bitboard), 'genMoves')
     # Benchmark.benchmark(lambda: moveGen.genMoves(player, [DictMoveEntry.CONTINUE_GAME], bitboard), 'genMoves', repetitions=10000)
 
 
 if __name__ == '__main__':
-    input_dict = {"board": "2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b"}
+    input_dict = {"board": "'b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"}
     fen, player = input_dict["board"].split(" ")
     player = Player.Blue if player == "b" else Player.Red
     bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
