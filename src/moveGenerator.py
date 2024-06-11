@@ -75,14 +75,14 @@ class MoveGenerator:
         """Checks the move if possible and return a Command for the Bitboard operation
             Code needs to be restructured,
             too many if else statements and if possible shortened.
-            
+
         Args:
             player (Player): use model.py - Class Player
             move (tuple): (uint64, uint64, uint64): (start, target, bitmask)
 
         Raises:
             TypeError: if type of move is wrong
-            ValueError: if error in unvalidated movegeneration 
+            ValueError: if error in unvalidated movegeneration
 
         Returns:
             list[Bordcommand]
@@ -292,8 +292,9 @@ class MoveGenerator:
         https://stackoverflow.com/questions/8898807/pythonic-way-to-iterate-over-bits-of-integer
         
         """
+        one = np.uint64(1)
         while n:
-            b = n & (~n + np.uint64(1))
+            b = n & (~n + one)
             yield b
             n ^= b
 
@@ -333,10 +334,7 @@ class MoveGenerator:
         if filteredPos == 0:
             return np.uint64(0), np.uint64(0)
 
-        operation = self.BITMASK_OPERATIONS[bitmask]
-        targetPosition = operation(filteredPos)
-
-        return filteredPos, targetPosition
+        return filteredPos, self.BITMASK_OPERATIONS[bitmask](filteredPos)
 
     def _getAllPawns(self, player: Player, board: list[np.uint64]):
         """Gets all Pawns of player Blue or Red which can Move
