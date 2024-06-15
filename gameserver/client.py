@@ -9,7 +9,7 @@ from game import Game
 
 pygame.font.init()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.new_alpha import *
+from src.alpha_beta import *
 
 
 

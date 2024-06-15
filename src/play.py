@@ -1,33 +1,46 @@
-import os
-import sys
+from moveLib import MoveLib
+from src.gui import Gui
+from alpha_beta import AlphaBetaSearch
+from minmax import MinimaxSearch
+from src.benchmark import Benchmark
+from src.moveGenerator import MoveGenerator
+from src.gamestate import GameState
+from src.model import Player, DictMoveEntry
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.gui import *
-from src.evalFunction import *
+def call(state, search_type='alpha_beta'):
+    if search_type == 'alpha_beta':
+        search_instance = AlphaBetaSearch(state)
+    else:
+        search_instance = MinimaxSearch(state)
+    depth = 6
 
 
-def play(FEN_board=False):
-    input_dict = {"board": "2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b"}
-    m = MoveLib()
+    # Initialize the MoveGenerator with the game state's bitboards
+    move_generator = MoveGenerator(state["bitboards"])
+
+    # Define the player and game over status
+    game_over = [DictMoveEntry.CONTINUE_GAME]
+    # Benchmark the genMoves method
+    # Benchmark.benchmark(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
+    # Benchmark.profile(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
+    Benchmark.profile(lambda: search_instance.search(time_limit=20, depth=depth), search_type)
+    # next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
+    # if next_move is not None:
+    #     out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
+    #     print(out)
+    # else:
+    #     print("No valid move found.")
+
+
+if __name__ == '__main__':
+    input_dict = {"board": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b"}
     fen, player = input_dict["board"].split(" ")
     player = Player.Blue if player == "b" else Player.Red
     bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
-    state = [bitboard, player, True, False]
-    search_instance = AlphaBetaSearch(state)
-
-    game = []
-    print_state("Startpos")
-    input()
-    while isOver() == "c":
-        if alpha_turn:
-            source, dest = alpha_random_move_execution(alpha_generation())
-        else:
-            source, dest = beta_random_move_execution(beta_generation())
-        game.append(MoveLib.move(source, dest, mode=3))
-        if alpha_turn:
-            print_state("Alpha")
-        else:
-            print_state("Beta")
-        alpha_turn = not alpha_turn
-        input()
-    print(isOver())
+    state = {
+        "bitboards": bitboard,
+        "player": player,
+        "player1": True,
+        "player2": False,
+    }
+    call(state, search_type='alpha_beta')  # Change to 'minimax' to use MinimaxSearch
