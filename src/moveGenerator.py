@@ -302,11 +302,11 @@ class MoveGenerator:
         return positions
 
     @classmethod
-    def checkBoardIfGameOver(cls, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
+    def checkBoardIfGameOver(self, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
         """Game is over if last Row is reached or no possible Moves
         Returns: Boolean: True for win else loose"""
         if printBoard:
-            cls.prettyPrintBoard(cls, board, gameOver)
+            self.prettyPrintBoard(self, board, gameOver)
 
         blue_pieces = board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_B_PAWNS]
         red_pieces = board[GameState._ZARR_INDEX_R_KNIGHTS] | board[GameState._ZARR_INDEX_R_PAWNS]
@@ -319,7 +319,7 @@ class MoveGenerator:
         if gameOver[0] != DictMoveEntry.CONTINUE_GAME:
             if printBoard:
                 print("Game Over")
-                cls.prettyPrintBoard(cls, board, gameOver)
+                self.prettyPrintBoard(self, board, gameOver)
 
     def execSingleMove(self, move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64],
                        printB: bool = False):
