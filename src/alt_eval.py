@@ -81,14 +81,14 @@ class EvalFunction:
         return position_points_max - position_points_min
 
     @lru_cache(maxsize=None)
-    def _materialPoints(self, board: list[np.uint64]):
+    def _materialPoints(self, board):
         bp = count_bits(board[GameState._ZARR_INDEX_B_PAWNS] & ~board[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
         bk = count_bits(board[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
         rp = count_bits(board[GameState._ZARR_INDEX_R_PAWNS] & ~board[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
         rk = count_bits(board[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
         return rp + rk - bp - bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp + bk - rp - rk
 
-    def computeEvaluationScore(self, board: list[np.uint64]) -> int:
+    def computeEvaluationScore(self, board: np.ndarray) -> int:
         board_tuple = tuple(board.tolist())  # Convert numpy array to tuple
         if board_tuple in self._score_cache:
             return self._score_cache[board_tuple]

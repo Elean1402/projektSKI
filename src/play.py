@@ -22,7 +22,7 @@ def call(state, search_type='alpha_beta'):
     game_over = [DictMoveEntry.CONTINUE_GAME]
     # Benchmark the genMoves method
     # Benchmark.benchmark(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
-    # Benchmark.profile(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
+    # Benchmark.profile(lambda: [move_generator.genMoves(state["player"], game_over, state["bitboards"]) for _ in range(1000)], 'genMoves')
     Benchmark.profile(lambda: search_instance.search(time_limit=20, depth=depth), search_type)
     # next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
     # if next_move is not None:
