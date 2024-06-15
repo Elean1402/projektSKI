@@ -1,4 +1,0 @@
-genMoves ist 1.470978792058304s (min aus 10000 Zügen) 
-genMoves ist 0.00012162502389401197s (min aus 1 Zügen) 
-genMoves ist 0.08535883401054889s (min aus 1000 Zügen) 
-genMoves ist 8.759321260731667e-05s (min aus 1 Zügen) 

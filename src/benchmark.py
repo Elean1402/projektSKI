@@ -3,8 +3,14 @@ import io
 import pstats
 from statistics import mean
 from timeit import repeat
+import time
+import cProfile
+import io
+import pstats
 
-
+class HighPrecisionStats(pstats.Stats):
+    def f8(self, x):
+        return "%8.6f" % x  # Increase precision to 6 decimal places
 class Benchmark:
     @staticmethod
     def benchmark(func_with_args, func_name="", fen=None, repetitions=100000):
@@ -27,16 +33,7 @@ class Benchmark:
 
     @staticmethod
     def profile(func_with_args, func_name="", sortby='tottime', mode='text'):
-        """
-        Inputs: func_with_args is the function to be profiled with its arguments,
-                func_name is the name of the function as string (optional),
-                sortby is the sorting criteria for the profile output (optional, default is 'cumulative')
-        Output: writes the profile results to a file
-
-        Example: Benchmark.profile(lambda: my_function('arg1_value', 'arg2_value'), 'my_function', 'time')
-        """
-
-        pr = cProfile.Profile()
+        pr = cProfile.Profile(time.perf_counter)  # Use time.perf_counter for higher precision
         pr.enable()
 
         # Call the function here
@@ -45,7 +42,7 @@ class Benchmark:
         pr.disable()
         if mode == 'text':
             s = io.StringIO()
-            ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+            ps = HighPrecisionStats(pr, stream=s).sort_stats(sortby)  # Use HighPrecisionStats
             ps.print_stats()
             with open(f"{func_name}_profile.txt", "w") as txt:
                 txt.write(f'Profile results for {func_name}:\n')

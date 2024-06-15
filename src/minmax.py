@@ -1,6 +1,19 @@
+import os
+import sys
+import time
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.gui import Gui
+from src.benchmark import Benchmark
+from src.scoreConfig_evalFunc import ScoreConfig
+from src.evalFunction import EvalFunction  # Importing the simplified EvalFunction
+from src.moveGenerator import *
+from src.moveLib import MoveLib
+from src.gamestate import GameState
+
+
 class TimeExceeded(Exception):
     pass
-
 
 class MinimaxSearch:
     def __init__(self, game):

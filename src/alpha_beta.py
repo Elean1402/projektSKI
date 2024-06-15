@@ -95,8 +95,8 @@ class AlphaBetaSearch:
                 best_score = score
                 best_move = move
             alpha = max(alpha, best_score)
-            if alpha >= beta:
-                break
+            # if alpha >= beta:
+            #     break
 
         self.transposition_table[bitboards_bytes] = (best_score, depth_left)
         return best_score, best_move
@@ -133,8 +133,8 @@ class AlphaBetaSearch:
                 best_score = score
                 best_move = move
             beta = min(beta, best_score)
-            if beta <= alpha:
-                break
+            # if beta <= alpha:
+            #     break
 
         self.transposition_table[bitboards_bytes] = (best_score, depth_left)
         return best_score, best_move

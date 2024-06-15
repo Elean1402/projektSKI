@@ -7,12 +7,12 @@ from src.moveGenerator import MoveGenerator
 from src.gamestate import GameState
 from src.model import Player, DictMoveEntry
 
-def call(state, search_type='alpha_beta'):
+def call(state, search_type='minmax'):
     if search_type == 'alpha_beta':
         search_instance = AlphaBetaSearch(state)
     else:
         search_instance = MinimaxSearch(state)
-    depth = 6
+    depth = 3
 
 
     # Initialize the MoveGenerator with the game state's bitboards
@@ -24,16 +24,16 @@ def call(state, search_type='alpha_beta'):
     # Benchmark.benchmark(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
     # Benchmark.profile(lambda: [move_generator.genMoves(state["player"], game_over, state["bitboards"]) for _ in range(1000)], 'genMoves')
     Benchmark.profile(lambda: search_instance.search(time_limit=20, depth=depth), search_type)
-    # next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
-    # if next_move is not None:
-    #     out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
-    #     print(out)
-    # else:
-    #     print("No valid move found.")
+    next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
+    if next_move is not None:
+        out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
+        print(out)
+    else:
+        print("No valid move found.")
 
 
 if __name__ == '__main__':
-    input_dict = {"board": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 b"}
+    input_dict = {"board": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"}
     fen, player = input_dict["board"].split(" ")
     player = Player.Blue if player == "b" else Player.Red
     bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)

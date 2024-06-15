@@ -53,7 +53,7 @@ class GameState:
         return BB
 
     @classmethod
-    def createBitBoardFrom(self, matrix: np.ndarray, mode=False):
+    def createBitBoardFrom(self, matrix: [np.ndarray], mode=False):
         """Creates Bitboard representation from given Matrix returned by function fenToMatrix 
 
         Args:
