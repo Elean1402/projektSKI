@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
 import sys
-from src.gui import Gui
+from gui import Gui
 
 minimum_version = (3,12)
 if sys.version_info < minimum_version:

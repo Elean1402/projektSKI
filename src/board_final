@@ -7,12 +7,15 @@ import random
 Notes:
     Only static methods -> don't create instances e.g. just call Board.func()
     To use:
-        initBoard -> new game
-        generate_moves -> generates all possible moves of the current player
-        exec_move -> executes move of the current player
+        initBoard(*Bitboards, blue_turn) -> None   # new game
+        generate_moves() -> [(source1, [dest1, dest2, ...]), ...] # generates all possible moves of the current player
+        exec_move(source, dest) -> (blue_pawns, blue_knights, red_pawns, red_knights) # executes move of the current player
         takeback -> takeback last move
         isOver  -> checks if the game is over
         --> check isOver after initBoard and after exec_move
+
+    In process (don't use yet):
+        eval() -> int # evaluation of the current board
 """
 
 
@@ -99,6 +102,8 @@ class Board():
             return "red"
         else:
             return ""
+        
+    ################### Class Variables #####################
         
     blue_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
     red_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
@@ -554,9 +559,24 @@ class Board():
         """
         Returns: evaluation of the current board
         """
+        # Hits
+        # Blue hits
+        blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
+        blue_p_hits = (Board.blue_p & Board.blue_p_hit_left << Board.bphl) | (Board.blue_p & Board.blue_p_hit_right << Board.bphr)
+
+        # Red hits
+        red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
+        red_p_hits = (Board.red_p & Board.red_p_hit_left >> Board.rphl) | (Board.red_p & Board.red_p_hit_right >> Board.rphr)
+
+        # Potential Knights
+        # Blue knights
+        blue_pot_k = Board.blue_p & ((Board.blue_p & Board.blue_p_forward << Board.bpf) | (Board.blue_p & Board.blue_p_left << Board.bpl) | (Board.blue_p & Board.blue_p_right >> Board.bpr) | (blue_p_hits & Board.red_k))
+
+        # Red knights
+        red_pot_k = Board.red_p & ((Board.red_p & Board.red_p_forward >> Board.rpf) | (Board.red_p & Board.red_p_left << Board.rpl) | (Board.red_p & Board.red_p_right >> Board.rpr) | (red_p_hits & Board.blue_k))
         return 0
 
-############################ TESTING ############################
+    ############################ TESTING ############################
     @staticmethod
     def state(message="") -> None:
         def board_to_string(board:np.uint64)->str:
