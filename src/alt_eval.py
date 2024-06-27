@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import MoveLib
-from src.moveGenerator import MoveGenerator
+from src.moveGenerator import MoveGenerator1 as MoveGenerator
 
 # Precomputed table of bit counts for 16-bit numbers
 BIT_COUNTS = [bin(i).count('1') for i in range(2**16)]

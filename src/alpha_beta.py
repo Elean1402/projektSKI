@@ -7,7 +7,7 @@ from src.gui import Gui
 from src.benchmark import Benchmark
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.alt_eval import EvalFunction
-from src.moveGenerator import MoveGenerator
+from src.moveGenerator import MoveGenerator1 as MoveGenerator
 from src.moveLib import MoveLib
 from src.gamestate import GameState
 from src.model import *

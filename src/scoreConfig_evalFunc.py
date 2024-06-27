@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.model import *
 from src.moveLib import *
-from src.moveGenerator import MoveGenerator as mg
+from src.moveGenerator import MoveGenerator1 as mg
 
 """All Versions have to return a Dictionary
 """

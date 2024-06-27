@@ -7,10 +7,11 @@ from src.gui import Gui
 from src.benchmark import Benchmark
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.alt_eval import EvalFunction
-from src.moveGenerator import MoveGenerator
+# from src.moveGenerator import MoveGenerator
 from src.moveLib import MoveLib
 from src.gamestate import GameState
 from src.model import *
+from board_final import MoveGenerator 
 
 class TimeExceeded(Exception):
     pass
@@ -23,12 +24,13 @@ class AlphaBetaSearch:
         self.game = game
         self.player = game["player"]
         self.opponent = Player.Red if self.player == Player.Blue else Player.Blue
+        self.turn = True if self.player == Player.Blue else False
         self.eval_func = EvalFunction(ScoreConfig.Version2(self.player, self.player))
         self.eval_func_opponent = EvalFunction(ScoreConfig.Version2(self.player, self.opponent))
         self.gameover = [DictMoveEntry.CONTINUE_GAME]
         self.total_gameover = False
         self.bitboards = game["bitboards"]
-        self.move_gen = MoveGenerator(self.bitboards)
+        self.move_gen = MoveGenerator(*self.bitboards, self.turn)
         self.best_move = None
         self.time_limit = 100  # Default time limit in seconds
         self.start_time = time.time()
@@ -62,7 +64,7 @@ class AlphaBetaSearch:
         return self.best_move
 
     def alpha_beta_max(self, alpha, beta, depth_left, bitboards):
-        if self.is_game_over(bitboards) or depth_left == 0:
+        if depth_left == 0:
             return self.eval_func_opponent.computeEvaluationScore(bitboards), None
 
         moves = self.generate_moves(self.player, bitboards)
@@ -70,22 +72,24 @@ class AlphaBetaSearch:
         best_move = None
 
         for move in moves:
-            if self.is_time_exceeded():
-                raise TimeExceeded()
-            new_board = self.move_gen.execSingleMove(move, self.player, self.gameover, bitboards, False)
-            score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_board)
-            #undo move
-            if score > best_score:
-                best_score = score
-                best_move = move
-            alpha = max(alpha, best_score)
-            if alpha >= beta:
-                break
+            for dest in move[1]:
+                if self.is_time_exceeded():
+                    raise TimeExceeded()
+                self.move_gen.exec_move(move[0], dest)
+                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, bitboards)
+                #undo move
+                self.move_gen.takeback()
+                if score > best_score:
+                    best_score = score
+                    best_move = [move[0], dest]
+                alpha = max(alpha, best_score)
+                if alpha >= beta:
+                   break
 
         return best_score, best_move
 
     def alpha_beta_min(self, alpha, beta, depth_left, bitboards):
-        if self.is_game_over(bitboards) or depth_left == 0:
+        if depth_left == 0:
             return self.eval_func_opponent.computeEvaluationScore(bitboards), None
 
         moves = self.generate_moves(self.opponent, bitboards)
@@ -93,25 +97,27 @@ class AlphaBetaSearch:
         best_move = None
 
         for move in moves:
-            if self.is_time_exceeded():
-                raise TimeExceeded()
-            new_board = self.move_gen.execSingleMove(move, self.opponent, self.gameover, bitboards, False)
-            score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_board)
-            if score < best_score:
-                best_score = score
-                best_move = move
-            beta = min(beta, best_score)
-            if beta <= alpha:
-                break
+            for dest in move[1]:
+                if self.is_time_exceeded():
+                    raise TimeExceeded()
+                self.move_gen.exec_move(move[0], dest)
+                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, bitboards)
+                self.move_gen.takeback()
+                if score < best_score:
+                    best_score = score
+                    best_move = [move[0], dest]
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                   break
 
         return best_score, best_move
 
     def generate_moves(self, player, bitboards):
         """Generate all possible moves for the given player."""
-        self.move_gen.checkBoardIfGameOver(self.gameover, bitboards)
-        moves = self.move_gen.genMoves(player, self.gameover, bitboards)
-        self.move_count += len(moves)
-        self.total_move_count += len(moves)
+        moves = self.move_gen.generate_moves()
+        for move in moves:
+            for i in move[1]:
+                self.total_move_count += 1
         return moves
 
     def is_game_over(self, bitboards):

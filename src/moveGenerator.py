@@ -9,7 +9,7 @@ from src.model import Player, BitMaskDict, DICT_MOVE, DictMoveEntry, BIT_MASK_AR
 from src.moveLib import MoveLib as mv
 
 
-class MoveGenerator:
+class MoveGenerator1:
     # _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
     # _boardIsInitialized = False
     # _gameover = False
