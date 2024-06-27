@@ -1,7 +1,7 @@
 from moveLib import MoveLib
 from src.gui import Gui
 from alpha_beta import AlphaBetaSearch
-from minmax import MinimaxSearch
+
 from src.benchmark import Benchmark
 from src.moveGenerator import MoveGenerator
 from src.gamestate import GameState
@@ -10,9 +10,9 @@ from src.model import Player, DictMoveEntry
 def call(state, search_type='minmax'):
     if search_type == 'alpha_beta':
         search_instance = AlphaBetaSearch(state)
-    else:
-        search_instance = MinimaxSearch(state)
-    depth = 3
+
+
+    depth = 6
 
 
     # Initialize the MoveGenerator with the game state's bitboards
@@ -23,7 +23,8 @@ def call(state, search_type='minmax'):
     # Benchmark the genMoves method
     # Benchmark.benchmark(lambda: move_generator.genMoves(state["player"], game_over, state["bitboards"]), 'genMoves')
     # Benchmark.profile(lambda: [move_generator.genMoves(state["player"], game_over, state["bitboards"]) for _ in range(1000)], 'genMoves')
-    Benchmark.profile(lambda: search_instance.search(time_limit=20, depth=depth), search_type)
+    # Benchmark.benchmark(lambda: move_generator.genMoves(state["player"], gameOver=game_over, board=state["bitboards"]), 'genMoves', func_name='genMoves', repetitions=1000,extra_depth=20,profile=True)
+    Benchmark.profile(lambda:search_instance.search(iterative_deepening=False, time_limit=200, depth=depth), 'alpha_beta', mode='text')
     next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
     if next_move is not None:
         out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
