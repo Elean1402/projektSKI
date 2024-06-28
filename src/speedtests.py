@@ -71,26 +71,104 @@
 # print(global_time)
 # print(enclosing_time)
 
-import timeit
-class MyClass:
-    class_attr = 0
+# import timeit
+# class MyClass:
+#     class_attr = 0
     
-    def __init__(self):
-        self.instance_attr = 0
+#     def __init__(self):
+#         self.instance_attr = 0
+
+# obj = MyClass()
+
+# def access_class_attr():
+#     return MyClass.class_attr
+
+# def access_instance_attr():
+#     return obj.instance_attr
+
+# # Measure time for accessing class attribute
+# class_attr_time = timeit.timeit(access_class_attr, number=1000000)
+
+# # Measure time for accessing instance attribute
+# instance_attr_time = timeit.timeit(access_instance_attr, number=1000000)
+
+# print(f"Time accessing class attribute: {class_attr_time}")
+# print(f"Time accessing instance attribute: {instance_attr_time}")
+
+import timeit
+
+class MyClass:
+    class_var_int = 1
+
+    def method_access_class_var_int(self):
+        return MyClass.class_var_int
+
+    def method_access_local_var_int(self):
+        local_var = 1
+        return local_var
 
 obj = MyClass()
 
-def access_class_attr():
-    return MyClass.class_attr
+# Timing access to a class variable (int)
+access_class_var_int_time = timeit.timeit('obj.method_access_class_var_int()', globals=globals(), number=1000000)
 
-def access_instance_attr():
-    return obj.instance_attr
+# Timing access to a local variable (int)
+access_local_var_int_time = timeit.timeit('obj.method_access_local_var_int()', globals=globals(), number=1000000)
 
-# Measure time for accessing class attribute
-class_attr_time = timeit.timeit(access_class_attr, number=1000000)
+print(f"Time to access a class variable (int): {access_class_var_int_time}")
+print(f"Time to access a local variable (int): {access_local_var_int_time}")
 
-# Measure time for accessing instance attribute
-instance_attr_time = timeit.timeit(access_instance_attr, number=1000000)
+# import timeit
+# import numpy as np
 
-print(f"Time accessing class attribute: {class_attr_time}")
-print(f"Time accessing instance attribute: {instance_attr_time}")
+# class MyClass:
+#     class_var = np.uint64(1)
+
+#     def method_access_class_var(self):
+#         return MyClass.class_var
+
+#     def method_create_local_var(self):
+#         local_var = np.uint64(1)
+#         return local_var
+
+#     def method_create_local_int(self):
+#         local_var = 1
+#         return local_var
+
+# obj = MyClass()
+
+# # Timing access to a class variable (np.uint64)
+# access_class_var_time = timeit.timeit('obj.method_access_class_var()', globals=globals(), number=1000000)
+
+# # Timing creation of a local variable (np.uint64)
+# create_local_var_time = timeit.timeit('obj.method_create_local_var()', globals=globals(), number=1000000)
+
+# # Timing creation of a local variable (native int)
+# create_local_int_time = timeit.timeit('obj.method_create_local_int()', globals=globals(), number=1000000)
+
+# print(f"Time to access a class variable (np.uint64): {access_class_var_time}")
+# print(f"Time to create a local variable (np.uint64): {create_local_var_time}")
+# print(f"Time to create a local variable (native int): {create_local_int_time}")
+
+# import timeit
+
+# def bitwise_and_twice(a, b):
+#     return a & b  & c
+
+# def bitwise_and_once(a, b):
+#     temp = a & b
+#     return temp
+
+# # Example values
+# a = 0b1101101
+# b = 0b1011011
+# c = 0b1110110
+
+# # Timing bitwise AND operation called twice
+# time_twice = timeit.timeit('bitwise_and_twice(a, b)', globals=globals(), number=1000000)
+
+# # Timing bitwise AND operation stored and used
+# time_once = timeit.timeit('bitwise_and_once(a, b)', globals=globals(), number=1000000)
+
+# print(f"Time to call bitwise AND operation twice: {time_twice}")
+# print(f"Time to store and reuse bitwise AND operation: {time_once}")

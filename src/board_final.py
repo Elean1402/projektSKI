@@ -14,9 +14,12 @@ Notes:
         isOver  -> checks if the game is over
         --> check isOver after initBoard and after exec_move
 
+        isOpening() -> bool # true if the current game is in the opening phase
+
     In process (don't use yet):
         eval() -> int # evaluation of the current board
-"""
+        
+    """
 
 
 
@@ -105,9 +108,15 @@ class Board():
         elif Board.red & Board.red_on_ground_row:
             return "Red"
         else:
-            return ""
+            return ""   
+
+    @staticmethod
+    def isOpening() -> bool:
+        return (Board.blue | Board.red) & Board.r45 == 0
         
+    
     ################### Class Variables #####################
+    
         
     blue_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
     red_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
@@ -593,36 +602,25 @@ class Board():
     F8 = np.uint64(0b0000010000000000000000000000000000000000000000000000000000000000)
 
     r23 = r2 | r3
+    r45 = r4 | r5
     r67 = r6 | r7
-
-    blue_k_hits = np.uint64(0)
-    blue_p_hits = np.uint64(0)
-    blue_hits = np.uint64(0)
-    blue_no_hits = np.uint64(0)
-    blue_pot_k  = np.uint64(0)
-    blue_k_untargeted = np.uint64(0)
-
-
-    red_k_hits  = np.uint64(0)
-    red_p_hits  = np.uint64(0)
-    red_hits  = np.uint64(0)
-    red_no_hits  = np.uint64(0)
-    red_pot_k   = np.uint64(0)
-    red_k_untargeted = np.uint64(0)
 
     min_eval = -1000
     max_eval = 1000
 
     # weights 
 
-    # pawn existence
-    wp = 10
+     
 
-    # knight existence
-    wk = 30
-
-    # temp 
-    b = 0      
+    # Helper Function for eval
+    numpyone = np.uint64(1) 
+    @staticmethod
+    def count_figs(num):
+        count = 0
+        while num:
+            num &= num - Board.numpyone 
+            count += 1
+        return count    
         
     @staticmethod
     def eval() -> int:
@@ -632,15 +630,28 @@ class Board():
         attacking -> attacks at least one figure
         """
 
+        # pawn existence
+        wp = 10
+
+        # knight existence
+        wk = 30
+
+        # temp 
+        w = 0
+        b = 0 
+
+        blue_p_movable = Board.blue_p & ~(Board.blue_k | Board.red_k)
+        red_p_movable = Board.red_p & ~(Board.blue_k | Board.red_k)
+
         # Hits
         # Blue hits
         blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
-        blue_p_hits = (Board.blue_p & Board.blue_p_hit_left << Board.bphl) | (Board.blue_p & Board.blue_p_hit_right << Board.bphr)
+        blue_p_hits = (blue_p_movable & Board.blue_p_hit_left << Board.bphl) | (blue_p_movable & Board.blue_p_hit_right << Board.bphr)
         blue_no_hits = ~(blue_k_hits | blue_p_hits)
 
         # Red hits
         red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
-        red_p_hits = (Board.red_p & Board.red_p_hit_left >> Board.rphl) | (Board.red_p & Board.red_p_hit_right >> Board.rphr)
+        red_p_hits = (red_p_movable & Board.red_p_hit_left >> Board.rphl) | (red_p_movable & Board.red_p_hit_right >> Board.rphr)
         red_no_hits = ~(red_k_hits | red_p_hits)
 
         # Potential Knights
@@ -650,7 +661,7 @@ class Board():
 
         # Blue Pawns
         blue_pot_p = Board.blue_k & Board.blue_p
-        blue_p_untargeted = Board.blue_p & Board.red_no_hits
+        blue_p_untargeted = blue_p_movable & red_no_hits
 
 
         # Red knights
@@ -658,20 +669,19 @@ class Board():
         red_k_untargeted = Board.red_k & blue_no_hits
 
         # Red Pawns
-        red_p_untargeted = Board.red_p & Board.blue_no_hits
+        red_p_untargeted = Board.red_p & blue_no_hits
 
         if Board.blue_turn:
             # Won
             if Board.blue & Board.r8:
                 return Board.max_eval
             
-            # Lost -> Red can force Win
+            # Lost -> Red can force Win cause red moves next
             if Board.red_k & Board.r23:
                 return Board.min_eval
             
-
             # Force Win in next knight move (knigth on r67)
-            if (Board.blue_k & ~Board.red_hits & Board.r67):
+            if (red_k_untargeted & Board.r67):
                 return Board.max_eval - 1
             
             # Force Win in next pawn move (no hits, on r7))
@@ -687,60 +697,47 @@ class Board():
                 return Board.max_eval - 1
         
         else:
-            # Won
-            if Board.red & Board.r1:
-                return Board.min_eval
-            
-            # Lost -> Red can force Win
-            if Board.blue_k & Board.r67:
-                return Board.max_eval
-            
-            # Unbeatable Figures:
-            # Pawns
-            red_p_untarget = Board.red_p & Board.blue_no_hits
-
-            # Force Win in next knight move (knigth on r23)
-            if (Board.red_k & ~Board.blue_hits & Board.r23):
-                return Board.min_eval + 1
-            
-            # Force Win in next pawn move (no hits, on r7))
-            if ((red_p_untarget & Board.r2mid) >> Board.rpf) & ~Board.blue:
-                return Board.min_eval + 1
-            
-            # Force Win in next pawn hit Knight left
-            if ((red_p_untarget & Board.r2r) >> Board.rphl) & Board.blue_k:
-                return Board.min_eval + 1
-            
-            # Force Win in next pawn hit Knight left
-            if ((red_p_untarget & Board.r2l) >> Board.rphr) & Board.blue_k:
-                return Board.min_eval + 1
+           pass
             
         ##############################################################
-        # Figure independent # Blue
+        # Figure independent # Blue (Mostly Cause Partial dependent on red)
         ##############################################################
 
         # Material Advantage
-        eval = Board.wp*(len(Board.l_blue_p) - len(Board.l_red_p)) + Board.wk*(len(Board.l_blue_k) - len(Board.l_red_k))
+        eval = wp*(len(Board.l_blue_p) - len(Board.l_red_p)) + wk*(len(Board.l_blue_k) - len(Board.l_red_k))
 
-        # Untargeted Knights on row
-        # Row 5
-        if Board.blue_k & Board.r5 & Board.red_no_hits:
-            eval += b
+ 
+        
+        # Blue untargeted Knights Attacking Pawns
+        red_p_attacked_by_k = blue_k_hits & red_p_movable
+        if red_p_attacked_by_k:
+            blue_k_attacking_p = ((red_p_attacked_by_k >> Board.bkfl) | (red_p_attacked_by_k >> Board.bkfr) | (red_p_attacked_by_k >> Board.bkl) | (red_p_attacked_by_k >> Board.bkr)) & Board.blue_k
+            eval += w*Board.count_figs(blue_k_attacking_p)
 
-        # Row 4
-        if Board.blue_k & Board.r4 & Board.red_no_hits:
-            eval += b
+        # Blue untargeted Pawns Attacking Knights
+        red_k_attacked_by_p = blue_p_hits & Board.red_k
+        if red_k_attacked_by_p:
+            blue_p_attacking_k = ((red_k_attacked_by_p >> Board.bphl) | (red_k_attacked_by_p >> Board.bphr)) & blue_p_movable
+            eval += w*Board.count_figs(blue_p_attacking_k)
 
-        # ...
+        ####################### Red #################################
+        # Red untargeted Knights Attacking Pawns
+        blue_p_attacked_by_k = red_k_hits & blue_p_movable
+        if blue_p_attacked_by_k:
+            red_k_attacking_p = ((blue_p_attacked_by_k << Board.rkfl) | (blue_p_attacked_by_k << Board.rkfr) | (blue_p_attacked_by_k << Board.rkl) | (blue_p_attacked_by_k << Board.rkr)) & Board.red_k
+            eval -= w*Board.count_figs(red_k_attacking_p)
 
+        # Red untargeted Pawns Attacking Knights
+        blue_k_attacked_by_p = red_p_hits & Board.blue_k
+        if blue_k_attacked_by_p:
+            red_p_attacking_k = ((blue_k_attacked_by_p << Board.rphl) | (blue_k_attacked_by_p << Board.rphr)) & red_p_movable
+            eval -= w*Board.count_figs(red_p_attacking_k)
+        ##############################################################
 
-
-
-
-        # Potential untargeted Knight on r67
-        if Board.blue_pot_k & Board.r67 & ~Board.red_hits:
-            eval += b
-
+        # Blue Pawns attacked by unprotected knights that can counterattack without being hit or with being hit and counterhit
+        squares = (blue_p_attacked_by_k << Board.bpf | blue_p_attacked_by_k << Board.bpl | blue_p_attacked_by_k >> Board.bpr) & ~(Board.red | Board.blue_k) & (red_no_hits | ~blue_no_hits)
+        if (squares << Board.bphr | squares << Board.bphl) & red_k_untargeted:
+            eval += w*Board.count_figs(squares)
         
         """
         ##############################################################
@@ -1087,7 +1084,7 @@ if __name__ == "__main__":
 
     # Multiple takebacks
     # hitcombis
-    test = "6/8/bb07/8/1rr06/8/rr07/6 r"
+    test = "6/87/bb07/8/8/8/rr07/6 r"
     # test = "6/8/8/b07/1rr06/8/rr07/6 r"
 
     #test = "6/8/8/8/1bb06/07r/8/6 r"
@@ -1102,8 +1099,10 @@ if __name__ == "__main__":
 			"player2": False,
 	}
     # For Blue
-    Board.play(game["board"])
-
+    FEN_board = game["board"]
+    Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),True)
+    Board.state("Startpos")
+    print(Board.isOpening())
     # For Red
     # Board.play()
     
