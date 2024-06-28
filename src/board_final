@@ -86,20 +86,24 @@ class Board():
         
         """
         if Board.blue_turn:
-            Board.red_takeback(*Board.stack.pop())
+            s,d = Board.red_takeback(*Board.stack.pop())
         else:
-            Board.blue_takeback(*Board.stack.pop())
+            s,d = Board.blue_takeback(*Board.stack.pop())
         Board.blue_turn = not Board.blue_turn
-    
+        return s,d
     @staticmethod
     def isOver() -> str:
         """
-        Returns: "blue" or "red" if one of the players has won, "" if not
+        Returns: "blue" or "red" if the appropriate player has won, "" if not
+        Call like: 
+        if Board.isOver():
+            print(f"{Board.isOver() Won}")
+            -> exit
         """
         if Board.blue & Board.blue_on_ground_row:
-            return "blue"
+            return "Blue"
         elif Board.red & Board.red_on_ground_row:
-            return "red"
+            return "Red"
         else:
             return ""
         
@@ -263,7 +267,6 @@ class Board():
         Board.l_blue_k.remove(source)
 
         
-        
         # on red_k -> hit & knight
         if dest & Board.red_k:
             # remove red knight
@@ -355,6 +358,7 @@ class Board():
         
         Board.blue = Board.blue_p | Board.blue_k
 
+        return source, dest
     ############ Red ##################
 
     @staticmethod
@@ -553,32 +557,266 @@ class Board():
 
         Board.red = Board.red_p | Board.red_k
 
+        return source, dest
 
+    r1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
+    C1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000000100000)
+    F1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000000000100)
+
+    r2 = np.uint64(0b0000000000000000000000000000000000000000000000001111111100000000)
+    r2r = np.uint64(0b0000000000000000000000000000000000000000000000000111111100000000)
+    r2l = np.uint64(0b0000000000000000000000000000000000000000000000001111111000000000)
+    r2mid = np.uint64(0b0000000000000000000000000000000000000000000000000111111000000000)
+    A2 = np.uint64(0b0000000000000000000000000000000000000000000000001000000000000000)
+    H2 = np.uint64(0b0000000000000000000000000000000000000000000000000000000100000000)
+
+
+    r3 = np.uint64(0b0000000000000000000000000000000000000000111111110000000000000000)
+    r4 = np.uint64(0b0000000000000000000000000000000011111111000000000000000000000000)
+    r5 = np.uint64(0b0000000000000000000000001111111100000000000000000000000000000000)
+    r6 = np.uint64(0b0000000000000000111111110000000000000000000000000000000000000000)
+    r7 = np.uint64(0b0000000011111111000000000000000000000000000000000000000000000000)
+    r7r = np.uint64(0b0000000001111111000000000000000000000000000000000000000000000000)
+    r7l = np.uint64(0b0000000011111110000000000000000000000000000000000000000000000000)
+    r7mid = np.uint64(0b0000000001111110000000000000000000000000000000000000000000000000)
+    A7 = np.uint64(0b0000000010000000000000000000000000000000000000000000000000000000)
+    H7 = np.uint64(0b0000000000000001000000000000000000000000000000000000000000000000)
+
+
+    r8 = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
+    C8 = np.uint64(0b0010000000000000000000000000000000000000000000000000000000000000)
+    F8 = np.uint64(0b0000010000000000000000000000000000000000000000000000000000000000)
+
+    r23 = r2 | r3
+    r67 = r6 | r7
+
+    blue_k_hits = np.uint64(0)
+    blue_p_hits = np.uint64(0)
+    blue_hits = np.uint64(0)
+    blue_no_hits = np.uint64(0)
+    blue_pot_k  = np.uint64(0)
+    blue_k_untargeted = np.uint64(0)
+
+
+    red_k_hits  = np.uint64(0)
+    red_p_hits  = np.uint64(0)
+    red_hits  = np.uint64(0)
+    red_no_hits  = np.uint64(0)
+    red_pot_k   = np.uint64(0)
+    red_k_untargeted = np.uint64(0)
+
+    min_eval = -1000
+    max_eval = 1000
+
+    # weights 
+
+    # pawn existence
+    wp = 10
+
+    # knight existence
+    wk = 30
+
+    # temp 
+    b = 0      
+        
     @staticmethod
     def eval() -> int:
         """
-        Returns: evaluation of the current board
+        targeted -> attacked at least once
+        protected -> protected at least once
+        attacking -> attacks at least one figure
         """
+
         # Hits
         # Blue hits
         blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
         blue_p_hits = (Board.blue_p & Board.blue_p_hit_left << Board.bphl) | (Board.blue_p & Board.blue_p_hit_right << Board.bphr)
+        blue_no_hits = ~(blue_k_hits | blue_p_hits)
 
         # Red hits
         red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
         red_p_hits = (Board.red_p & Board.red_p_hit_left >> Board.rphl) | (Board.red_p & Board.red_p_hit_right >> Board.rphr)
+        red_no_hits = ~(red_k_hits | red_p_hits)
 
         # Potential Knights
         # Blue knights
-        blue_pot_k = Board.blue_p & ((Board.blue_p & Board.blue_p_forward << Board.bpf) | (Board.blue_p & Board.blue_p_left << Board.bpl) | (Board.blue_p & Board.blue_p_right >> Board.bpr) | (blue_p_hits & Board.red_k))
+        blue_pot_k = Board.blue_p & ((Board.blue_p & Board.blue_p_forward << Board.bpf) | (Board.blue_p & Board.blue_p_left << Board.bpl) | (Board.blue_p & Board.blue_p_right >> Board.bpr) | (Board.blue_p_hits & Board.red_k))
+        blue_k_untargeted = Board.blue_k & red_no_hits
+
+        # Blue Pawns
+        blue_pot_p = Board.blue_k & Board.blue_p
+        blue_p_untargeted = Board.blue_p & Board.red_no_hits
+
 
         # Red knights
-        red_pot_k = Board.red_p & ((Board.red_p & Board.red_p_forward >> Board.rpf) | (Board.red_p & Board.red_p_left << Board.rpl) | (Board.red_p & Board.red_p_right >> Board.rpr) | (red_p_hits & Board.blue_k))
-        return 0
+        red_pot_k = Board.red_p & ((Board.red_p & Board.red_p_forward >> Board.rpf) | (Board.red_p & Board.red_p_left << Board.rpl) | (Board.red_p & Board.red_p_right >> Board.rpr) | (Board.red_p_hits & Board.blue_k))
+        red_k_untargeted = Board.red_k & blue_no_hits
+
+        # Red Pawns
+        red_p_untargeted = Board.red_p & Board.blue_no_hits
+
+        if Board.blue_turn:
+            # Won
+            if Board.blue & Board.r8:
+                return Board.max_eval
+            
+            # Lost -> Red can force Win
+            if Board.red_k & Board.r23:
+                return Board.min_eval
+            
+
+            # Force Win in next knight move (knigth on r67)
+            if (Board.blue_k & ~Board.red_hits & Board.r67):
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn move (no hits, on r7))
+            if ((blue_p_untargeted & Board.r7mid) << Board.bpf) & ~Board.red:
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((blue_p_untargeted & Board.r7r) << Board.bphl) & Board.red_k:
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((blue_p_untargeted & Board.r7l) << Board.bphr) & Board.red_k:
+                return Board.max_eval - 1
+        
+        else:
+            # Won
+            if Board.red & Board.r1:
+                return Board.min_eval
+            
+            # Lost -> Red can force Win
+            if Board.blue_k & Board.r67:
+                return Board.max_eval
+            
+            # Unbeatable Figures:
+            # Pawns
+            red_p_untarget = Board.red_p & Board.blue_no_hits
+
+            # Force Win in next knight move (knigth on r23)
+            if (Board.red_k & ~Board.blue_hits & Board.r23):
+                return Board.min_eval + 1
+            
+            # Force Win in next pawn move (no hits, on r7))
+            if ((red_p_untarget & Board.r2mid) >> Board.rpf) & ~Board.blue:
+                return Board.min_eval + 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((red_p_untarget & Board.r2r) >> Board.rphl) & Board.blue_k:
+                return Board.min_eval + 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((red_p_untarget & Board.r2l) >> Board.rphr) & Board.blue_k:
+                return Board.min_eval + 1
+            
+        ##############################################################
+        # Figure independent # Blue
+        ##############################################################
+
+        # Material Advantage
+        eval = Board.wp*(len(Board.l_blue_p) - len(Board.l_red_p)) + Board.wk*(len(Board.l_blue_k) - len(Board.l_red_k))
+
+        # Untargeted Knights on row
+        # Row 5
+        if Board.blue_k & Board.r5 & Board.red_no_hits:
+            eval += b
+
+        # Row 4
+        if Board.blue_k & Board.r4 & Board.red_no_hits:
+            eval += b
+
+        # ...
+
+
+
+
+
+        # Potential untargeted Knight on r67
+        if Board.blue_pot_k & Board.r67 & ~Board.red_hits:
+            eval += b
+
+        
+        """
+        ##############################################################
+        # For each Figure # Blue
+        ##############################################################
+        ########################## Pawns #############################
+        for fig in Board.l_blue_p:
+            # attacking Pawns
+            if((fig & Board.blue_p_hit_right << Board.bphr) | (fig & Board.blue_p_hit_left << Board.bphl)) & Board.red:
+                # untargeted
+                if fig & ~Board.red_hits:
+                    eval += b
+                # targeted & protected
+                elif fig & Board.blue_hits:
+                    eval += b
+                # targeted
+                else:
+                    eval += b
+
+            # non-attacking Pawns
+            else:
+                # targeted
+                if fig & Board.red_hits:
+                    # protected
+                    if fig & Board.blue_hits:
+                        eval += b
+                    
+                    # unprotected
+                    else:
+                        eval += b
+                # untargeted & non-attacking
+                else:
+                    eval += b
+        
+            ##############################################################
+            # Certain Pawn Areas # Blue
+            ##############################################################
+            
+            # Targeted
+            if fig & ~Board.red_hits:
+                # Valueble Pawn H7 untargeted
+                if fig & Board.H7:
+                    eval += b
+                    # no Red Pawn on C8
+                    if ~(Board.C8 & Board.red_p):
+                        eval += b
+
+                # Valueble Pawn H2 untargeted
+                if blue_p_untarget & Board.H2:
+                    eval += b
+                    # no Red Pawn on F8          
+                    if ~(Board.F8 & Board.red_p):
+                        eval += b
+                
+
+            
+        # TODO: Knights
+        ########################## Knights #############################
+        for fig in Board.l_blue_k: 
+            # non-targeted
+            if fig & ~Board.red_hits:
+
+            ##############################################################
+            # Certain Knight Areas # Blue
+            ##############################################################
+
+                # Possible Knight on r5 untargeted
+                if fig & Board.r5:
+                    eval += b
+
+                # Knight on r5 untargeted or at least one possible takeback
+                if fig & Board.r4:
+                    eval += b
+        """
+                
+        return eval
+
 
     ############################ TESTING ############################
     @staticmethod
-    def state(message="") -> None:
+    def state(message="",s=False,d=False) -> None:
         def board_to_string(board:np.uint64)->str:
             return np.binary_repr(board,width=64)
         def print_board(board:np.uint64):
@@ -590,54 +828,58 @@ class Board():
             print(f"------------- {message}  --------------------------")
         else:
             print("-----------------------------------------------------");print()
-	
-        red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
-        for p in Board.l_blue_p: blue_p = blue_p ^ p
-        for k in Board.l_blue_k: blue_k = blue_k ^ k
-        for p in Board.l_red_p: red_p = red_p ^ p
-        for k in Board.l_red_k: red_k = red_k ^ k
+
+        if s | d:
+            print("Source")
+            print_board(s)
+            print("Dest")
+            print_board(d)
+
+        red_p,blue_p,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
+        for p in Board.l_blue_p:
+            if p & blue_p:
+                Board.bitboard_states()
+                raise Exception("Double Blue Pawn")
+            blue_p = blue_p ^ p
+        for k in Board.l_blue_k:
+            if k & blue_k:
+                Board.bitboard_states()
+                raise Exception("Double Blue Knight")
+            blue_k = blue_k ^ k
+        for p in Board.l_red_p: 
+            if p & red_p:
+                Board.bitboard_states()
+                raise Exception("Double Red Pawn")
+            red_p = red_p ^ p
+        for k in Board.l_red_k: 
+            if k & red_k:
+                Board.bitboard_states()
+                raise Exception("Double Red Knight")
+            red_k = red_k ^ k
 
         if blue_p==Board.blue_p:
             if blue_k==Board.blue_k:
                 if blue_p | blue_k!=Board.blue:
-                    print("blue")
-                    print_board(blue_p | blue_k)
-                    print("board.blue")
-                    print_board(Board.blue)
+                    Board.bitboard_states()
                     raise Exception("blue != board.blue")
 
             else:
-                print("blue_k")
-                print_board(Board.blue_k)
-                print("l_blue_k")
-                print_board(blue_k)
+                Board.bitboard_states()
                 raise Exception("blues knights != l_blues_knights")
         else:
-            print("blue_p")
-            print_board(Board.blue_p)
-            print("l_blue_p")
-            print_board(blue_p)
+            Board.bitboard_states()
             raise Exception("blues pawns != l_blues_pawns")
 
         if red_p==Board.red_p: 
             if red_k==Board.red_k:
                 if red_p | red_k!=Board.red:
-                    print("red")
-                    print_board(red_p | red_k)
-                    print("board.red")
-                    print_board(Board.red)
+                    Board.bitboard_states()
                     raise Exception("red != board.red")		
             else:
-                print("red_k")
-                print_board(Board.red_k)
-                print("l_red_k")
-                print_board(red_k)
+                Board.bitboard_states()
                 raise Exception("red knights != l_red_knights")
         else:
-            print("red_p")
-            print_board(Board.red_p)
-            print("l_red_p")
-            print_board(red_p)
+            Board.bitboard_states()
             raise Exception("red pawns != l_red_pawns")
         
         s=""
@@ -667,32 +909,84 @@ class Board():
 
     @staticmethod
     def play(FEN_board=False, blue_turn=True):
+
         if FEN_board:
             Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn)
         else:
             Board.initBoard(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0),blue_turn)
         Board.state("Startpos")
+        Board.bitboard_states()
 
         def rand_move_execution(moves):
             fig = random.choice(moves)
             move = random.choice(fig[1])
             Board.exec_move(fig[0],move)
             return fig[0],move
+        
+        def takeback():
+            inp = input("Takeback? -> Enter 't', State? -> 's': ")
+            
+            if inp =="t":
+                s,d  = Board.takeback()
+                Board.state("Takeback",s,d)    
+                takeback()
+            elif inp == "s":
+                Board.bitboard_states()
+                takeback()
+            
 
         while Board.isOver() == "":
             moves = Board.generate_moves()
             print(f"moves: {moves}")
-
             rand_move_execution(moves)
 
             Board.state()
-            inp = input("Takeback? -> Enter 't': ")
-            
-            if inp =="t":
-                Board.takeback()
-                Board.state("Takeback")
+
+            takeback()
+
+        
             
         print(Board.isOver())
+
+    @staticmethod
+    def bitboard_states():
+        def print_board(board:np.uint64):
+            string = np.binary_repr(board,width=64)
+            #str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
+            print('\n'.join(string[i:i+8] for i in range(0, len(string), 8)))
+            print()
+
+        red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
+        for p in Board.l_blue_p:
+            blue_p = blue_p ^ p
+        for k in Board.l_blue_k:
+            blue_k = blue_k ^ k
+        for p in Board.l_red_p: 
+            red_p = red_p ^ p
+        for k in Board.l_red_k: 
+            red_k = red_k ^ k
+
+        print("Blue Pawns")
+        print_board(Board.blue_p)
+        print("Blue L_pawns (maybe double)")
+        print_board(blue_p)
+        print("Blue Knights")
+        print_board(Board.blue_k)
+        print("Blue L_knights (maybe double)")
+        print_board(blue_k)
+        # print("Blue")
+        # print_board(Board.blue)
+
+        # print("Red Pawns")
+        # print_board(Board.red_p)
+        # print("Red L_pawns (maybe double)")
+        # print_board(red_p)
+        # print("Red Knights")
+        # print_board(Board.red_k)
+        # print("Red L_knights (maybe double)")
+        # print_board(red_k)
+        # print("Red")
+        # print_board(Board.red)
 
 if __name__ == "__main__":
     # simple figure
@@ -772,7 +1066,17 @@ if __name__ == "__main__":
     # test = "6/8/8/8/1rb06/8/rr07/6 r"
 
 	# on rr knigth?
-    test = "6/8/8/8/1rr06/8/rr07/6 r"
+
+
+    # Multiple takebacks
+    # hitcombis
+    # test = "6/8/bb07/8/1rr06/8/rr07/6 r"
+    # test = "6/8/8/b07/1rr06/8/rr07/6 r"
+
+    test = "6/8/8/8/1bb06/07r/8/6 r"
+
+
+
 
     b, player = test.split(" ")
     game = {"board": b,
@@ -781,8 +1085,8 @@ if __name__ == "__main__":
 			"player2": False,
 	}
     # For Blue
-    # Board.play(game["board"])
+    Board.play(game["board"])
 
     # For Red
-    Board.play(game["board"],False)
+    # Board.play()
     
