@@ -1,5 +1,0 @@
-genMoves ist 1.5675286296755076e-05s (mean aus 1000 Zügen) 
-genMoves ist 2.5299435132183133e-05s (mean aus 1000 Zügen) 
-genMoves1 ist 0.00015706312414840795s (mean aus 1000 Zügen) 
-genMoves ist 1.575775505625643e-05s (mean aus 1000 Zügen) 
-genMoves1 ist 0.00013161342818057163s (mean aus 1000 Zügen) 

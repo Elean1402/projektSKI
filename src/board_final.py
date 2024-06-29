@@ -1,15 +1,11 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
-from src.gamestate import GameState
-from src.gui import Gui
+from gamestate import GameState
+from gui import Gui
 import random
 
 """
 Notes:
-    Only static methods -> don't create instances e.g. just call self.func()
+    Only static methods -> don't create instances e.g. just call Board.func()
     To use:
         initBoard(*Bitboards, blue_turn) -> None   # new game
         generate_moves() -> [(source1, [dest1, dest2, ...]), ...] # generates all possible moves of the current player
@@ -18,95 +14,109 @@ Notes:
         isOver  -> checks if the game is over
         --> check isOver after initBoard and after exec_move
 
+        isOpening() -> bool # true if the current game is in the opening phase
+
     In process (don't use yet):
         eval() -> int # evaluation of the current board
-"""
+        
+    """
 
 
 
-class MoveGenerator:
-    def __init__(self,red_pawns, red_knights,blue_pawns, blue_knights, blue_turn=True) -> None:
+class Board():
+    @staticmethod
+    def initBoard(red_pawns, red_knights,blue_pawns, blue_knights, blue_turn=True) -> None:
         """
         Sets up new game:
         Call like this: 
-            self.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn:bool)
+            Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn:bool)
 
         Imports needed for that:
             from src.gamestate import GameState
             from src.gui import Gui
         """
-        self.blue_turn = blue_turn
-        self.blue_p = blue_pawns
-        self.blue_k = blue_knights
-        self.blue = blue_pawns | blue_knights
-        self.red_p = red_pawns
-        self.red_k = red_knights
-        self.red = red_pawns | red_knights
-        self.l_blue_p=[]
-        self.l_blue_k=[]
-        self.l_red_p=[]
-        self.l_red_k=[]
-        for bit_board, figure_list in zip((self.blue_p, self.blue_k, self.red_p, self.red_k),(self.l_blue_p,self.l_blue_k,self.l_red_p,self.l_red_k)):
+        Board.blue_turn = blue_turn
+        Board.blue_p = blue_pawns
+        Board.blue_k = blue_knights
+        Board.blue = blue_pawns | blue_knights
+        Board.red_p = red_pawns
+        Board.red_k = red_knights
+        Board.red = red_pawns | red_knights
+        Board.l_blue_p=[]
+        Board.l_blue_k=[]
+        Board.l_red_p=[]
+        Board.l_red_k=[]
+        for bit_board, figure_list in zip((Board.blue_p, Board.blue_k, Board.red_p, Board.red_k),(Board.l_blue_p,Board.l_blue_k,Board.l_red_p,Board.l_red_k)):
             for bit in range(64):
                 if bit_board & (np.uint64(1 << bit)):
                     figure_list.append(np.uint64(1 << bit))
 
-
-    def generate_moves(self) -> list:
+    @staticmethod
+    def generate_moves() -> list:
         """
         Format of the returned list:
         [(source1, [dest1, dest2, ...]), (source2, [dest1, dest2, ...]), ...]
         """
-        if self.blue_turn:
-            return self.blue_generation()
+        if Board.blue_turn:
+            return Board.blue_generation()
         else:
-            return self.red_generation()
+            return Board.red_generation()
     
-
-    def exec_move(self,source:np.uint64, dest:np.uint64) -> tuple:
+    @staticmethod
+    def exec_move(source:np.uint64, dest:np.uint64) -> tuple:
         """
         switches player automatically after execution
         Args: source, dest
         Returns: (blue_p, blue_k, red_p, red_k) # all bitboards for transition table
         """
-        if self.blue_turn:
-            if source & self.blue_k:
-                self.blue_k_move_execution(source, dest)
+        if Board.blue_turn:
+            if source & Board.blue_k:
+                Board.blue_k_move_execution(source, dest)
             else:
-                self.blue_p_move_execution(source, dest)
+                Board.blue_p_move_execution(source, dest)
         else:
-            if source & self.red_k:
-                self.red_k_move_execution(source, dest)
+            if source & Board.red_k:
+                Board.red_k_move_execution(source, dest)
             else:
-                self.red_p_move_execution(source, dest)
-        self.blue_turn = not self.blue_turn
-        return self.blue_p, self.blue_k, self.red_p, self.red_k
+                Board.red_p_move_execution(source, dest)
+        Board.blue_turn = not Board.blue_turn
+        return Board.blue_p, Board.blue_k, Board.red_p, Board.red_k
          
-
-    def takeback(self) -> None:
+    @staticmethod
+    def takeback() -> None:
         """
         switches player automatically after execution
         
         """
-        if self.blue_turn:
-            self.red_takeback(*self.stack.pop())
+        if Board.blue_turn:
+            s,d = Board.red_takeback(*Board.stack.pop())
         else:
-            self.blue_takeback(*self.stack.pop())
-        self.blue_turn = not self.blue_turn
-    
+            s,d = Board.blue_takeback(*Board.stack.pop())
+        Board.blue_turn = not Board.blue_turn
+        return s,d
+    @staticmethod
+    def isOver() -> str:
+        """
+        Returns: "blue" or "red" if the appropriate player has won, "" if not
+        Call like: 
+        if Board.isOver():
+            print(f"{Board.isOver() Won}")
+            -> exit
+        """
+        if Board.blue & Board.blue_on_ground_row:
+            return "Blue"
+        elif Board.red & Board.red_on_ground_row:
+            return "Red"
+        else:
+            return ""   
 
-    def isOver(self) -> str:
-        """
-        Returns: "blue" or "red" if one of the players has won, "" if not
-        """
-        if self.blue & self.blue_on_ground_row:
-            return "blue"
-        elif self.red & self.red_on_ground_row:
-            return "red"
-        else:
-            return ""
+    @staticmethod
+    def isOpening() -> bool:
+        return (Board.blue | Board.red) & Board.r45 == 0
         
+    
     ################### Class Variables #####################
+    
         
     blue_on_ground_row = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
     red_on_ground_row = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
@@ -177,406 +187,637 @@ class MoveGenerator:
     # left, forward left, right, forward right
     rkl, rkfl, rkr, rkfr = np.uint8(6), np.uint8(15), np.uint8(10), np.uint8(17)
 
-
-    def blue_p_move_generation(self,source:np.uint64) -> list:  
+    @staticmethod
+    def blue_p_move_generation(source:np.uint64) -> list:  
         dests = []
-        blocked_squares = ~(self.red | self.blue_k) # Pawns unmovable squares
+        blocked_squares = ~(Board.red | Board.blue_k) # Pawns unmovable squares
         # forward
-        if (source & self.blue_p_forward) << self.bpf & blocked_squares: dests.append(source << self.bpf) 
+        if (source & Board.blue_p_forward) << Board.bpf & blocked_squares: dests.append(source << Board.bpf) 
         # left
-        if (source & self.blue_p_left) << self.bpl & blocked_squares: dests.append(source << self.bpl) 
+        if (source & Board.blue_p_left) << Board.bpl & blocked_squares: dests.append(source << Board.bpl) 
         # hit left
-        if (source & self.blue_p_hit_left) << self.bphl & self.red: dests.append(source << self.bphl) 
+        if (source & Board.blue_p_hit_left) << Board.bphl & Board.red: dests.append(source << Board.bphl) 
         # hit right
-        if (source & self.blue_p_hit_right) << self.bphr & self.red: dests.append(source << self.bphr) 
+        if (source & Board.blue_p_hit_right) << Board.bphr & Board.red: dests.append(source << Board.bphr) 
         # right
-        if (source & self.blue_p_right) >> self.bpr & blocked_squares: dests.append(source >> self.bpr) 
+        if (source & Board.blue_p_right) >> Board.bpr & blocked_squares: dests.append(source >> Board.bpr) 
         return dests
 
-
-    def blue_k_move_generation(self,source:np.uint64) -> list: 
+    @staticmethod
+    def blue_k_move_generation(source:np.uint64) -> list: 
         dests = []
         # left
-        if (source & self.blue_k_left) << self.bkl & ~self.blue_k: dests.append(source << self.bkl) 
+        if (source & Board.blue_k_left) << Board.bkl & ~Board.blue_k: dests.append(source << Board.bkl) 
         # forward_left
-        if (source & self.blue_k_forward_left) << self.bkfl & ~self.blue_k: dests.append(source << self.bkfl) 
+        if (source & Board.blue_k_forward_left) << Board.bkfl & ~Board.blue_k: dests.append(source << Board.bkfl) 
         # right
-        if (source & self.blue_k_right) << self.bkr & ~self.blue_k: dests.append(source << self.bkr) 
+        if (source & Board.blue_k_right) << Board.bkr & ~Board.blue_k: dests.append(source << Board.bkr) 
         # forward_right
-        if (source & self.blue_k_forward_right) << self.bkfr & ~self.blue_k: dests.append(source << self.bkfr) 
+        if (source & Board.blue_k_forward_right) << Board.bkfr & ~Board.blue_k: dests.append(source << Board.bkfr) 
         return dests
 
-
-    def blue_p_move_execution(self,source:np.uint64, dest:np.uint64) -> None:
+    @staticmethod
+    def blue_p_move_execution(source:np.uint64, dest:np.uint64) -> None:
         # delete source Position 
-        self.l_blue_p.remove(source)
-        self.blue_p = self.blue_p ^ source
+        Board.l_blue_p.remove(source)
+        Board.blue_p = Board.blue_p ^ source
 
         # on red_k -> hit & knight
-        if dest & self.red_k:
+        if dest & Board.red_k:
             # remove red knight
             
-            self.red_k = self.red_k ^ dest
-            self.l_red_k.remove(dest)
+            Board.red_k = Board.red_k ^ dest
+            Board.l_red_k.remove(dest)
 
             # add blue knigth
-            self.blue_k = self.blue_k | dest
-            self.l_blue_k.append(dest)
+            Board.blue_k = Board.blue_k | dest
+            Board.l_blue_k.append(dest)
 
             # new red
-            self.red = self.red_p | self.red_k
-            self.stack.append((source, dest, True))
+            Board.red = Board.red_p | Board.red_k
+            Board.stack.append((source, dest, True))
 
         # on blue_p -> knight
-        elif dest & self.blue_p:
+        elif dest & Board.blue_p:
             # add blue knight
-            self.blue_k = self.blue_k | dest
-            self.l_blue_k.append(dest)
-            self.stack.append((source, dest))
+            Board.blue_k = Board.blue_k | dest
+            Board.l_blue_k.append(dest)
+            Board.stack.append((source, dest))
 
 
         # on red_p -> hit
-        elif dest & self.red_p:
+        elif dest & Board.red_p:
             # remove red pawn
-            self.red_p = self.red_p ^ dest
-            self.l_red_p.remove(dest)
+            Board.red_p = Board.red_p ^ dest
+            Board.l_red_p.remove(dest)
 
             # move blue pawn
-            self.blue_p = self.blue_p | dest
-            self.l_blue_p.append(dest)
+            Board.blue_p = Board.blue_p | dest
+            Board.l_blue_p.append(dest)
             
             # new red
-            self.red = self.red_p | self.red_k
-            self.stack.append((source, dest, True))
+            Board.red = Board.red_p | Board.red_k
+            Board.stack.append((source, dest, True))
 
         # simple move
         else: 
             # move blue pawn
-            self.blue_p = self.blue_p | dest
-            self.l_blue_p.append(dest)
-            self.stack.append((source, dest))
+            Board.blue_p = Board.blue_p | dest
+            Board.l_blue_p.append(dest)
+            Board.stack.append((source, dest))
         
         # new blue
-        self.blue = self.blue_p | self.blue_k
+        Board.blue = Board.blue_p | Board.blue_k
     
-    def blue_k_move_execution(self,source:np.uint64, dest:np.uint64) -> None:
+    @staticmethod
+    def blue_k_move_execution(source:np.uint64, dest:np.uint64) -> None:
         # delete source Position 
-        self.blue_k = self.blue_k ^ source
-        self.l_blue_k.remove(source)
+        Board.blue_k = Board.blue_k ^ source
+        Board.l_blue_k.remove(source)
 
-        
         
         # on red_k -> hit & knight
-        if dest & self.red_k:
+        if dest & Board.red_k:
             # remove red knight
-            self.red_k = self.red_k ^ dest
-            self.l_red_k.remove(dest)
+            Board.red_k = Board.red_k ^ dest
+            Board.l_red_k.remove(dest)
 
             # add blue knight
-            self.blue_k = self.blue_k | dest
-            self.l_blue_k.append(dest)
+            Board.blue_k = Board.blue_k | dest
+            Board.l_blue_k.append(dest)
 
             # new red
-            self.red = self.red_p | self.red_k
-            self.stack.append((source, dest, True))
+            Board.red = Board.red_p | Board.red_k
+            Board.stack.append((source, dest, True))
 
         # on blue_p -> knight
-        elif dest & self.blue_p:
+        elif dest & Board.blue_p:
             # add blue knight
-            self.blue_k = self.blue_k ^ dest
-            self.l_blue_k.append(dest)
-            self.stack.append((source, dest))
+            Board.blue_k = Board.blue_k ^ dest
+            Board.l_blue_k.append(dest)
+            Board.stack.append((source, dest))
 
         # on red_p -> hit & pawn
-        elif dest & self.red_p:
+        elif dest & Board.red_p:
             # remove red pawn
-            self.red_p = self.red_p ^ dest
-            self.l_red_p.remove(dest)
+            Board.red_p = Board.red_p ^ dest
+            Board.l_red_p.remove(dest)
             
             # add blue pawn
-            self.blue_p = self.blue_p | dest
-            self.l_blue_p.append(dest)
+            Board.blue_p = Board.blue_p | dest
+            Board.l_blue_p.append(dest)
             
             # new red
-            self.red = self.red_p | self.red_k
-            self.stack.append((source, dest, True))
+            Board.red = Board.red_p | Board.red_k
+            Board.stack.append((source, dest, True))
 
 
         # simple move -> pawn
         else: 
             # add blue pawn
-            self.blue_p = self.blue_p | dest
-            self.l_blue_p.append(dest)
-            self.stack.append((source, dest))
+            Board.blue_p = Board.blue_p | dest
+            Board.l_blue_p.append(dest)
+            Board.stack.append((source, dest))
         
         # new blue
-        self.blue = self.blue_p | self.blue_k
+        Board.blue = Board.blue_p | Board.blue_k
     
-    def blue_generation(self):
+    @staticmethod
+    def blue_generation():
         moves = []
-        precon = ~(self.blue_k | self.red_k)
-        for source in self.l_blue_p:	
+        precon = ~(Board.blue_k | Board.red_k)
+        for source in Board.l_blue_p:	
             if source & precon:   #pre-validation (pawn under knight)
-                fig_moves = self.blue_p_move_generation(source)
+                fig_moves = Board.blue_p_move_generation(source)
                 if len(fig_moves):
                     moves.append((source, fig_moves))
-        for source in self.l_blue_k:
-            fig_moves = self.blue_k_move_generation(source)
+        for source in Board.l_blue_k:
+            fig_moves = Board.blue_k_move_generation(source)
             if len(fig_moves):
                 moves.append((source, fig_moves))
         return moves
 
-    def blue_takeback(self,source, dest, hit=False):
+    @staticmethod
+    def blue_takeback(source, dest, hit=False):
         # hit (add red)
         if hit:
-            if self.blue_k & dest:
-                self.l_red_k.append(dest)
-                self.red_k = self.red_k | dest
+            if Board.blue_k & dest:
+                Board.l_red_k.append(dest)
+                Board.red_k = Board.red_k | dest
             else:
-                self.l_red_p.append(dest)
-                self.red_p = self.red_p | dest
-            self.red = self.red_p | self.red_k
+                Board.l_red_p.append(dest)
+                Board.red_p = Board.red_p | dest
+            Board.red = Board.red_p | Board.red_k
 
         # delete dest
-        if self.blue_k & dest:
-            del self.l_blue_k[-1]
-            self.blue_k = self.blue_k ^ dest
+        if Board.blue_k & dest:
+            # del Board.l_blue_k[-1]
+            Board.l_blue_k.remove(dest)
+            Board.blue_k = Board.blue_k ^ dest
         else:
-            del self.l_blue_p[-1]
-            self.blue_p = self.blue_p ^ dest
+            # del Board.l_blue_p[-1]
+            Board.l_blue_p.remove(dest)  
+            Board.blue_p = Board.blue_p ^ dest
 
         # add source
-        if (self.blue_p | self.red_p) & source:
-            self.l_blue_k.append(source)
-            self.blue_k = self.blue_k | source
+        if (Board.blue_p | Board.red_p) & source:
+            Board.l_blue_k.append(source)
+            Board.blue_k = Board.blue_k | source
         else:
-            self.l_blue_p.append(source)
-            self.blue_p = self.blue_p | source
+            Board.l_blue_p.append(source)
+            Board.blue_p = Board.blue_p | source
         
-        self.blue = self.blue_p | self.blue_k
+        Board.blue = Board.blue_p | Board.blue_k
 
+        return source, dest
     ############ Red ##################
 
-    def red_p_move_generation(self,source:np.uint64) -> list:	# after pre-validation wheather source can move (being below knight
+    @staticmethod
+    def red_p_move_generation(source:np.uint64) -> list:	# after pre-validation wheather source can move (being below knight
         dests = []
         # Pawns unmovable squares
-        blocked_squares = ~(self.blue | self.red_k)
+        blocked_squares = ~(Board.blue | Board.red_k)
 
         # forward
-        if (source & self.red_p_forward) >> self.rpf & blocked_squares:
-            dests.append(source >> self.rpf) 
+        if (source & Board.red_p_forward) >> Board.rpf & blocked_squares:
+            dests.append(source >> Board.rpf) 
 
         # left
-        if (source & self.red_p_left) << self.rpl & blocked_squares:
-            dests.append(source << self.rpl) 
+        if (source & Board.red_p_left) << Board.rpl & blocked_squares:
+            dests.append(source << Board.rpl) 
 
         # right
-        if (source & self.red_p_right) >> self.rpr & blocked_squares:
-            dests.append(source >> self.rpr) 
+        if (source & Board.red_p_right) >> Board.rpr & blocked_squares:
+            dests.append(source >> Board.rpr) 
 
         # hit left
-        if (source & self.red_p_hit_left) >> self.rphl & self.blue:
-            dests.append(source >> self.rphl) 
+        if (source & Board.red_p_hit_left) >> Board.rphl & Board.blue:
+            dests.append(source >> Board.rphl) 
 
         # hit right
-        if (source & self.blue_p_hit_right) >> self.rphr & self.blue:
-            dests.append(source >> self.rphr) 
+        if (source & Board.blue_p_hit_right) >> Board.rphr & Board.blue:
+            dests.append(source >> Board.rphr) 
         
         return dests
 
-    def red_k_move_generation(self,source:np.uint64) -> list: # no pre-validation needed
+    @staticmethod
+    def red_k_move_generation(source:np.uint64) -> list: # no pre-validation needed
         dests = []
         # left
-        if (source & self.red_k_left) >> self.rkl & ~self.red_k:
-            dests.append(source >> self.rkl) 
+        if (source & Board.red_k_left) >> Board.rkl & ~Board.red_k:
+            dests.append(source >> Board.rkl) 
 
         # forward_left
-        if (source & self.red_k_forward_left) >> self.rkfl & ~self.red_k:
-            dests.append(source >> self.rkfl) 
+        if (source & Board.red_k_forward_left) >> Board.rkfl & ~Board.red_k:
+            dests.append(source >> Board.rkfl) 
 
         # right
-        if (source & self.red_k_right) >> self.rkr & ~self.red_k:
-            dests.append(source >> self.rkr) 
+        if (source & Board.red_k_right) >> Board.rkr & ~Board.red_k:
+            dests.append(source >> Board.rkr) 
 
         # forward_left
-        if (source & self.red_k_forward_right) >> self.rkfr & ~self.red_k:
-            dests.append(source >> self.rkfr) 
+        if (source & Board.red_k_forward_right) >> Board.rkfr & ~Board.red_k:
+            dests.append(source >> Board.rkfr) 
 
         return dests
 
-
-    def red_p_move_execution(self,source:np.uint64, dest:np.uint64) -> None:
+    @staticmethod
+    def red_p_move_execution(source:np.uint64, dest:np.uint64) -> None:
         # delete source Position 
-        self.l_red_p.remove(source)
-        self.red_p = self.red_p ^ source
+        Board.l_red_p.remove(source)
+        Board.red_p = Board.red_p ^ source
 
         # on blue_k -> hit & knight
-        if dest & self.blue_k:
+        if dest & Board.blue_k:
             # remove blue knight
-            self.blue_k = self.blue_k ^ dest
-            self.l_blue_k.remove(dest)
+            Board.blue_k = Board.blue_k ^ dest
+            Board.l_blue_k.remove(dest)
 
             # add red knight
-            self.red_k = self.red_k | dest
-            self.l_red_k.append(dest)
+            Board.red_k = Board.red_k | dest
+            Board.l_red_k.append(dest)
             
             # new blue
-            self.blue = self.blue_p | self.blue_k
-            self.stack.append((source, dest, True))
+            Board.blue = Board.blue_p | Board.blue_k
+            Board.stack.append((source, dest, True))
             
         # on red_p -> knight
-        elif dest & self.red_p:
+        elif dest & Board.red_p:
             # add blue knight
-            self.red_k = self.red_k | dest
-            self.l_red_k.append(dest)
-            self.stack.append((source, dest))
+            Board.red_k = Board.red_k | dest
+            Board.l_red_k.append(dest)
+            Board.stack.append((source, dest))
 
         # on blue_p -> hit
-        elif dest & self.blue_p:
+        elif dest & Board.blue_p:
             # remove blue pawn
-            self.blue_p = self.blue_p ^ dest
-            self.l_blue_p.remove(dest)
+            Board.blue_p = Board.blue_p ^ dest
+            Board.l_blue_p.remove(dest)
 
             # move red pawn 
-            self.red_p = self.red_p | dest
-            self.l_red_p.append(dest)
+            Board.red_p = Board.red_p | dest
+            Board.l_red_p.append(dest)
 
             # new blue
-            self.blue = self.blue_p | self.blue_k
-            self.stack.append((source, dest, True))
+            Board.blue = Board.blue_p | Board.blue_k
+            Board.stack.append((source, dest, True))
 
         # simple move
         else: 
-            self.red_p = self.red_p | dest
-            self.l_red_p.append(dest)
-            self.stack.append((source, dest))
+            Board.red_p = Board.red_p | dest
+            Board.l_red_p.append(dest)
+            Board.stack.append((source, dest))
         
         # new red
-        self.red = self.red_p | self.red_k
+        Board.red = Board.red_p | Board.red_k
 
-
-    def red_k_move_execution(self,source:np.uint64, dest:np.uint64) -> None:
+    @staticmethod
+    def red_k_move_execution(source:np.uint64, dest:np.uint64) -> None:
         # delete source Position 
-        self.red_k = self.red_k ^ source
-        self.l_red_k.remove(source)
+        Board.red_k = Board.red_k ^ source
+        Board.l_red_k.remove(source)
         
         # on blue_k -> hit & knight
-        if dest & self.blue_k:
+        if dest & Board.blue_k:
             # remove blue knight
-            self.blue_k = self.blue_k ^ dest
-            self.l_blue_k.remove(dest)
+            Board.blue_k = Board.blue_k ^ dest
+            Board.l_blue_k.remove(dest)
 
             # add red knight
-            self.red_k = self.red_k | dest
-            self.l_red_k.append(dest)
+            Board.red_k = Board.red_k | dest
+            Board.l_red_k.append(dest)
 
             # new blue
-            self.blue = self.blue_p | self.blue_k
-            self.stack.append((source, dest, True))
+            Board.blue = Board.blue_p | Board.blue_k
+            Board.stack.append((source, dest, True))
 
         # on red_p -> knight
-        elif dest & self.red_p:
+        elif dest & Board.red_p:
             # add red knight
-            self.red_k = self.red_k ^ dest
-            self.l_red_k.append(dest)
-            self.stack.append((source, dest))
+            Board.red_k = Board.red_k ^ dest
+            Board.l_red_k.append(dest)
+            Board.stack.append((source, dest))
 
         # on blue_p -> hit & pawn
-        elif dest & self.blue_p:
+        elif dest & Board.blue_p:
             # remove blue pawn
-            self.blue_p = self.blue_p ^ dest
-            self.l_blue_p.remove(dest)
+            Board.blue_p = Board.blue_p ^ dest
+            Board.l_blue_p.remove(dest)
             
             # add red pawn
-            self.red_p = self.red_p | dest
-            self.l_red_p.append(dest)
+            Board.red_p = Board.red_p | dest
+            Board.l_red_p.append(dest)
             
             # new blue
-            self.blue = self.blue_p | self.blue_k
-            self.stack.append((source, dest, True))
+            Board.blue = Board.blue_p | Board.blue_k
+            Board.stack.append((source, dest, True))
 
         # simple move -> pawn
         else: 
             # add red pawn
-            self.red_p = self.red_p | dest
-            self.l_red_p.append(dest)
-            self.stack.append((source, dest))
+            Board.red_p = Board.red_p | dest
+            Board.l_red_p.append(dest)
+            Board.stack.append((source, dest))
 
         # new red
-        self.red = self.red_p | self.red_k
+        Board.red = Board.red_p | Board.red_k
 
-
-    def red_generation(self) -> list:
+    @staticmethod
+    def red_generation() -> list:
         moves = []
-        precon = ~(self.blue_k | self.red_k)
-        for source in self.l_red_p:	
+        precon = ~(Board.blue_k | Board.red_k)
+        for source in Board.l_red_p:	
             if source & precon:   #pre-validation (pawn under knight)
-                fig_moves = self.red_p_move_generation(source)
+                fig_moves = Board.red_p_move_generation(source)
                 if len(fig_moves):
                     moves.append((source, fig_moves))
         
-        for source in self.l_red_k:
-            fig_moves = self.red_k_move_generation(source)
+        for source in Board.l_red_k:
+            fig_moves = Board.red_k_move_generation(source)
             if len(fig_moves):
                 moves.append((source, fig_moves))
         return moves
 
-    
-    def red_takeback(self,source, dest, hit=False) -> None:
+    @staticmethod        
+    def red_takeback(source, dest, hit=False) -> None:
         # hit (add blue)
         if hit:
-            if self.red_k & dest:
-                self.l_blue_k.append(dest)
-                self.blue_k = self.blue_k | dest
+            if Board.red_k & dest:
+                Board.l_blue_k.append(dest)
+                Board.blue_k = Board.blue_k | dest
             else:
-                self.l_blue_p.append(dest)
-                self.blue_p = self.blue_p | dest
-            self.blue = self.blue_p | self.blue_k
+                Board.l_blue_p.append(dest)
+                Board.blue_p = Board.blue_p | dest
+            Board.blue = Board.blue_p | Board.blue_k
 
         # delete dest
-        if self.red_k & dest:
-            del self.l_red_k[-1]
-            self.red_k = self.red_k ^ dest
+        if Board.red_k & dest:
+            # del Board.l_red_k[-1]
+            Board.l_red_k.remove(dest)
+            Board.red_k = Board.red_k ^ dest
         else:
-            del self.l_red_p[-1]
-            self.red_p = self.red_p ^ dest
+            # del Board.l_red_p[-1]
+            Board.l_red_p.remove(dest)
+            Board.red_p = Board.red_p ^ dest
 
         # add source
-        if (self.blue_p | self.red_p) & source:
-            self.l_red_k.append(source)
-            self.red_k = self.red_k | source
+        if (Board.blue_p | Board.red_p) & source:
+            Board.l_red_k.append(source)
+            Board.red_k = Board.red_k | source
         else:
-            self.l_red_p.append(source)
-            self.red_p = self.red_p | source
+            Board.l_red_p.append(source)
+            Board.red_p = Board.red_p | source
 
-        self.red = self.red_p | self.red_k
+        Board.red = Board.red_p | Board.red_k
+
+        return source, dest
+
+    r1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
+    C1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000000100000)
+    F1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000000000100)
+
+    r2 = np.uint64(0b0000000000000000000000000000000000000000000000001111111100000000)
+    r2r = np.uint64(0b0000000000000000000000000000000000000000000000000111111100000000)
+    r2l = np.uint64(0b0000000000000000000000000000000000000000000000001111111000000000)
+    r2mid = np.uint64(0b0000000000000000000000000000000000000000000000000111111000000000)
+    A2 = np.uint64(0b0000000000000000000000000000000000000000000000001000000000000000)
+    H2 = np.uint64(0b0000000000000000000000000000000000000000000000000000000100000000)
 
 
+    r3 = np.uint64(0b0000000000000000000000000000000000000000111111110000000000000000)
+    r4 = np.uint64(0b0000000000000000000000000000000011111111000000000000000000000000)
+    r5 = np.uint64(0b0000000000000000000000001111111100000000000000000000000000000000)
+    r6 = np.uint64(0b0000000000000000111111110000000000000000000000000000000000000000)
+    r7 = np.uint64(0b0000000011111111000000000000000000000000000000000000000000000000)
+    r7r = np.uint64(0b0000000001111111000000000000000000000000000000000000000000000000)
+    r7l = np.uint64(0b0000000011111110000000000000000000000000000000000000000000000000)
+    r7mid = np.uint64(0b0000000001111110000000000000000000000000000000000000000000000000)
+    A7 = np.uint64(0b0000000010000000000000000000000000000000000000000000000000000000)
+    H7 = np.uint64(0b0000000000000001000000000000000000000000000000000000000000000000)
 
-    def eval(self) -> int:
+
+    r8 = np.uint64(0b0111111000000000000000000000000000000000000000000000000000000000)
+    C8 = np.uint64(0b0010000000000000000000000000000000000000000000000000000000000000)
+    F8 = np.uint64(0b0000010000000000000000000000000000000000000000000000000000000000)
+
+    r23 = r2 | r3
+    r45 = r4 | r5
+    r67 = r6 | r7
+
+    min_eval = -1000
+    max_eval = 1000
+
+    # weights 
+
+     
+
+    # Helper Function for eval
+    numpyone = np.uint64(1) 
+    @staticmethod
+    def count_figs(num):
+        count = 0
+        while num:
+            num &= num - Board.numpyone 
+            count += 1
+        return count    
+        
+    @staticmethod
+    def eval() -> int:
         """
-        Returns: evaluation of the current board
+        targeted -> attacked at least once
+        protected -> protected at least once
+        attacking -> attacks at least one figure
         """
+
+        # pawn existence
+        wp = 10
+
+        # knight existence
+        wk = 30
+
+        # temp 
+        w = 0
+        b = 0 
+
+        blue_p_movable = Board.blue_p & ~(Board.blue_k | Board.red_k)
+        red_p_movable = Board.red_p & ~(Board.blue_k | Board.red_k)
+
         # Hits
         # Blue hits
-        blue_k_hits = (self.blue_k & self.blue_k_forward_left << self.bkfl) | (self.blue_k & self.blue_k_forward_right << self.bkfr) | (self.blue_k & self.blue_k_left << self.bkl) | (self.blue_k & self.blue_k_right << self.bkr) if self.blue_k else np.uint64(0)
-        blue_p_hits = (self.blue_p & self.blue_p_hit_left << self.bphl) | (self.blue_p & self.blue_p_hit_right << self.bphr)
+        blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
+        blue_p_hits = (blue_p_movable & Board.blue_p_hit_left << Board.bphl) | (blue_p_movable & Board.blue_p_hit_right << Board.bphr)
+        blue_no_hits = ~(blue_k_hits | blue_p_hits)
 
         # Red hits
-        red_k_hits = (self.red_k & self.red_k_forward_left >> self.rkfl) | (self.red_k & self.red_k_forward_right >> self.rkfr) | (self.red_k & self.red_k_left >> self.rkl) | (self.red_k & self.red_k_right >> self.rkr) if self.red_k else np.uint64(0)
-        red_p_hits = (self.red_p & self.red_p_hit_left >> self.rphl) | (self.red_p & self.red_p_hit_right >> self.rphr)
+        red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
+        red_p_hits = (red_p_movable & Board.red_p_hit_left >> Board.rphl) | (red_p_movable & Board.red_p_hit_right >> Board.rphr)
+        red_no_hits = ~(red_k_hits | red_p_hits)
 
         # Potential Knights
         # Blue knights
-        blue_pot_k = self.blue_p & ((self.blue_p & self.blue_p_forward << self.bpf) | (self.blue_p & self.blue_p_left << self.bpl) | (self.blue_p & self.blue_p_right >> self.bpr) | (blue_p_hits & self.red_k))
+        blue_pot_k = Board.blue_p & ((Board.blue_p & Board.blue_p_forward << Board.bpf) | (Board.blue_p & Board.blue_p_left << Board.bpl) | (Board.blue_p & Board.blue_p_right >> Board.bpr) | (Board.blue_p_hits & Board.red_k))
+        blue_k_untargeted = Board.blue_k & red_no_hits
+
+        # Blue Pawns
+        blue_pot_p = Board.blue_k & Board.blue_p
+        blue_p_untargeted = blue_p_movable & red_no_hits
+
 
         # Red knights
-        red_pot_k = self.red_p & ((self.red_p & self.red_p_forward >> self.rpf) | (self.red_p & self.red_p_left << self.rpl) | (self.red_p & self.red_p_right >> self.rpr) | (red_p_hits & self.blue_k))
-        return 0
+        red_pot_k = Board.red_p & ((Board.red_p & Board.red_p_forward >> Board.rpf) | (Board.red_p & Board.red_p_left << Board.rpl) | (Board.red_p & Board.red_p_right >> Board.rpr) | (Board.red_p_hits & Board.blue_k))
+        red_k_untargeted = Board.red_k & blue_no_hits
+
+        # Red Pawns
+        red_p_untargeted = Board.red_p & blue_no_hits
+
+        if Board.blue_turn:
+            # Won
+            if Board.blue & Board.r8:
+                return Board.max_eval
+            
+            # Lost -> Red can force Win cause red moves next
+            if Board.red_k & Board.r23:
+                return Board.min_eval
+            
+            # Force Win in next knight move (knigth on r67)
+            if (red_k_untargeted & Board.r67):
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn move (no hits, on r7))
+            if ((blue_p_untargeted & Board.r7mid) << Board.bpf) & ~Board.red:
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((blue_p_untargeted & Board.r7r) << Board.bphl) & Board.red_k:
+                return Board.max_eval - 1
+            
+            # Force Win in next pawn hit Knight left
+            if ((blue_p_untargeted & Board.r7l) << Board.bphr) & Board.red_k:
+                return Board.max_eval - 1
+        
+        else:
+           pass
+            
+        ##############################################################
+        # Figure independent # Blue (Mostly Cause Partial dependent on red)
+        ##############################################################
+
+        # Material Advantage
+        eval = wp*(len(Board.l_blue_p) - len(Board.l_red_p)) + wk*(len(Board.l_blue_k) - len(Board.l_red_k))
+
+ 
+        
+        # Blue untargeted Knights Attacking Pawns
+        red_p_attacked_by_k = blue_k_hits & red_p_movable
+        if red_p_attacked_by_k:
+            blue_k_attacking_p = ((red_p_attacked_by_k >> Board.bkfl) | (red_p_attacked_by_k >> Board.bkfr) | (red_p_attacked_by_k >> Board.bkl) | (red_p_attacked_by_k >> Board.bkr)) & Board.blue_k
+            eval += w*Board.count_figs(blue_k_attacking_p)
+
+        # Blue untargeted Pawns Attacking Knights
+        red_k_attacked_by_p = blue_p_hits & Board.red_k
+        if red_k_attacked_by_p:
+            blue_p_attacking_k = ((red_k_attacked_by_p >> Board.bphl) | (red_k_attacked_by_p >> Board.bphr)) & blue_p_movable
+            eval += w*Board.count_figs(blue_p_attacking_k)
+
+        ####################### Red #################################
+        # Red untargeted Knights Attacking Pawns
+        blue_p_attacked_by_k = red_k_hits & blue_p_movable
+        if blue_p_attacked_by_k:
+            red_k_attacking_p = ((blue_p_attacked_by_k << Board.rkfl) | (blue_p_attacked_by_k << Board.rkfr) | (blue_p_attacked_by_k << Board.rkl) | (blue_p_attacked_by_k << Board.rkr)) & Board.red_k
+            eval -= w*Board.count_figs(red_k_attacking_p)
+
+        # Red untargeted Pawns Attacking Knights
+        blue_k_attacked_by_p = red_p_hits & Board.blue_k
+        if blue_k_attacked_by_p:
+            red_p_attacking_k = ((blue_k_attacked_by_p << Board.rphl) | (blue_k_attacked_by_p << Board.rphr)) & red_p_movable
+            eval -= w*Board.count_figs(red_p_attacking_k)
+        ##############################################################
+
+        # Blue Pawns attacked by unprotected knights that can counterattack without being hit or with being hit and counterhit
+        squares = (blue_p_attacked_by_k << Board.bpf | blue_p_attacked_by_k << Board.bpl | blue_p_attacked_by_k >> Board.bpr) & ~(Board.red | Board.blue_k) & (red_no_hits | ~blue_no_hits)
+        if (squares << Board.bphr | squares << Board.bphl) & red_k_untargeted:
+            eval += w*Board.count_figs(squares)
+        
+        """
+        ##############################################################
+        # For each Figure # Blue
+        ##############################################################
+        ########################## Pawns #############################
+        for fig in Board.l_blue_p:
+            # attacking Pawns
+            if((fig & Board.blue_p_hit_right << Board.bphr) | (fig & Board.blue_p_hit_left << Board.bphl)) & Board.red:
+                # untargeted
+                if fig & ~Board.red_hits:
+                    eval += b
+                # targeted & protected
+                elif fig & Board.blue_hits:
+                    eval += b
+                # targeted
+                else:
+                    eval += b
+
+            # non-attacking Pawns
+            else:
+                # targeted
+                if fig & Board.red_hits:
+                    # protected
+                    if fig & Board.blue_hits:
+                        eval += b
+                    
+                    # unprotected
+                    else:
+                        eval += b
+                # untargeted & non-attacking
+                else:
+                    eval += b
+        
+            ##############################################################
+            # Certain Pawn Areas # Blue
+            ##############################################################
+            
+            # Targeted
+            if fig & ~Board.red_hits:
+                # Valueble Pawn H7 untargeted
+                if fig & Board.H7:
+                    eval += b
+                    # no Red Pawn on C8
+                    if ~(Board.C8 & Board.red_p):
+                        eval += b
+
+                # Valueble Pawn H2 untargeted
+                if blue_p_untarget & Board.H2:
+                    eval += b
+                    # no Red Pawn on F8          
+                    if ~(Board.F8 & Board.red_p):
+                        eval += b
+                
+
+            
+        # TODO: Knights
+        ########################## Knights #############################
+        for fig in Board.l_blue_k: 
+            # non-targeted
+            if fig & ~Board.red_hits:
+
+            ##############################################################
+            # Certain Knight Areas # Blue
+            ##############################################################
+
+                # Possible Knight on r5 untargeted
+                if fig & Board.r5:
+                    eval += b
+
+                # Knight on r5 untargeted or at least one possible takeback
+                if fig & Board.r4:
+                    eval += b
+        """
+                
+        return eval
+
 
     ############################ TESTING ############################
-
-    def state(self, message="") -> None:
+    @staticmethod
+    def state(message="",s=False,d=False) -> None:
         def board_to_string(board:np.uint64)->str:
             return np.binary_repr(board,width=64)
         def print_board(board:np.uint64):
@@ -588,54 +829,69 @@ class MoveGenerator:
             print(f"------------- {message}  --------------------------")
         else:
             print("-----------------------------------------------------");print()
-	
-        red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
-        for p in self.l_blue_p: blue_p = blue_p ^ p
-        for k in self.l_blue_k: blue_k = blue_k ^ k
-        for p in self.l_red_p: red_p = red_p ^ p
-        for k in self.l_red_k: red_k = red_k ^ k
 
-        if blue_p==self.blue_p:
-            if blue_k==self.blue_k:
-                if blue_p | blue_k!=self.blue:
-                    print("blue")
-                    print_board(blue_p | blue_k)
-                    print("self.blue")
-                    print_board(self.blue)
-                    raise Exception("blue != self.blue")
+        def print_move(s=False,d=False):
+            if s | d:
+                print("Source")
+                print_board(s)
+                print("Dest")
+                print_board(d)
+
+        red_p,blue_p,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
+        for p in Board.l_blue_p:
+            if p & blue_p:
+                print_move(s,d)
+                Board.bitboard_states()
+                raise Exception("Double Blue Pawn")
+            blue_p = blue_p ^ p
+        for k in Board.l_blue_k:
+            if k & blue_k:
+                print_move(s,d)
+                Board.bitboard_states()
+                raise Exception("Double Blue Knight")
+            blue_k = blue_k ^ k
+        for p in Board.l_red_p: 
+            if p & red_p:
+                print_move(s,d)
+                Board.bitboard_states()
+                raise Exception("Double Red Pawn")
+            red_p = red_p ^ p
+        for k in Board.l_red_k: 
+            if k & red_k:
+                print_move(s,d)
+                Board.bitboard_states()
+                raise Exception("Double Red Knight")
+            red_k = red_k ^ k
+
+        if blue_p==Board.blue_p:
+            if blue_k==Board.blue_k:
+                if blue_p | blue_k!=Board.blue:
+                    print_move(s,d)
+                    Board.bitboard_states()
+                    raise Exception("blue != board.blue")
 
             else:
-                print("blue_k")
-                print_board(self.blue_k)
-                print("l_blue_k")
-                print_board(blue_k)
+                print_move(s,d)
+                Board.bitboard_states()
                 raise Exception("blues knights != l_blues_knights")
         else:
-            print("blue_p")
-            print_board(self.blue_p)
-            print("l_blue_p")
-            print_board(blue_p)
+            print_move(s,d)
+            Board.bitboard_states()
             raise Exception("blues pawns != l_blues_pawns")
 
-        if red_p==self.red_p: 
-            if red_k==self.red_k:
-                if red_p | red_k!=self.red:
-                    print("red")
-                    print_board(red_p | red_k)
-                    print("self.red")
-                    print_board(self.red)
-                    raise Exception("red != self.red")		
+        if red_p==Board.red_p: 
+            if red_k==Board.red_k:
+                if red_p | red_k!=Board.red:
+                    print_move(s,d)
+                    Board.bitboard_states()
+                    raise Exception("red != board.red")		
             else:
-                print("red_k")
-                print_board(self.red_k)
-                print("l_red_k")
-                print_board(red_k)
+                print_move(s,d)
+                Board.bitboard_states()
                 raise Exception("red knights != l_red_knights")
         else:
-            print("red_p")
-            print_board(self.red_p)
-            print("l_red_p")
-            print_board(red_p)
+            print_move(s,d)
+            Board.bitboard_states()
             raise Exception("red pawns != l_red_pawns")
         
         s=""
@@ -660,39 +916,92 @@ class MoveGenerator:
         # print_board(blue_k)
         # print_board(red_p)
         # print_board(red_k)
-        print(f"Blue Turn?: {self.blue_turn}")
-        print(f"Stack: {self.stack}")
+        print(f"Blue Turn?: {Board.blue_turn}")
+        print(f"Stack: {Board.stack}")
 
+    @staticmethod
+    def play(FEN_board=False, blue_turn=True):
 
-    def play(self, FEN_board=False, blue_turn=True):
         if FEN_board:
-            self.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn)
+            Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn)
         else:
-            self.initBoard(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0),blue_turn)
-        self.state("Startpos")
+            Board.initBoard(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0),blue_turn)
+        Board.state("Startpos")
+        if input("Move? -> Enter, State? -> s") == "s":
+            Board.bitboard_states()
 
         def rand_move_execution(moves):
             fig = random.choice(moves)
             move = random.choice(fig[1])
-            self.exec_move(fig[0],move)
+            Board.exec_move(fig[0],move)
             return fig[0],move
-
-        while self.isOver() == "":
-            moves = self.generate_moves()
-            print(f"moves: {moves}")
-
-            rand_move_execution(moves)
-
-            self.state()
-            inp = input("Takeback? -> Enter 't': ")
+        
+        def takeback():
+            inp = input("Takeback? -> 't', State? -> 's': ")
             
             if inp =="t":
-                self.takeback()
-                self.state("Takeback")
+                s,d  = Board.takeback()
+                Board.state("Takeback",s,d)    
+                takeback()
+            elif inp == "s":
+                Board.bitboard_states()
+                takeback()
             
-        print(self.isOver())
 
-# if __name__ == "__main__":
+        while Board.isOver() == "":
+            moves = Board.generate_moves()
+            print(f"moves: {moves}")
+            rand_move_execution(moves)
+
+            Board.state()
+
+            takeback()
+
+        
+            
+        print(Board.isOver())
+
+    @staticmethod
+    def bitboard_states():
+        def print_board(board:np.uint64):
+            string = np.binary_repr(board,width=64)
+            #str = 'X' + str[1:7]+'X'+str[8:56]+'X'+str[57:63]+'X'
+            print('\n'.join(string[i:i+8] for i in range(0, len(string), 8)))
+            print()
+
+        red_p,blue_p ,red_k ,blue_k = np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)
+        for p in Board.l_blue_p:
+            blue_p = blue_p ^ p
+        for k in Board.l_blue_k:
+            blue_k = blue_k ^ k
+        for p in Board.l_red_p: 
+            red_p = red_p ^ p
+        for k in Board.l_red_k: 
+            red_k = red_k ^ k
+
+        print("Blue Pawns")
+        print_board(Board.blue_p)
+        print("Blue L_pawns (maybe double)")
+        print_board(blue_p)
+        print("Blue Knights")
+        print_board(Board.blue_k)
+        print("Blue L_knights (maybe double)")
+        print_board(blue_k)
+        # print("Blue")
+        # print_board(Board.blue)
+
+        # print("Red Pawns")
+        # print_board(Board.red_p)
+        # print("Red L_pawns (maybe double)")
+        # print_board(red_p)
+        # print("Red Knights")
+        # print_board(Board.red_k)
+        # print("Red L_knights (maybe double)")
+        # print_board(red_k)
+        # print("Red")
+        # print_board(Board.red)
+
+if __name__ == "__main__":
     # simple figure
     #test = "6/b07/8/8/8/8/8/6 b"
 
@@ -770,16 +1079,29 @@ class MoveGenerator:
     # test = "6/8/8/8/1rb06/8/rr07/6 r"
 
 	# on rr knigth?
-    # test = "6/8/8/8/1rr06/8/rr07/6 r"
 
-    # b, player = test.split(" ")
-    # game = {"board": b,
-	# 		"player": player,
-	# 		"player1": True,
-	# 		"player2": False,
-	# }
-    # # For Blue
-    # # self.play(game["board"])
 
-    # # For Red
-    # Board = Board(game["board"])
+    # Multiple takebacks
+    # hitcombis
+    test = "6/87/bb07/8/8/8/rr07/6 r"
+    # test = "6/8/8/b07/1rr06/8/rr07/6 r"
+
+    #test = "6/8/8/8/1bb06/07r/8/6 r"
+
+
+
+
+    b, player = test.split(" ")
+    game = {"board": b,
+			"player": player,
+			"player1": True,
+			"player2": False,
+	}
+    # For Blue
+    FEN_board = game["board"]
+    Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),True)
+    Board.state("Startpos")
+    print(Board.isOpening())
+    # For Red
+    # Board.play()
+    

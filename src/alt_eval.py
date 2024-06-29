@@ -1,8 +1,7 @@
 import os
 import sys
-from collections import Counter
 import numpy as np
-from functools import lru_cache
+from collections import Counter
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
@@ -14,6 +13,8 @@ from src.moveGenerator import MoveGenerator1 as MoveGenerator
 BIT_COUNTS = [bin(i).count('1') for i in range(2**16)]
 
 def count_bits(mask):
+    if not isinstance(mask, int):
+        mask = int(mask)  # Ensure the mask is an integer
     return BIT_COUNTS[mask & 0xFFFF] + BIT_COUNTS[(mask >> 16) & 0xFFFF] + BIT_COUNTS[(mask >> 32) & 0xFFFF] + BIT_COUNTS[(mask >> 48) & 0xFFFF]
 
 class EvalFunction:
@@ -35,7 +36,6 @@ class EvalFunction:
             raise ValueError("Configs do not have the same size")
         self._CONFIG_DICT.update(config)
         vals = self._CONFIG_DICT.values()
-        self._score_cache = {}
         if any(x == -1 for x in vals):
             raise ValueError("Config is not complete, missing key-value pair")
         if any(len(self._CONFIG_DICT[key]) == 0 for key in [
@@ -49,9 +49,9 @@ class EvalFunction:
         if self._CONFIG_DICT[Config.CONFIGVERSION] is None:
             raise ValueError("CONFIGVERSION NOT SET")
 
-    def _computeActualPositionalPoints(self, board: np.ndarray):
+    def _computeActualPositionalPoints(self, bitboards):
         def compute_points(piece_index, score_dict):
-            positions = MoveGenerator.getBitPositions(board[piece_index])
+            positions = MoveGenerator.getBitPositions(bitboards[piece_index])
             return np.sum(score_dict[MoveLib.BitsToPosition(bits)] for bits in positions)
 
         max_player = self._CONFIG_DICT[Config.MaxPlayer]
@@ -80,21 +80,14 @@ class EvalFunction:
 
         return position_points_max - position_points_min
 
-    @lru_cache(maxsize=None)
-    def _materialPoints(self, board):
-        bp = count_bits(board[GameState._ZARR_INDEX_B_PAWNS] & ~board[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
-        bk = count_bits(board[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
-        rp = count_bits(board[GameState._ZARR_INDEX_R_PAWNS] & ~board[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
-        rk = count_bits(board[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+    def _materialPoints(self, bitboards):
+        bp = count_bits(bitboards[GameState._ZARR_INDEX_B_PAWNS] & ~bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+        bk = count_bits(bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+        rp = count_bits(bitboards[GameState._ZARR_INDEX_R_PAWNS] & ~bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+        rk = count_bits(bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
         return rp + rk - bp - bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp + bk - rp - rk
 
-    def computeEvaluationScore(self, board: np.ndarray) -> int:
-        board_tuple = tuple(board.tolist())  # Convert numpy array to tuple
-        if board_tuple in self._score_cache:
-            return self._score_cache[board_tuple]
-
-        totalScore = self._materialPoints(board_tuple)  # Pass tuple to _materialPoints
-        totalScore += self._computeActualPositionalPoints(board)
-
-        self._score_cache[board_tuple] = totalScore
+    def computeEvaluationScore(self, bitboards) -> int:
+        totalScore = self._materialPoints(bitboards)
+        totalScore += self._computeActualPositionalPoints(bitboards)
         return totalScore
