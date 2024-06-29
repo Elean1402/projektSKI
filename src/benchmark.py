@@ -65,7 +65,10 @@ def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = ""
     times = repeat(wrapper, repeat=repetitions, number=1)
     mean_duration = sum(times) / repetitions
 
-    output, move_count = wrapper()
+    # Only call wrapper if output or move_count is needed
+    output, move_count = None, None
+    if include_output or include_move_count:
+        output, move_count = wrapper()
 
     if move_output:
         if output is not None:
@@ -126,7 +129,10 @@ def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", 
 
     mean_duration = sum(times) / repetitions
 
-    output, move_count = wrapper()
+    # Only call wrapper if output or move_count is needed
+    output, move_count = None, None
+    if include_output or include_move_count:
+        output, move_count = wrapper()
 
     if move_output:
         if output is not None:

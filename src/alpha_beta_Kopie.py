@@ -8,9 +8,6 @@ from src.alt_eval import EvalFunction
 from src.model import *
 from board_final import Board
 
-import hashlib
-import random
-
 import random
 
 class ZobristHashing:
@@ -93,11 +90,10 @@ class AlphaBetaSearch:
         self.start_time = time.time()
         self.alpha = -float('inf')
         self.beta = float('inf')
-        
+        self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
 
     def search(self, iterative_deepening=False, time_limit=100, depth=2):
-        self.transposition_table = TranspositionTable()
-        self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
+        self.transposition_table = TranspositionTable()  # Reset transposition table
         self.total_move_count = 0
         self.start_time = time.time()
         self.time_limit = time_limit
@@ -200,4 +196,3 @@ class AlphaBetaSearch:
 
     def is_time_exceeded(self):
         return time.time() - self.start_time > self.time_limit
-

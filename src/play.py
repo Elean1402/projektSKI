@@ -18,11 +18,11 @@ def call(state, search_type='minmax'):
     search_instance = AlphaBetaSearch(state)
     search_instance1 = AlphaBetaSearch1(state)
 
-    depth = 4
+    depth = 3
 
     # Benchmark the genMoves method
     # benchmark(lambda: search_instance.search(iterative_deepening=False, time_limit=200, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True)
-    benchmark(lambda: search_instance.search(iterative_deepening=True, time_limit=10, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True, include_move_count=True)
+    benchmark(lambda: search_instance.search(iterative_deepening=True, time_limit=5, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True, include_move_count=True)
     # next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
     # if next_move is not None:
     #     out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
