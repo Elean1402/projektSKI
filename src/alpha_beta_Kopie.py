@@ -93,10 +93,11 @@ class AlphaBetaSearch:
         self.start_time = time.time()
         self.alpha = -float('inf')
         self.beta = float('inf')
-        self.transposition_table = TranspositionTable()
-        self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
+        
 
     def search(self, iterative_deepening=False, time_limit=100, depth=2):
+        self.transposition_table = TranspositionTable()
+        self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
         self.total_move_count = 0
         self.start_time = time.time()
         self.time_limit = time_limit
@@ -129,7 +130,6 @@ class AlphaBetaSearch:
         zobrist_key = self.zobrist.hash_position(bitboards)
         stored_score, stored_move = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
         if stored_score is not None:
-            print("Transposition Table hit")
             return stored_score, stored_move
 
         moves = self.move_gen.generate_moves()
@@ -168,7 +168,6 @@ class AlphaBetaSearch:
         zobrist_key = self.zobrist.hash_position(bitboards)
         stored_score, stored_move = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
         if stored_score is not None:
-            print("Transposition Table hit")
             return stored_score, stored_move
 
         moves = self.move_gen.generate_moves()

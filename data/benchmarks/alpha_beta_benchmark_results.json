@@ -9,5 +9,27 @@
             "B7"
         ],
         "move_count": 860068
+    },
+    {
+        "function_name": "alpha_beta",
+        "fen": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r",
+        "depth": 4,
+        "mean_duration": 19.99959412496537,
+        "output": [
+            "C8",
+            "C7"
+        ],
+        "move_count": 903666
+    },
+    {
+        "function_name": "alpha_beta",
+        "fen": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r",
+        "depth": 4,
+        "mean_duration": 10.000037333986256,
+        "output": [
+            "C8",
+            "C7"
+        ],
+        "move_count": 454841
     }
 ]
