@@ -53,7 +53,14 @@ def convert_to_serializable(obj, seen=None):
     else:
         return str(obj)
 
-def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True) -> List[Dict[str, Any]]:
+def lightweight_warmup():
+    """A lightweight function that mimics some operations of the main functions."""
+    for i in range(1000):
+        x = np.random.rand(100)
+        x = np.sort(x)
+    return np.sum(x)
+
+def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True, warmup_reps: int = 10) -> List[Dict[str, Any]]:
     results = []
 
     def wrapper():
@@ -62,6 +69,11 @@ def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = ""
         else:
             return func_with_args(), None
 
+    # Warmup phase
+    for _ in range(warmup_reps):
+        lightweight_warmup()
+
+    # Timing phase
     times = repeat(wrapper, repeat=repetitions, number=1)
     mean_duration = sum(times) / repetitions
 
@@ -114,7 +126,7 @@ def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = ""
     
     return results
 
-def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True) -> None:
+def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True, warmup_reps: int = 10) -> None:
     profiler = cProfile.Profile()
 
     def wrapper():
@@ -122,6 +134,10 @@ def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", 
             return func_with_args()
         else:
             return func_with_args(), None
+
+    # Warmup phase
+    for _ in range(warmup_reps):
+        lightweight_warmup()
 
     profiler.enable()
     times = repeat(wrapper, repeat=repetitions, number=1)

@@ -53,5 +53,27 @@
             "E7"
         ],
         "move_count": 228409
+    },
+    {
+        "function_name": "alpha_beta",
+        "fen": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r",
+        "depth": 3,
+        "mean_duration": 5.000046291970648,
+        "output": [
+            "F8",
+            "F7"
+        ],
+        "move_count": 225461
+    },
+    {
+        "function_name": "alpha_beta",
+        "fen": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r",
+        "depth": 3,
+        "mean_duration": 5.000048624991905,
+        "output": [
+            "F8",
+            "F7"
+        ],
+        "move_count": 227541
     }
 ]
