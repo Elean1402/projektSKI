@@ -4,7 +4,7 @@ import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gui import Gui
-from src.benchmark import Benchmark
+
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.alt_eval import EvalFunction
 # from src.moveGenerator import MoveGenerator
@@ -60,7 +60,7 @@ class AlphaBetaSearch:
             pass
         
         print(f"Total moves looked at: {self.total_move_count}")
-        return self.best_move
+        return self.best_move, self.total_move_count
 
     def alpha_beta_max(self, alpha, beta, depth_left, bitboards):
         if depth_left == 0:
@@ -75,8 +75,8 @@ class AlphaBetaSearch:
                 self.total_move_count += 1
                 if time.time() - self.start_time > self.time_limit:
                     raise TimeExceeded()
-                self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, bitboards)
+                new_bitboards = self.move_gen.exec_move(piece[0], dest)
+                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards)
                 #undo move
                 self.move_gen.takeback()
                 if score > best_score:
@@ -103,8 +103,8 @@ class AlphaBetaSearch:
                 self.total_move_count += 1
                 if time.time() - self.start_time > self.time_limit:
                     raise TimeExceeded()
-                self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, bitboards)
+                new_bitboards = self.move_gen.exec_move(piece[0], dest)
+                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards)
                 self.move_gen.takeback()
                 if score < best_score:
                     best_score = score

@@ -1,78 +1,108 @@
 import os
 import sys
-import time
 import json
 import numpy as np
-from typing import Callable, Any, Dict, List
+import cProfile
+import pstats
+from typing import Callable, Any, Dict, List, Tuple
 from tabulate import tabulate
+from io import StringIO
+from timeit import repeat
+from types import MappingProxyType
 from src.moveLib import MoveLib
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.moveGenerator import MoveGenerator1
 from src.gui import Gui
 from src.alpha_beta_Kopie import AlphaBetaSearch
-from src.benchmark import *
 from src.gamestate import GameState
 from src.model import Player, DictMoveEntry
 from src.board_final import Board
 
-# Ensure the data directory exists
-if not os.path.exists('data'):
-    os.makedirs('data')
+# Ensure the data directories exist
+if not os.path.exists('data/benchmarks'):
+    os.makedirs('data/benchmarks')
 
+if not os.path.exists('data/profiles'):
+    os.makedirs('data/profiles')
 
-def convert_to_serializable(obj):
-    if isinstance(obj, np.integer):
+def convert_to_serializable(obj, seen=None):
+    if seen is None:
+        seen = set()
+    
+    obj_id = id(obj)
+    if obj_id in seen:
+        return f"<Circular reference to object {obj_id}>"
+
+    seen.add(obj_id)
+
+    if isinstance(obj, (np.integer, int)):
         return int(obj)
-    elif isinstance(obj, np.floating):
+    elif isinstance(obj, (np.floating, float)):
         return float(obj)
     elif isinstance(obj, np.ndarray):
         return obj.tolist()
+    elif isinstance(obj, (dict, MappingProxyType)):
+        return {k: convert_to_serializable(v, seen) for k, v in obj.items()}
+    elif hasattr(obj, '__dict__'):
+        return {k: convert_to_serializable(v, seen) for k, v in obj.__dict__.items()}
+    elif hasattr(obj, '__class__') and hasattr(obj, '__slots__'):
+        return {slot: convert_to_serializable(getattr(obj, slot), seen) for slot in obj.__slots__}
+    elif callable(obj):
+        return str(obj)
     else:
-        raise TypeError(f'Object of type {obj.__class__.__name__} is not JSON serializable')
+        return str(obj)
 
-def benchmark(func_with_args: Callable[[], Any], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False) -> List[Dict[str, Any]]:
-    # List to store benchmark results
+def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True) -> List[Dict[str, Any]]:
     results = []
 
-    # Benchmark the function
-    for i in range(repetitions):
-        start_time = time.time()
-        output = func_with_args()
-        end_time = time.time()
+    def wrapper():
+        if include_move_count:
+            return func_with_args()
+        else:
+            return func_with_args(), None
 
-        duration = end_time - start_time
-        
-        if move_output:
-            if output is not None:
-                output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
-            else:
-                output = "No valid move found."
+    times = repeat(wrapper, repeat=repetitions, number=1)
+    mean_duration = sum(times) / repetitions
 
-        result = {
-            "function_name": func_name,
-            "fen": fen,
-            "depth": depth,
-            "duration": duration,
-            "output": output
-        }
-        results.append(result)
-    
-    # Write results to text file
-    with open('data/benchmark_results.txt', 'a') as text_file:
+    output, move_count = wrapper()
+
+    if move_output:
+        if output is not None:
+            output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
+        else:
+            output = "No valid move found."
+
+    result = {
+        "function_name": func_name,
+        "fen": fen,
+        "depth": depth,
+        "mean_duration": mean_duration,
+    }
+
+    if include_output:
+        result["output"] = output
+
+    if include_move_count:
+        result["move_count"] = move_count
+
+    results.append(result)
+
+    # Save results to files named after the function
+    text_file_path = f'data/benchmarks/{func_name}_benchmark_results.txt'
+    json_file_path = f'data/benchmarks/{func_name}_benchmark_results.json'
+
+    with open(text_file_path, 'a') as text_file:
         text_file.write(tabulate(results, headers="keys", tablefmt="grid"))
         text_file.write("\n")
 
-    # Write results to JSON file
-    json_file_path = 'data/benchmark_results.json'
     existing_data = []
-
     if os.path.exists(json_file_path):
         try:
             with open(json_file_path, 'r') as json_file:
                 existing_data = json.load(json_file)
         except json.JSONDecodeError:
-            print("Warning: JSON file is corrupted or not in the correct format. A new file will be created.")
+            print(f"Warning: JSON file {json_file_path} is corrupted or not in the correct format. A new file will be created.")
     
     existing_data.extend(results)
 
@@ -81,11 +111,47 @@ def benchmark(func_with_args: Callable[[], Any], func_name: str = "", fen: str =
     
     return results
 
-# Example usage
-def example_function():
-    # Example function to be benchmarked
-    time.sleep(1)
-    return np.array([12345, 67890], dtype=np.uint64)
+def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", fen: str = None, repetitions: int = 1, depth: int = 0, move_output: bool = False, include_move_count: bool = False, include_output: bool = True) -> None:
+    profiler = cProfile.Profile()
 
-if __name__ == "__main__":
-    benchmark(lambda: example_function(), func_name="example_function", fen="sample_fen", repetitions=3, depth=5, move_output=True)
+    def wrapper():
+        if include_move_count:
+            return func_with_args()
+        else:
+            return func_with_args(), None
+
+    profiler.enable()
+    times = repeat(wrapper, repeat=repetitions, number=1)
+    profiler.disable()
+
+    mean_duration = sum(times) / repetitions
+
+    output, move_count = wrapper()
+
+    if move_output:
+        if output is not None:
+            output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
+        else:
+            output = "No valid move found."
+
+    s = StringIO()
+    ps = pstats.Stats(profiler, stream=s).sort_stats(pstats.SortKey.TIME)
+    ps.print_stats()
+
+    profile_output = s.getvalue()
+
+    profile_text_file_path = f"data/profiles/{func_name}_profile.txt"
+    with open(profile_text_file_path, 'w') as f:
+        f.write(profile_output)
+        f.write(f"\nMean duration over {repetitions} repetitions: {mean_duration} seconds\n")
+
+        if include_output:
+            f.write(f"Output: {output}\n")
+
+        if include_move_count:
+            f.write(f"Move count: {move_count}\n")
+
+    profile_pstats_file_path = f"data/profiles/{func_name}_profile.pstats"
+    profiler.dump_stats(profile_pstats_file_path)
+
+    print(f"Profile results saved to {profile_text_file_path} and {profile_pstats_file_path}")
