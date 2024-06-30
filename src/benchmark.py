@@ -83,9 +83,7 @@ def benchmark(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = ""
         output, move_count = wrapper()
 
     if move_output:
-        if output is not None:
-            output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
-        else:
+        if output is None:
             output = "No valid move found."
 
     result = {

@@ -6,7 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.alt_eval import EvalFunction
 from src.model import *
-from board_final import Board
+from src.board_final import Board
+from src.moveLib import MoveLib
 
 import random
 
@@ -55,20 +56,21 @@ class TranspositionTable:
     def __init__(self):
         self.table = {}
 
-    def store(self, zobrist_key, depth, score, flag, best_move):
-        self.table[zobrist_key] = {'depth': depth, 'score': score, 'flag': flag, 'best_move': best_move}
+    def store(self, zobrist_key, depth, score, flag, best_move, age):
+        self.table[zobrist_key] = {'depth': depth, 'score': score, 'flag': flag, 'best_move': best_move, 'age': age}
 
     def lookup(self, zobrist_key, depth, alpha, beta):
         if zobrist_key in self.table:
             entry = self.table[zobrist_key]
             if entry['depth'] >= depth:
                 if entry['flag'] == 'EXACT':
-                    return entry['score'], entry['best_move']
+                    return entry['score'], entry['best_move'], entry['age']
                 elif entry['flag'] == 'LOWERBOUND' and entry['score'] >= beta:
-                    return entry['score'], entry['best_move']
+                    return entry['score'], entry['best_move'], entry['age']
                 elif entry['flag'] == 'UPPERBOUND' and entry['score'] <= alpha:
-                    return entry['score'], entry['best_move']
-        return None, None
+                    return entry['score'], entry['best_move'], entry['age']
+        return None, None, None
+
 
 class TimeExceeded(Exception):
     pass
@@ -76,6 +78,7 @@ class TimeExceeded(Exception):
 class AlphaBetaSearch:
     def __init__(self, game):
         self.total_move_count = 0
+        self.total_time = game["time"]
         self.game = game
         self.player = game["player"]
         self.opponent = Player.Red if self.player == Player.Blue else Player.Blue
@@ -87,44 +90,89 @@ class AlphaBetaSearch:
         self.move_gen.initBoard(*self.bitboards, self.turn)
         self.best_move = None
         self.time_limit = 100  # Default time limit in seconds
-        self.start_time = time.time()
-        self.alpha = -float('inf')
-        self.beta = float('inf')
         self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
 
+    def random_move(self, opening=False):
+        moves = self.move_gen.generate_moves()
+        piece = random.choice(moves)
+        move = piece[1][0]
+        self.best_move = piece[0], move
+        
+    def count_pieces(self, fen_string):
+        count_b = 0
+        count_r = 0
+        
+        for char in fen_string:
+            if char == 'b':
+                count_b += 1
+            elif char == 'r':
+                count_r += 1
+        
+        if self.player == Player.Blue:
+            return count_b, count_r       
+        return count_r, count_b
+    
+    def set_time(self):
+        if self.move_gen.isOpening:
+            self.random_move(opening=True)
+            raise TimeExceeded()
+        elif self.total_time < 100:
+            self.random_move(opening=False)
+            raise TimeExceeded()
+        pieces, pieces_opponent = self.count_pieces
+        if pieces > 9 and pieces_opponent > 9:
+            return self.total_time / 100
+        if pieces > 9 and pieces_opponent <= 4:
+            return self.total_time / 40
+        if pieces <= 4 and pieces_opponent > 9:
+            return self.total_time / 20
+        if pieces <= 4 and pieces_opponent <= 4:
+            return self.total_time / 20
+
     def search(self, iterative_deepening=False, time_limit=100, depth=2):
+        
         self.transposition_table = TranspositionTable()  # Reset transposition table
         self.total_move_count = 0
-        self.start_time = time.time()
-        self.time_limit = time_limit
+        self.start_time = time.time()*1000
         try:
             if iterative_deepening:
+                self.time_limit = self.set_time()
                 depth = 1
                 while True:
                     print(f"Iterative Deepening: {depth}")
-                    result, temp_move = self.alpha_beta_max(self.alpha, self.beta, depth, self.bitboards)
+                    result, temp_move = self.alpha_beta_max(-float('inf'), float('inf'), depth, self.bitboards, depth)
                     if temp_move is not None:
                         self.best_move = temp_move
                     if self.is_time_exceeded():
                         break
                     depth += 2
             else:
-                result, temp_move = self.alpha_beta_max(self.alpha, self.beta, depth, self.bitboards)
+                result, temp_move = self.alpha_beta_max(-float('inf'), float('inf'), depth, self.bitboards, depth)
                 if temp_move is not None:
                     self.best_move = temp_move
         except TimeExceeded:
             pass
         
         print(f"Total moves looked at: {self.total_move_count}")
-        return self.best_move, self.total_move_count
+        if self.best_move is not None:
+            move_string = f"{MoveLib.BitsToPosition(self.best_move[0])}-{MoveLib.BitsToPosition(self.best_move[1])}"
+            print(move_string)
+        else:
+            move_string = None
+            print("No valid move found.")
+        print(f"total time: {self.total_time}")
+        current_time = time.time()*1000
+        time_taken = current_time - self.start_time
+        print(f"Time remaining: {self.total_time - time_taken} milliseconds")
+        return move_string, self.total_move_count
 
-    def alpha_beta_max(self, alpha, beta, depth_left, bitboards):
+    def alpha_beta_max(self, alpha, beta, depth_left, bitboards, age):
         if depth_left == 0:
             points = self.eval_func_opponent.computeEvaluationScore(bitboards)
             return points, None
 
         zobrist_key = self.zobrist.hash_position(bitboards)
-        stored_score, stored_move = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
+        stored_score, stored_move, stored_age = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
         if stored_score is not None:
             return stored_score, stored_move
 
@@ -138,7 +186,7 @@ class AlphaBetaSearch:
                 if self.is_time_exceeded():
                     raise TimeExceeded()
                 new_bitboards = self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards)
+                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards, age)
                 self.move_gen.takeback()
                 if score > best_score:
                     best_score = score
@@ -153,16 +201,16 @@ class AlphaBetaSearch:
         elif best_score >= beta:
             flag = 'LOWERBOUND'
 
-        self.transposition_table.store(zobrist_key, depth_left, best_score, flag, best_move)
+        self.transposition_table.store(zobrist_key, depth_left, best_score, flag, best_move, age)
         return best_score, best_move
 
-    def alpha_beta_min(self, alpha, beta, depth_left, bitboards):
+    def alpha_beta_min(self, alpha, beta, depth_left, bitboards, age):
         if depth_left == 0:
             points = self.eval_func_opponent.computeEvaluationScore(bitboards)
             return points, None
 
         zobrist_key = self.zobrist.hash_position(bitboards)
-        stored_score, stored_move = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
+        stored_score, stored_move, stored_age = self.transposition_table.lookup(zobrist_key, depth_left, alpha, beta)
         if stored_score is not None:
             return stored_score, stored_move
 
@@ -176,7 +224,7 @@ class AlphaBetaSearch:
                 if self.is_time_exceeded():
                     raise TimeExceeded()
                 new_bitboards = self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards)
+                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards, age)
                 self.move_gen.takeback()
                 if score < best_score:
                     best_score = score
@@ -191,7 +239,7 @@ class AlphaBetaSearch:
         elif best_score >= beta:
             flag = 'LOWERBOUND'
 
-        self.transposition_table.store(zobrist_key, depth_left, best_score, flag, best_move)
+        self.transposition_table.store(zobrist_key, depth_left, best_score, flag, best_move, age)
         return best_score, best_move
 
     def is_time_exceeded(self):

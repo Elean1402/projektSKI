@@ -22,7 +22,7 @@ class MoveGenerator1:
         Args:
             board (list[np.uint64]): Bitboard Array of length 4
         """
-
+    
         print("Board init:")
         self.prettyPrintBoard(board)
 

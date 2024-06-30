@@ -13,30 +13,22 @@ from src.gamestate import GameState
 from src.model import Player, DictMoveEntry
 from src.board_final import Board
 
-def call(state, search_type='minmax'):
+def call(state, output=False):
 
     search_instance = AlphaBetaSearch(state)
-    search_instance1 = AlphaBetaSearch1(state)
+    # search_instance1 = AlphaBetaSearch1(state)
 
-    depth = 3
-
-    # Benchmark the genMoves method
-    # benchmark(lambda: search_instance.search(iterative_deepening=False, time_limit=200, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True)
-    benchmark(lambda: search_instance.search(iterative_deepening=True, time_limit=5, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True, include_move_count=True)
-    # next_move = search_instance.search(iterative_deepening=False, time_limit=200, depth=depth)
-    # if next_move is not None:
-    #     out = [MoveLib.BitsToPosition(next_move[0]), MoveLib.BitsToPosition(next_move[1])]
-    #     print(out)
-    # else:
-    #     print("No valid move found.")
+    depth = 5
+    benchmark(lambda: search_instance.search(iterative_deepening=False, time_limit=5, depth=depth), 'alpha_beta',fen=state['board'], repetitions=1, depth=depth, move_output=True, include_move_count=True)
+    
 
 def board_test(state, output=False):
-    game_over = [DictMoveEntry.CONTINUE_GAME]
+    # game_over = [DictMoveEntry.CONTINUE_GAME]
     move_generator = Board()
     move_generator.initBoard(red_pawns=state["red_pawns"], red_knights=state["red_knights"], blue_pawns=state["blue_pawns"], blue_knights=state["blue_knights"], blue_turn=False)
-    move_generator1 = MoveGenerator1(state["bitboards"])
-    benchmark(lambda: move_generator.generate_moves(), 'genMoves', repetitions=1000, fen=state["board"], include_output=False)
-    benchmark(lambda: move_generator1.genMoves(state["player"],game_over,state["bitboards"]), 'genMoves1', repetitions=1000, fen=state["board"], include_output=False)
+    # move_generator1 = MoveGenerator1(state["bitboards"])
+    # benchmark(lambda: move_generator.generate_moves(), 'genMoves', repetitions=1000, fen=state["board"], include_output=False)
+    # benchmark(lambda: move_generator1.genMoves(state["player"],game_over,state["bitboards"]), 'genMoves1', repetitions=1000, fen=state["board"], include_output=False)
 
     if output:
         test = move_generator.generate_moves()
@@ -46,7 +38,7 @@ def board_test(state, output=False):
 
 
 if __name__ == '__main__':
-    input_dict = {"board": "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0 r"}
+    input_dict = {"board": "2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b"}
     fen, player = input_dict["board"].split(" ")
     player = Player.Blue if player == "b" else Player.Red
     bitboard = GameState.createBitBoardFrom(Gui.fenToMatrix(fen), True)
@@ -61,5 +53,6 @@ if __name__ == '__main__':
         "player": player,
         "player1": True,
         "player2": False,
+        "time": 120_000,
     }
-    call(state)  # Change to 'minimax' to use MinimaxSearch
+    call(state, True)  # Change to 'minimax' to use MinimaxSearch
