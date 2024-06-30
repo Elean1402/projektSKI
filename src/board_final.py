@@ -7,7 +7,7 @@ import random
 Notes:
     Only static methods -> don't create instances e.g. just call Board.func()
     To use:
-        initBoard(*Bitboards, blue_turn, player) -> None   # new game
+        initBoard(*Bitboards, blue_turn, we_blue) -> None   # new game
         generate_moves() -> [(source1, [dest1, dest2, ...]), ...] # generates all possible moves of the current player
         exec_move(source, dest) -> (blue_pawns, blue_knights, red_pawns, red_knights) # executes move of the current player
         takeback -> takeback last move
@@ -26,7 +26,7 @@ Notes:
 
 class Board():
     @staticmethod
-    def initBoard(red_pawns, red_knights,blue_pawns, blue_knights, blue_turn=True, player=True) -> None:
+    def initBoard(red_pawns, red_knights,blue_pawns, blue_knights, blue_turn=True, we_blue=True) -> None:
         """
         Sets up new game:
         Call like this: 
@@ -36,7 +36,7 @@ class Board():
             from src.gamestate import GameState
             from src.gui import Gui
         """
-        Board.player = player
+        Board.we_blue = we_blue
         Board.blue_turn = blue_turn
         Board.blue_p = blue_pawns
         Board.blue_k = blue_knights
@@ -124,7 +124,7 @@ class Board():
         if return value == Board.max_eval -> KI won
         if return value == Board.min_eval -> Opponent lost
         """
-        if Board.player:
+        if Board.we_blue:
             return Board.eval_simple()
         else:
             return -Board.eval_simple()
@@ -132,9 +132,9 @@ class Board():
     ################### Class Variables #####################
     
     
-    # Player (self)
+    # Are we blue or red
     # True -> Blue, False -> Red
-    player = True
+    we_blue = True
 
 
     # Turn
@@ -1220,5 +1220,5 @@ if __name__ == "__main__":
     # Board.state("Startpos")
     # print(Board.eval_easy())
     # For Red
-    Board.play(player=False)
+    Board.play()
     
