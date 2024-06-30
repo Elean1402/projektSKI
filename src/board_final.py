@@ -16,9 +16,10 @@ Notes:
 
         isOpening() -> bool # true if the current game is in the opening phase
 
+        eval() -> int # simple evaluation of the current board 
+
     In process (don't use yet):
-        eval() -> int # evaluation of the current board
-        
+        eval_complex() -> int # complex evaluation of the current board
     """
 
 
@@ -572,6 +573,8 @@ class Board():
         Board.red = Board.red_p | Board.red_k
 
         return source, dest
+    
+    
 
     r1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000001111110)
     C1 = np.uint64(0b0000000000000000000000000000000000000000000000000000000000100000)
@@ -604,13 +607,67 @@ class Board():
     r23 = r2 | r3
     r45 = r4 | r5
     r67 = r6 | r7
+    
 
     min_eval = -1000
     max_eval = 1000
 
-    # weights 
 
-     
+
+    # easy eval weights
+    rows = [r1, r2, r3, r4, r5, r6, r7, r8]
+
+    pawn_weight = 30
+    knight_weight = 35
+    blue_row_weights = [2,2,4,7,20,50,500,1000] # for row 1 to 8
+    red_row_weights = [1000,500,50,20,7,4,2,2] # for row 1 to 8
+
+
+    rows_and_weights=list(zip(rows,blue_row_weights,red_row_weights))
+
+    @staticmethod
+    def eval() -> int:
+        """
+        Opponent moves next!!!  -> helps for defensive eval function
+            -> attacking Opponent not necessarly strong 
+                -> dodge / protect
+                -> double attack stong?
+            -> but beeing attacked unprotected is bad 
+                -> penalize
+
+        Returns: evaluation of the current board
+        """
+
+        # precalcs
+        blue_p_movable = Board.blue_p & ~(Board.blue_k | Board.red_k)
+        red_p_movable = Board.red_p & ~(Board.blue_k | Board.red_k)
+
+        # Hits
+        # Blue hits
+        blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
+        blue_p_hits = (blue_p_movable & Board.blue_p_hit_left << Board.bphl) | (blue_p_movable & Board.blue_p_hit_right << Board.bphr)
+        blue_no_hits = ~(blue_k_hits | blue_p_hits)
+
+        # Red hits
+        red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
+        red_p_hits = (red_p_movable & Board.red_p_hit_left >> Board.rphl) | (red_p_movable & Board.red_p_hit_right >> Board.rphr)
+        red_no_hits = ~(red_k_hits | red_p_hits)
+
+        # Material Advantage
+        eval = Board.pawn_weight*(len(Board.l_blue_p) - len(Board.l_red_p)) + Board.knight_weight*(len(Board.l_blue_k) - len(Board.l_red_k))
+
+        # Advancement on board
+        if Board.blue_turn:
+            for row, b_weight, r_weight in Board.rows_and_weights:
+                eval += b_weight*Board.count_figs(Board.blue & row)
+                eval -= r_weight*Board.count_figs(Board.red & blue_no_hits & row)
+
+        else:
+            for row, b_weight, r_weight in Board.rows_and_weights:
+                eval += b_weight*Board.count_figs(Board.blue & red_no_hits & row)
+                eval -= r_weight*Board.count_figs(Board.red & row)
+
+        return eval
 
     # Helper Function for eval
     numpyone = np.uint64(1) 
@@ -623,7 +680,7 @@ class Board():
         return count    
         
     @staticmethod
-    def eval() -> int:
+    def eval_complex() -> int:
         """
         targeted -> attacked at least once
         protected -> protected at least once
@@ -739,79 +796,9 @@ class Board():
         if (squares << Board.bphr | squares << Board.bphl) & red_k_untargeted:
             eval += w*Board.count_figs(squares)
         
-        """
-        ##############################################################
-        # For each Figure # Blue
-        ##############################################################
-        ########################## Pawns #############################
-        for fig in Board.l_blue_p:
-            # attacking Pawns
-            if((fig & Board.blue_p_hit_right << Board.bphr) | (fig & Board.blue_p_hit_left << Board.bphl)) & Board.red:
-                # untargeted
-                if fig & ~Board.red_hits:
-                    eval += b
-                # targeted & protected
-                elif fig & Board.blue_hits:
-                    eval += b
-                # targeted
-                else:
-                    eval += b
-
-            # non-attacking Pawns
-            else:
-                # targeted
-                if fig & Board.red_hits:
-                    # protected
-                    if fig & Board.blue_hits:
-                        eval += b
-                    
-                    # unprotected
-                    else:
-                        eval += b
-                # untargeted & non-attacking
-                else:
-                    eval += b
+        # Knigths that can jump and attack unprotected knights
         
-            ##############################################################
-            # Certain Pawn Areas # Blue
-            ##############################################################
-            
-            # Targeted
-            if fig & ~Board.red_hits:
-                # Valueble Pawn H7 untargeted
-                if fig & Board.H7:
-                    eval += b
-                    # no Red Pawn on C8
-                    if ~(Board.C8 & Board.red_p):
-                        eval += b
-
-                # Valueble Pawn H2 untargeted
-                if blue_p_untarget & Board.H2:
-                    eval += b
-                    # no Red Pawn on F8          
-                    if ~(Board.F8 & Board.red_p):
-                        eval += b
-                
-
-            
-        # TODO: Knights
-        ########################## Knights #############################
-        for fig in Board.l_blue_k: 
-            # non-targeted
-            if fig & ~Board.red_hits:
-
-            ##############################################################
-            # Certain Knight Areas # Blue
-            ##############################################################
-
-                # Possible Knight on r5 untargeted
-                if fig & Board.r5:
-                    eval += b
-
-                # Knight on r5 untargeted or at least one possible takeback
-                if fig & Board.r4:
-                    eval += b
-        """
+        
                 
         return eval
 
@@ -922,14 +909,17 @@ class Board():
 
     @staticmethod
     def play(FEN_board=False, blue_turn=True):
-
+        eval = Board.eval
         if FEN_board:
             Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn)
         else:
             Board.initBoard(np.uint64(0b0111111001111110000000000000000000000000000000000000000000000000), np.uint64(0),np.uint64(0b0111111001111110), np.uint64(0),blue_turn)
         Board.state("Startpos")
-        if input("Move? -> Enter, State? -> s") == "s":
+        inp = input("Move? -> Enter, State? -> s, Eval? -> e")
+        if inp == "s":
             Board.bitboard_states()
+        elif inp == "e":
+            print(eval())
 
         def rand_move_execution(moves):
             fig = random.choice(moves)
@@ -938,7 +928,7 @@ class Board():
             return fig[0],move
         
         def takeback():
-            inp = input("Takeback? -> 't', State? -> 's': ")
+            inp = input("Takeback? -> 't', State? -> 's', , Eval? -> e: ")
             
             if inp =="t":
                 s,d  = Board.takeback()
@@ -946,6 +936,10 @@ class Board():
                 takeback()
             elif inp == "s":
                 Board.bitboard_states()
+                takeback()
+
+            elif inp == "e":
+                print(eval())
                 takeback()
             
 
@@ -1100,9 +1094,9 @@ if __name__ == "__main__":
 	}
     # For Blue
     FEN_board = game["board"]
-    Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),True)
-    Board.state("Startpos")
-    print(Board.isOpening())
+    # Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),True)
+    # Board.state("Startpos")
+    # print(Board.eval_easy())
     # For Red
-    # Board.play()
+    Board.play()
     

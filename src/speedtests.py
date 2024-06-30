@@ -172,3 +172,77 @@ print(f"Time to access a local variable (int): {access_local_var_int_time}")
 
 # print(f"Time to call bitwise AND operation twice: {time_twice}")
 # print(f"Time to store and reuse bitwise AND operation: {time_once}")
+
+"""
+        ##############################################################
+        # For each Figure # Blue
+        ##############################################################
+        ########################## Pawns #############################
+        for fig in Board.l_blue_p:
+            # attacking Pawns
+            if((fig & Board.blue_p_hit_right << Board.bphr) | (fig & Board.blue_p_hit_left << Board.bphl)) & Board.red:
+                # untargeted
+                if fig & ~Board.red_hits:
+                    eval += b
+                # targeted & protected
+                elif fig & Board.blue_hits:
+                    eval += b
+                # targeted
+                else:
+                    eval += b
+
+            # non-attacking Pawns
+            else:
+                # targeted
+                if fig & Board.red_hits:
+                    # protected
+                    if fig & Board.blue_hits:
+                        eval += b
+                    
+                    # unprotected
+                    else:
+                        eval += b
+                # untargeted & non-attacking
+                else:
+                    eval += b
+        
+            ##############################################################
+            # Certain Pawn Areas # Blue
+            ##############################################################
+            
+            # Targeted
+            if fig & ~Board.red_hits:
+                # Valueble Pawn H7 untargeted
+                if fig & Board.H7:
+                    eval += b
+                    # no Red Pawn on C8
+                    if ~(Board.C8 & Board.red_p):
+                        eval += b
+
+                # Valueble Pawn H2 untargeted
+                if blue_p_untarget & Board.H2:
+                    eval += b
+                    # no Red Pawn on F8          
+                    if ~(Board.F8 & Board.red_p):
+                        eval += b
+                
+
+            
+        # TODO: Knights
+        ########################## Knights #############################
+        for fig in Board.l_blue_k: 
+            # non-targeted
+            if fig & ~Board.red_hits:
+
+            ##############################################################
+            # Certain Knight Areas # Blue
+            ##############################################################
+
+                # Possible Knight on r5 untargeted
+                if fig & Board.r5:
+                    eval += b
+
+                # Knight on r5 untargeted or at least one possible takeback
+                if fig & Board.r4:
+                    eval += b
+        """
