@@ -9,7 +9,7 @@ from src.model import Player, BitMaskDict, DICT_MOVE, DictMoveEntry, BIT_MASK_AR
 from src.moveLib import MoveLib as mv
 
 
-class MoveGenerator1:
+class MoveGenerator:
     # _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
     # _boardIsInitialized = False
     # _gameover = False
@@ -22,7 +22,7 @@ class MoveGenerator1:
         Args:
             board (list[np.uint64]): Bitboard Array of length 4
         """
-    
+
         print("Board init:")
         self.prettyPrintBoard(board)
 
@@ -302,11 +302,11 @@ class MoveGenerator1:
         return positions
 
     @classmethod
-    def checkBoardIfGameOver(self, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
+    def checkBoardIfGameOver(cls, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
         """Game is over if last Row is reached or no possible Moves
         Returns: Boolean: True for win else loose"""
         if printBoard:
-            self.prettyPrintBoard(self, board, gameOver)
+            cls.prettyPrintBoard(cls, board, gameOver)
 
         blue_pieces = board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_B_PAWNS]
         red_pieces = board[GameState._ZARR_INDEX_R_KNIGHTS] | board[GameState._ZARR_INDEX_R_PAWNS]
@@ -319,7 +319,7 @@ class MoveGenerator1:
         if gameOver[0] != DictMoveEntry.CONTINUE_GAME:
             if printBoard:
                 print("Game Over")
-                self.prettyPrintBoard(self, board, gameOver)
+                cls.prettyPrintBoard(cls, board, gameOver)
 
     def execSingleMove(self, move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64],
                        printB: bool = False):

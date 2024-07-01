@@ -8,8 +8,8 @@ from network import Network
 from game import Game
 
 pygame.font.init()
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from src.new_alpha import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.alpha_beta import *
 
 
 
@@ -50,9 +50,7 @@ def main():
 				last_action_time = pygame.time.get_ticks()  # Reset the timer after taking an action
 
 		# Check if 3 seconds have passed without any action
-		if pygame.time.get_ticks() - last_action_time > 10000:  # 3000 milliseconds = 3 seconds
-			print("Timeout: No action for 3 seconds")
-			sys.exit(0)
+		
 
 
 while True:
