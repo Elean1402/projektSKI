@@ -30,7 +30,7 @@ class Board():
         """
         Sets up new game:
         Call like this: 
-            Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn:bool,player:bool) # player: True -> Blue, False -> Red
+            Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),blue_turn:bool,we_blue:bool) # we_blue: True -> Blue, False -> Red
 
         Imports needed for that:
             from src.gamestate import GameState
@@ -638,57 +638,43 @@ class Board():
 
 
     # easy eval weights
-    rows = [r1, r2, r3, r4, r5, r6, r7, r8]
-
-    pawn_weight = 30
-    knight_weight = 35
-    blue_row_weights = [2,2,4,7,20,50,500,max_eval] # for row 1 to 8
-    red_row_weights = [min_eval,500,50,20,7,4,2,2] # for row 1 to 8
+    rows1_7 = [r1, r2, r3, r4, r5, r6, r7]
+    rows2_8 = [r2, r3, r4, r5, r6, r7, r8]
 
 
-    rows_and_weights=list(zip(rows,blue_row_weights,red_row_weights))
+    pawn_weight = 40
+    knight_weight = 45
+    blue_row_weights = [2,2,4,7,20,50,500] # for row 1 to 8
+    red_row_weights = [500,50,20,7,4,2,2] # for row 1 to 8
+
+
+    rows1_7_and_weights=list(zip(rows1_7,blue_row_weights,red_row_weights))
+    rows2_8_and_weights=list(zip(rows2_8,blue_row_weights,red_row_weights))
+
 
     @staticmethod
     def eval_simple() -> int:
         """
-        Opponent moves next!!!  -> helps for defensive eval function
-            -> attacking Opponent not necessarly strong 
-                -> dodge / protect
-                -> double attack stong?
-            -> but beeing attacked unprotected is bad 
-                -> penalize
+        Material Advantage + Advancement on Board
 
         Returns: evaluation of the current board
         """
 
-        # precalcs
-        blue_p_movable = Board.blue_p & ~(Board.blue_k | Board.red_k)
-        red_p_movable = Board.red_p & ~(Board.blue_k | Board.red_k)
-
-        # Hits
-        # Blue hits
-        blue_k_hits = (Board.blue_k & Board.blue_k_forward_left << Board.bkfl) | (Board.blue_k & Board.blue_k_forward_right << Board.bkfr) | (Board.blue_k & Board.blue_k_left << Board.bkl) | (Board.blue_k & Board.blue_k_right << Board.bkr) if Board.blue_k else np.uint64(0)
-        blue_p_hits = (blue_p_movable & Board.blue_p_hit_left << Board.bphl) | (blue_p_movable & Board.blue_p_hit_right << Board.bphr)
-        blue_no_hits = ~(blue_k_hits | blue_p_hits)
-
-        # Red hits
-        red_k_hits = (Board.red_k & Board.red_k_forward_left >> Board.rkfl) | (Board.red_k & Board.red_k_forward_right >> Board.rkfr) | (Board.red_k & Board.red_k_left >> Board.rkl) | (Board.red_k & Board.red_k_right >> Board.rkr) if Board.red_k else np.uint64(0)
-        red_p_hits = (red_p_movable & Board.red_p_hit_left >> Board.rphl) | (red_p_movable & Board.red_p_hit_right >> Board.rphr)
-        red_no_hits = ~(red_k_hits | red_p_hits)
+        
 
         # Material Advantage
         eval = Board.pawn_weight*(len(Board.l_blue_p) - len(Board.l_red_p)) + Board.knight_weight*(len(Board.l_blue_k) - len(Board.l_red_k))
 
         # Advancement on board
-        if Board.blue_turn:
-            for row, b_weight, r_weight in Board.rows_and_weights:
-                eval += b_weight*Board.count_figs(Board.blue & row)
-                eval -= r_weight*Board.count_figs(Board.red & blue_no_hits & row)
-
-        else:
-            for row, b_weight, r_weight in Board.rows_and_weights:
-                eval += b_weight*Board.count_figs(Board.blue & red_no_hits & row)
-                eval -= r_weight*Board.count_figs(Board.red & row)
+        if Board.blue & Board.r8:
+            return Board.max_eval
+        if Board.red & Board.r1:
+            return Board.min_eval
+        
+        for row, b_weight, r_weight in Board.rows1_7_and_weights:
+            eval += b_weight*Board.count_figs(Board.blue & row)
+        for row, b_weight, r_weight in Board.rows2_8_and_weights:
+            eval -= r_weight*Board.count_figs(Board.red & row)
 
         return eval
 
@@ -1203,9 +1189,9 @@ if __name__ == "__main__":
     #test = "6/8/8/8/1bb06/07r/8/6 r"
 
 
-    test = "b05/r07/3b01b02/rrb0bbb0b01b01/1rr2r0r02/3r0r03/2b0b01r02/6 r"
+    # test = "b05/r07/3b01b02/rrb0bbb0b01b01/1rr2r0r02/3r0r03/2b0b01r02/6 r"
     # test = "b05/r07/8/8/8/8/8/6 r"
-
+    test = "6/2bb1bbr02/1b01bb4/2b03b01/rrb01rr4/4rrb0r01/3b01rr2/6 b"
 
 
     b, player = test.split(" ")
@@ -1216,7 +1202,7 @@ if __name__ == "__main__":
 	}
     # For Blue
     FEN_board = game["board"]
-    #Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),False)
+    # Board.initBoard(*GameState.createBitBoardFrom(Gui.fenToMatrix(FEN_board),True),True)
     # Board.state("Startpos")
     # print(Board.eval_easy())
     # For Red
