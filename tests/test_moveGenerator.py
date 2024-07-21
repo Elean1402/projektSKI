@@ -2,10 +2,13 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from src.model import *
-from src.moveGenerator import MoveGenerator
+from src.moveGenerator_sicher import MoveGenerator
 from src.gui import *
 from src.gamestate import *
 from src.moveLib import *
+from src.model import *
+import json
+import random
 
 class moveGenerator(unittest.TestCase):
     @unittest.skip("not implemented yet")
@@ -20,77 +23,77 @@ class moveGenerator(unittest.TestCase):
     def test_genValidatedMoves_1(self):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/8/8/8/8/8/8/r05")
-        mvG = MoveGenerator(BB)
-        list1 = mvG._genValidatedMoves(Player.Red)
-        mvG.prettyPrintBoard()
+        mvg = MoveGenerator(BB)
+        list1 = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         
-        print(list1)
-        self.assertListEqual([MoveLib.move(x,y,3) for x,y,z in list1], ["B8-B7", "B8-A7", "B8-C7", "B8-C8"])
+        print([MoveLib.move(move[0],move[1],3) for move in list1])
+        self.assertListEqual([MoveLib.move(x,y,3) for x,y,z in list1], ["B8-B7", "B8-C8"])
     
     
     
     def test_genValidatedMoves_2(self):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/r07/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Red)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
-        self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-B1","A2-B2"])
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
+        self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-B2"])
         
     def test_genValidatedMoves_3(self):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/br7/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Red)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-C1"])
     
     def test_genValidatedMoves_4(self):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/2rr5/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Red)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["C2-E1"])
         
     def test_genValidatedMoves_5(self):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/8/6br1/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Red)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["G3-F1","G3-E2"])
     
     def test_genValidatedMoves_6(self):
         
         BB = GameState.createBitBoardFromFEN("6/8/6br1/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Blue)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],[])
     
     def test_genValidatedMoves_7(self):
         
         BB = GameState.createBitBoardFromFEN("6/8/1bb6/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Blue)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["B3-A5","B3-C5", "B3-D4"])
         
     def test_genValidatedMoves_8(self):
         
         BB = GameState.createBitBoardFromFEN("6/8/1bb6/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        list = mvG._genValidatedMoves(Player.Blue)
-        mvG.prettyPrintBoard()
-        mvG.prettyPrintMoves(list)
+        mvg = MoveGenerator(BB)
+        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        mvg.prettyPrintMoves(list)
         
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["B3-A5","B3-C5","B3-D4"])
     
@@ -101,104 +104,104 @@ class moveGenerator(unittest.TestCase):
     
     def test_getTarget_1(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllPawns(Player.Blue)
-        move = mvG._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllPawns(Player.Blue,BB)
+        move = mvg._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP])
         print(MoveLib.move(*move,3))
         self.assertEqual("B1-B2",MoveLib.move(*move,3))
     
     def test_getTarget_2(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllPawns(Player.Blue)
-        move = mvG._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllPawns(Player.Blue,BB)
+        move = mvg._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT])
         print(MoveLib.move(*move,3))
         self.assertEqual("B1-A2",MoveLib.move(*move,3))   
     
-    def test_getTarget_2(self):
+    def test_getTarget_3(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllPawns(Player.Blue)
-        move = mvG._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllPawns(Player.Blue,BB)
+        move = mvg._getTarget(bp, BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT])
         print(MoveLib.move(*move,3))
         self.assertEqual("B1-C2",MoveLib.move(*move,3))   
     
-    def test_getTarget_2(self):
+    def test_getTarget_4(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllPawns(Player.Blue)
-        move = mvG._getTarget(bp, BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllPawns(Player.Blue,BB)
+        move = mvg._getTarget(bp, BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
         print(MoveLib.move(*move,3))
         self.assertEqual("B1-C1",MoveLib.move(*move,3))   
     
-    def test_getTarget_2(self):
+    def test_getTarget_5(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllPawns(Player.Blue)
-        bp = mvG._filterPositions(Player.Blue,bp, BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllPawns(Player.Blue,BB)
+        bp = mvg._filterPositions(Player.Blue,bp, BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
         print("filteredpos:", bp)
-        move = mvG._getTarget(bp, BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
+        move = mvg._getTarget(bp, BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
         print(MoveLib.move(*move,3))
-        self.assertEqual("H1-H1",MoveLib.move(*move,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move,3))
     
-    def test_getTarget_3(self):
+    def test_getTarget_6(self):
         """Edge Case Test - all not possible
             "6/bb7/8/8/8/8/1rbbb3bb1/6" """
         BB = GameState.createBitBoardFromFEN("6/bb7/8/8/8/8/8/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllKnights(Player.Blue)
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
-        move = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllKnights(Player.Blue, BB)
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
+        move = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
         
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
-        move2 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
-        move3 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
-        move4 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
+        move2 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
+        move3 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
+        move4 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
         print(MoveLib.move(*move,3))
         print(MoveLib.move(*move2,3))
         print(MoveLib.move(*move3,3))
         print(MoveLib.move(*move4,3))
         
-        self.assertEqual("H1-H1",MoveLib.move(*move,3))
-        self.assertEqual("H1-H1",MoveLib.move(*move2,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move2,3))
         self.assertEqual("A2-B4",MoveLib.move(*move3,3))
         self.assertEqual("A2-C3",MoveLib.move(*move4,3))
         
-    def test_getTarget_4(self):
+    def test_getTarget_7(self):
         """Edge Case Test - all not possible
             "6/8/8/8/8/8/1rb6/6" """
         BB = GameState.createBitBoardFromFEN("6/8/8/8/8/8/1rb6/6")
-        mvG = MoveGenerator(BB)
-        bp = mvG._getAllKnights(Player.Blue)
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
-        move = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
+        mvg = MoveGenerator(BB)
+        bp = mvg._getAllKnights(Player.Blue, BB)
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
+        move = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
         
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
-        move2 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
-        move3 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
-        bp2 = mvG._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
-        move4 = mvG._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
+        move2 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
+        move3 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
+        bp2 = mvg._filterPositions(Player.Blue, bp, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
+        move4 = mvg._getTarget(bp2, BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
         print(MoveLib.move(*move,3))
         print(MoveLib.move(*move2,3))
         print(MoveLib.move(*move3,3))
         print(MoveLib.move(*move4,3))
         
-        self.assertEqual("H1-H1",MoveLib.move(*move,3))
-        self.assertEqual("H1-H1",MoveLib.move(*move2,3))
-        self.assertEqual("H1-H1",MoveLib.move(*move3,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move2,3))
+        self.assertEqual("A0-A0",MoveLib.move(*move3,3))
         self.assertEqual("B7-D8",MoveLib.move(*move4,3))
     
     def test_getAllPawns_1(self):
         
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/r05")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual(np.log2(posRedPawns),np.log2(2**62))
         self.assertEqual(np.log2(posBluePawns),np.log2(2**6))
@@ -207,10 +210,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("b0b0b0b0b0b0/8/8/8/8/8/8/r0r0r0r0r0r0")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual(np.log2(posRedPawns),np.log2(2**62+2**61+2**60+2**59+2**58+2**57))
         self.assertEqual(np.log2(posBluePawns),np.log2(2**6+2**5+2**4+2**3+2**2+2**1))
@@ -219,10 +222,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/6")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual(np.log2(posRedPawns),np.log2(2**54+2**53+2**52+2**51+2**50+2**49))
         self.assertEqual(np.log2(posBluePawns),np.log2(2**14+2**13+2**12+2**11+2**10+2**9))
@@ -231,10 +234,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/r0b0r0b0r0b0r01/8/8/8/8/1r0b0r0b0r0b0r0/6")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual(np.log2(posRedPawns),np.log2(2**54+2**52+2**50+2**48+2**15+2**13+2**11+2**9))
         self.assertEqual(np.log2(posBluePawns),np.log2(2**53+2**51+2**49+2**14+2**12+2**10))
@@ -243,10 +246,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/8/8/8/8/8/8/6")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual((posRedPawns),0)
         self.assertEqual((posBluePawns),0)
@@ -255,10 +258,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("bbbbbbbbbbbb/8/8/8/8/8/8/rrrrrrrrrrrr")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual((posRedPawns),0)
         self.assertEqual((posBluePawns),0)
@@ -267,10 +270,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("brbrbrbrbrbr/8/8/8/8/8/8/rbrbrbrbrbrb")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual((posRedPawns),0)
         self.assertEqual((posBluePawns),0)
@@ -279,10 +282,10 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/r07/8/8/8/8/b07/6")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedPawns =mvG._getAllPawns(Player.Red)
-        posBluePawns = mvG._getAllPawns(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedPawns =mvg._getAllPawns(Player.Red,BB)
+        posBluePawns = mvg._getAllPawns(Player.Blue,BB)
         
         self.assertEqual(np.log2(posRedPawns),np.log2(2**15))
         self.assertEqual(np.log2(posBluePawns),np.log2(2**55))
@@ -291,10 +294,10 @@ class moveGenerator(unittest.TestCase):
     def test_getAllKnights_1(self):
         BB = GameState.createBitBoardFromFEN("bbbbbbbbbbbb/8/8/8/8/8/8/rrrrrrrrrrrr")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedKnights =mvG._getAllKnights(Player.Red)
-        posBlueKnights = mvG._getAllKnights(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedKnights =mvg._getAllKnights(Player.Red,BB)
+        posBlueKnights = mvg._getAllKnights(Player.Blue, BB)
         bits = np.uint64(2**6+2**5+2**4+2**3+2**2+2**1)
         self.assertEqual(np.log2(posRedKnights),np.log2(bits << np.uint64(7*8)))
         self.assertEqual(np.log2(posBlueKnights),np.log2(bits))
@@ -302,10 +305,10 @@ class moveGenerator(unittest.TestCase):
     def test_getAllKnights_2(self):
         BB = GameState.createBitBoardFromFEN("6/8/1rbrbrbrbrbrb1/8/8/1brbrbrbrbrbr1/8/6")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        posRedKnights =mvG._getAllKnights(Player.Red)
-        posBlueKnights = mvG._getAllKnights(Player.Blue)
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        posRedKnights =mvg._getAllKnights(Player.Red,BB)
+        posBlueKnights = mvg._getAllKnights(Player.Blue, BB)
         bits = np.uint64(2**6+2**5+2**4+2**3+2**2+2**1)
         self.assertEqual(np.log2(posRedKnights),np.log2(bits << np.uint64(5*8)))
         self.assertEqual(np.log2(posBlueKnights),np.log2(bits << np.uint64(2*8)))
@@ -314,79 +317,79 @@ class moveGenerator(unittest.TestCase):
     def test_filterPositions_1(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/r05")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        redPawns = mvG._getAllPawns(Player.Red)
-        fredpos =mvG._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        redPawns = mvg._getAllPawns(Player.Red,BB)
+        fredpos =mvg._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
         self.assertEqual(fredpos,0)
-        fredpos =mvG._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
+        fredpos =mvg._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**62))
-        fredpos =mvG._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
+        fredpos =mvg._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
         self.assertEqual(np.log2(fredpos), np.log2( 2**62))
         try:
-            fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
+            fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
         except:
             self.assertEqual(True,True)
         try:
-            fredpos =mvG._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT])
+            fredpos =mvg._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT])
         except:
             self.assertEqual(np.log2(fredpos),np.log2(2**62))
-        fredpos =mvG._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT])
+        fredpos =mvg._filterPositions(Player.Red,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT])
         self.assertEqual(fredpos, 2**62)
     
     def test_filterPositions_2(self):
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/r05")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        redPawns = mvG._getAllPawns(Player.Blue)
-        fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        redPawns = mvg._getAllPawns(Player.Blue,BB)
+        fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_LEFT])
         self.assertEqual(fredpos,0)
-        fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
+        fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**6))
-        fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP])
+        fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP])
         self.assertEqual(np.log2(fredpos), np.log2( 2**6))
         try:
-            fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
+            fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM])
         except:
             self.assertEqual(True,True)
         try:
-            fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT])
+            fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT])
         except:
             self.assertEqual(np.log2(fredpos),np.log2(2**6))
-        fredpos =mvG._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT])
+        fredpos =mvg._filterPositions(Player.Blue,redPawns,BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT])
         self.assertEqual(fredpos, 2**6)
     
     def test_filterPositions_3(self):
         BB = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/1r04")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        knights = mvG._getAllKnights(Player.Blue)
-        fredpos =mvG._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        knights = mvg._getAllKnights(Player.Blue, BB)
+        fredpos =mvg._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT])
         self.assertEqual(fredpos,0)
-        fredpos =mvG._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
+        fredpos =mvg._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**6))
-        fredpos =mvG._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
+        fredpos =mvg._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**6))
         
-        fredpos =mvG._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
+        fredpos =mvg._filterPositions(Player.Blue,knights,BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT])
         self.assertEqual(fredpos,2**6)
     
     def test_filterPositions_4(self):
         BB = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/1rr4")
         print(BB)
-        mvG = MoveGenerator(BB)
-        mvG.prettyPrintBoard()
-        knights = mvG._getAllKnights(Player.Red)
-        fredpos =mvG._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT])
+        mvg = MoveGenerator(BB)
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
+        knights = mvg._getAllKnights(Player.Red,BB)
+        fredpos =mvg._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT])
         self.assertEqual(fredpos,2**61)
-        fredpos =mvG._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT])
+        fredpos =mvg._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**61))
-        fredpos =mvG._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT])
+        fredpos =mvg._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT])
         self.assertEqual(np.log2(fredpos), np.log2( 2**61))
         
-        fredpos =mvG._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT])
+        fredpos =mvg._filterPositions(Player.Red,knights,BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT])
         self.assertEqual(fredpos,2**61)
     
     def test_checkTargetPos_11(self):
@@ -395,11 +398,13 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("b05/8/8/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        
         print(moves)
         mvg.prettyPrintMoves(moves)
+        
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
         
@@ -411,9 +416,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("b05/1r0r07/8/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -427,9 +432,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("b05/r0r0r07/8/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -447,9 +452,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("bb5/8/8/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -467,9 +472,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("bb5/8/r07/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -487,9 +492,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("bb5/8/rr7/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -498,7 +503,8 @@ class moveGenerator(unittest.TestCase):
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
-        
+        print("L:", l)
+        print("T",t)
         self.assertListEqual(l,t)
     
     def test_checkTargetPos_17(self):
@@ -507,9 +513,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("bb5/8/rb7/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -528,9 +534,9 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("b0b04/8/8/8/8/8/8/6")    
         mvg = MoveGenerator(BB)
-        mvg.prettyPrintBoard()
+        mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue)
+        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -551,7 +557,61 @@ class moveGenerator(unittest.TestCase):
     def test_gameover_1(self):
         self.assertEqual(True,True)
         
-    @unittest.skip("not implemented yet")
-    def test_execSingleMove_1(self):
-        self.assertEqual(True,True)
+    def test_Cannot_Move_GameOver(self):
+        fen = "6/8/4b03/3b0r0b02/8/8/8/6"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mvg = MoveGenerator()
+        gameOver =[DictMoveEntry.CONTINUE_GAME]
+        moves = mvg.genMoves(Player.Red,gameOver,bb)
+        self.assertEqual(len(moves), 0)
+        self.assertEqual(gameOver[0], DictMoveEntry.GAME_OVER_BLUE_WINS)
+        
+    def test_TOTAL_ISIS_TEST(self):
+        fdscr = open('test_data.json')
+        moves = json.load(fdscr)
+        
+        testcases = [(move['board'],move['moves']) for move in moves]
+        
+        for case in testcases:
+            fen,player = np.array(case[0].split(" "))
+            movelist = np.array([move.replace(" ","") for move in case[1].split(",")])
+            print(fen)
+            
+            print(movelist)
+            #movelist =list(map(lambda x: (x[0],x[1]) ,[move.split("-") for move in movelist]))
+            bb = GameState.createBitBoardFromFEN(fen)
+            mvg = MoveGenerator()
+            mvg.prettyPrintBoard(bb,[DictMoveEntry.CONTINUE_GAME])
+            genmoves = np.array(list(map(lambda x: MoveLib.move(x[0],x[1],3) ,mvg.genMoves(Player.Blue if player=="b" else Player.Red,[DictMoveEntry.CONTINUE_GAME], bb ))))
+            movelist.sort()
+            genmoves.sort()
+            print("targelist:\n",movelist)
+            print("genlist:\n",genmoves)
+           
+            genmoves = set(genmoves)
+            movelist = set(movelist)
+            
+            
+            self.assertEqual(genmoves,movelist)
+    
+    def test_GameTest_move_exec1(self):
+        fen = "r05/8/8/8/8/8/8/b05"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            RorB = True
+            player = Player.Red if RorB else Player.Red
+            moves = mv.genMoves(player,gameover,bb)
+            a,b = 0, len(moves)
+            move = moves[random.randint(a,b-1)]
+            bb = mv.execSingleMove(move,player, gameover,bb,printB=True)
+            RorB = not RorB
+        
+        self.assertEqual(True,False)
+            
+        
+            
+            
+        
     

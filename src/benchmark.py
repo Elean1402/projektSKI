@@ -9,9 +9,11 @@ from tabulate import tabulate
 from io import StringIO
 from timeit import repeat
 from types import MappingProxyType
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.moveLib import MoveLib
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 from src.moveGenerator import MoveGenerator1
 from src.gui import Gui
 from src.alpha_beta_Kopie import AlphaBetaSearch

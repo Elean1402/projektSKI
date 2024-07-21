@@ -15,16 +15,16 @@ class MoveGenerator:
     # _gameover = False
     # _WinnerIs = Player.NoOne
 
-    def __init__(self, board: list[np.uint64]):
+    def __init__(self, board: list[np.uint64] = [np.uint64(0)]):
         """ Must use Gamestate._ZARR_... constants as indices
             for board.
             e.g. board[Gamestate._ZARR_INDEX_R_PAWNS] ...
         Args:
             board (list[np.uint64]): Bitboard Array of length 4
         """
-
-        print("Board init:")
-        self.prettyPrintBoard(board)
+        if(board[0] !=0):
+            print("Board init:")
+            self.prettyPrintBoard(board)
 
     def genMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
         """Generates all possible Moves
@@ -43,7 +43,7 @@ class MoveGenerator:
         # TODO
         return self._genValidatedMoves(player, gameOver, board)
 
-    def _startPosBelongsToPlayer(self, player: Player, pos: np.uint64, board: list[np.uint64]):
+    def _startPosBelongsToPlayer(self,player: Player, pos: np.uint64, board: list[np.uint64]):
         """Double Check if startpos belongs to player
 
         Args:
@@ -56,140 +56,246 @@ class MoveGenerator:
         Returns:
             boolean: true if correct otherwise false
         """
-        if player not in [Player.Blue, Player.Red]:
-            raise TypeError("player is not from Type Player")
-
-        player_pawns = board[GameState._ZARR_INDEX_B_PAWNS] if player == Player.Blue else board[
-            GameState._ZARR_INDEX_R_PAWNS]
-        player_knights = board[GameState._ZARR_INDEX_B_KNIGHTS] if player == Player.Blue else board[
-            GameState._ZARR_INDEX_R_KNIGHTS]
-        opponent_knights = board[GameState._ZARR_INDEX_R_KNIGHTS] if player == Player.Blue else board[
-            GameState._ZARR_INDEX_B_KNIGHTS]
-
         posBelongsToPlayer = False
-        if (player_pawns & pos & ~(
-                player_knights | opponent_knights) == pos or player_knights & pos & ~opponent_knights == pos):
-            posBelongsToPlayer = True
-
+        if(player == Player.Blue):
+            if(board[GameState._ZARR_INDEX_B_PAWNS] & pos & 
+               ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                 board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+               == pos 
+               or
+               board[GameState._ZARR_INDEX_B_KNIGHTS] & pos &
+               ~(board[GameState._ZARR_INDEX_R_KNIGHTS])
+               == pos):
+                posBelongsToPlayer = True
+        elif(player == Player.Red):
+            if(board[GameState._ZARR_INDEX_R_PAWNS] & pos & 
+               ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                 board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+               == pos 
+               or
+               board[GameState._ZARR_INDEX_R_KNIGHTS] & pos &
+               ~(board[GameState._ZARR_INDEX_B_KNIGHTS])
+               == pos):
+                posBelongsToPlayer = True
+        else:
+            raise TypeError("player is not from Type Player")
         return posBelongsToPlayer
 
-    def _checkTargetPos(self, player: Player, move: tuple, board: list[np.uint64]):
-        start, target, bitmask = move
+    def _checkTargetPos(self, player:Player, move: tuple, board: list[np.uint64]):
+        """Checks the move if possible and return a Command for the Bitboard operation
+            Code needs to be restructured,
+            too many if else statements and if possible shortened.
+            
+        Args:
+            player (Player): use model.py - Class Player
+            move (tuple): (uint64, uint64, uint64): (start, target, bitmask)
 
-        if start == target:
+        Raises:
+            TypeError: if type of move is wrong
+            ValueError: if error in unvalidated movegeneration 
+
+        Returns:
+            list[Bordcommand]
+        """
+        
+        if(len(move)!=3):
+            print("len move", len(move))
+            print("move",move)
+            raise TypeError("move if from wrong Type. Should be (uint64,uint64,uint64): (start, target, bitmask)")
+        
+        start = move[0]
+        target = move[1]
+        bitmask = move[2]
+        if(start == target):
             return [BoardCommand.Cannot_Move]
-
-        board_pawns = board[GameState._ZARR_INDEX_B_PAWNS]
-        board_knights = board[GameState._ZARR_INDEX_B_KNIGHTS]
-        board_r_knights = board[GameState._ZARR_INDEX_R_KNIGHTS]
-        board_r_pawns = board[GameState._ZARR_INDEX_R_PAWNS]
-
-        all_pawns = board_pawns | board_r_pawns
-        all_knights = board_knights | board_r_knights
-
-        is_clear_target = (target & ~(all_pawns | all_knights)) == target
-
-        if player == Player.Blue:
-            start_pawn = (start & board_pawns) and not (start & all_knights)
-            start_knight = start & board_knights
-            target_pawn = (target & board_pawns) and not (target & all_knights)
-            target_knight = target & board_knights
-            target_r_pawn = (target & board_r_pawns) and not (target & board_knights)
-            target_r_knight = target & board_r_knights
-
-            if start_pawn:
-                if bitmask in {BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT],
-                               BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]}:
-                    if target_r_knight:
-                        return [BoardCommand.Hit_Red_KnightOnTarget, BoardCommand.Move_Blue_Knight_no_Change]
-                    elif target_r_pawn:
-                        return [BoardCommand.Hit_Red_PawnOnTarget, BoardCommand.Move_Blue_Pawn_no_Change]
-                elif is_clear_target:
-                    return [BoardCommand.Move_Blue_Pawn_no_Change]
-                elif target_pawn:
-                    return [BoardCommand.Upgrade_Blue_KnightOnTarget]
-                # Handle other conditions here as needed
-
-            elif start_knight:
-                if is_clear_target:
+        if(target & NotAccessiblePos == target):
+            raise ValueError("TargetPosition is on A1 or A8 or H1 or H8 (impossible), check how the moves are generated.")
+        if(not self._startPosBelongsToPlayer(player, start,board)):
+            raise ValueError("Startposition does not belong to player",player,", check also Bitboards")
+        if(player == Player.Blue):
+            # Figure on start is a Pawn
+            if(start & board[GameState._ZARR_INDEX_B_PAWNS] & 
+               ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                 board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+               == start):
+                #Case hit diagonal possible?
+                if(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or
+                   bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
+                    #on target is an enemy knight
+                    if(target & board[GameState._ZARR_INDEX_R_KNIGHTS] 
+                       == target):
+                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+                    #on target is only a enemy pawn        
+                    elif(target & ( board[GameState._ZARR_INDEX_R_PAWNS] & 
+                                    ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
+                                    board[GameState._ZARR_INDEX_B_KNIGHTS]) )
+                         == target):
+                        return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]
+                    else:
+                        return [BoardCommand.Cannot_Move]
+                else:
+                #standard move on free Target Position
+                    if(target & ~(  board[GameState._ZARR_INDEX_B_PAWNS]   | 
+                                    board[GameState._ZARR_INDEX_R_PAWNS]   | 
+                                    board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                    board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+                       == target):
+                        return [BoardCommand.Move_Blue_Pawn_no_Change]
+                    #Target not free, only possible if our pawn is on target
+                    elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
+                                   ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                     board[GameState._ZARR_INDEX_R_KNIGHTS])
+                        == target ):
+                        return [BoardCommand.Upgrade_Blue_KnightOnTarget]
+                    #move on Target not possible
+                    else:    
+                        return [BoardCommand.Cannot_Move]
+            #Figure is Knight
+            elif(start &board[GameState._ZARR_INDEX_B_KNIGHTS] == start):
+                #Case: target pos not occupied
+                if(target & ~( board[GameState._ZARR_INDEX_B_PAWNS] |
+                               board[GameState._ZARR_INDEX_R_PAWNS] |
+                               board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                               board[GameState._ZARR_INDEX_R_KNIGHTS])
+                   == target):
                     return [BoardCommand.Degrade_Blue_KnightOnTarget]
-                elif target_pawn:
+                #Case: only our pawn is on target
+                elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
+                     ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
                     return [BoardCommand.Move_Blue_Knight_no_Change]
-                elif target_r_pawn:
-                    return [BoardCommand.Hit_Red_PawnOnTarget, BoardCommand.Degrade_Blue_KnightOnTarget]
-                elif target_knight:
+                #Case: only a enemy pawn is on target
+                elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
+                     ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
+                    return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget]
+                    
+                #Case: 2 figures are on target
+                    #on target our knight
+                elif(target & board[GameState._ZARR_INDEX_B_KNIGHTS]
+                     == target):
                     return [BoardCommand.Cannot_Move]
-                elif target_r_knight:
-                    return [BoardCommand.Hit_Red_KnightOnTarget, BoardCommand.Move_Blue_Knight_no_Change]
-
-        elif player == Player.Red:
-            start_pawn = (start & board_r_pawns) and not (start & all_knights)
-            start_knight = start & board_r_knights
-            target_pawn = (target & board_pawns) and not (target & board_knights)
-            target_knight = target & board_knights
-            target_r_pawn = (target & board_r_pawns) and not (target & all_knights)
-            target_r_knight = target & board_r_knights
-
-            if start_pawn:
-                if bitmask in {BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT],
-                               BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]}:
-                    if target_knight:
-                        return [BoardCommand.Hit_Blue_KnightOnTarget, BoardCommand.Move_Red_Knight_no_Change]
-                    elif target_pawn:
-                        return [BoardCommand.Hit_Blue_PawnOnTarget, BoardCommand.Move_Red_Pawn_no_Change]
-                elif is_clear_target:
-                    return [BoardCommand.Move_Red_Pawn_no_Change]
-                elif target_r_pawn:
-                    return [BoardCommand.Upgrade_Red_KnightOnTarget]
-                # Handle other conditions here as needed
-
-            elif start_knight:
-                if is_clear_target:
+                    #on target enemy knight
+                elif(target & board[GameState._ZARR_INDEX_R_KNIGHTS] 
+                     == target):
+                    return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+        elif(player == Player.Red):
+            # Figure on start is a Pawn
+            if(start & board[GameState._ZARR_INDEX_R_PAWNS] & 
+               ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                 board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+               == start):
+                #Case hit diagonal possible?
+                if(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or
+                   bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
+                    #on target is an enemy knight
+                    if(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
+                       == target):
+                        return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]
+                    #on target is only a enemy pawn        
+                    elif(target & ( board[GameState._ZARR_INDEX_B_PAWNS] & 
+                                    ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
+                                    board[GameState._ZARR_INDEX_B_KNIGHTS]) )
+                         == target):
+                        return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Move_Red_Pawn_no_Change]
+                    else:
+                        return [BoardCommand.Cannot_Move]
+                else:
+                #standard move on free Target Position
+                    if(target & ~(  board[GameState._ZARR_INDEX_R_PAWNS]   | 
+                                    board[GameState._ZARR_INDEX_B_PAWNS]   | 
+                                    board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                    board[GameState._ZARR_INDEX_R_KNIGHTS]) 
+                       == target):
+                        return [BoardCommand.Move_Red_Pawn_no_Change]
+                    #Target not free, only possible if our pawn is on target
+                    elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
+                                   ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                                     board[GameState._ZARR_INDEX_R_KNIGHTS])
+                        == target ):
+                        return [BoardCommand.Upgrade_Red_KnightOnTarget]
+                    #move on Target not possible
+                    else:    
+                        return [BoardCommand.Cannot_Move]
+            #Figure is Knight
+            elif(start &board[GameState._ZARR_INDEX_R_KNIGHTS] == start):
+                #Case: target pos not occupied
+                if(target & ~( board[GameState._ZARR_INDEX_B_PAWNS] |
+                               board[GameState._ZARR_INDEX_R_PAWNS] |
+                               board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                               board[GameState._ZARR_INDEX_R_KNIGHTS])
+                   == target):
                     return [BoardCommand.Degrade_Red_KnightOnTarget]
-                elif target_r_pawn:
+                #Case: only our pawn is on target
+                elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
+                     ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
                     return [BoardCommand.Move_Red_Knight_no_Change]
-                elif target_pawn:
-                    return [BoardCommand.Hit_Blue_PawnOnTarget, BoardCommand.Degrade_Red_KnightOnTarget]
-                elif target_r_knight:
+                #Case: only a enemy pawn is on target
+                elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
+                     ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
+                       board[GameState._ZARR_INDEX_R_KNIGHTS])
+                     == target):
+                    return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Degrade_Red_KnightOnTarget]
+                    
+                #Case: 2 figures are on target
+                    #on target our knight
+                elif(target & board[GameState._ZARR_INDEX_R_KNIGHTS]
+                     == target):
                     return [BoardCommand.Cannot_Move]
-                elif target_knight:
-                    return [BoardCommand.Hit_Blue_KnightOnTarget, BoardCommand.Move_Red_Knight_no_Change]
+                    #on target enemy knight
+                elif(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
+                     == target):
+                    return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change] 
 
-        return [BoardCommand.Cannot_Move]
+    def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry],board: list[np.uint64])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
+        """Generates all unvalidated Moves of Player Blue or Red
 
-    def _genValidatedMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]) -> list[
-        tuple[np.uint64, np.uint64, list[BoardCommand]]]:
-        """Generates all unvalidated Moves of Player Blue or Red"""
+        Args:
+            player (Player): Please use model.py Player class
 
-        pawnsPositions = self._getAllPawns(player, board)
-        knightPositions = self._getAllKnights(player, board)
-
+        Returns:
+            List[Tuple[np.uint64, np.uint64, list]]: [(startpos,targetpos, boardcommands)]
+        """
+        pawnsPositions = self._getAllPawns(player,board)
+        knightPositions = self._getAllKnights(player,board)
         filteredPositions = FilteredPositionsArray()
-
-        pawn_bitmasks, knight_bitmasks = {
-            Player.Red: (BIT_MASK_ARRAY_PAWN_RED, BIT_MASK_ARRAY_KNIGHT_RED),
-            Player.Blue: (BIT_MASK_ARRAY_PAWN_BLUE, BIT_MASK_ARRAY_KNIGHT_BLUE)
-        }[player]
-
-        for bitmask in pawn_bitmasks:
-            filteredPositions.append((bitmask, self._filterPositions(player, pawnsPositions, bitmask)))
-        for bitmask in knight_bitmasks:
-            filteredPositions.append((bitmask, self._filterPositions(player, knightPositions, bitmask)))
-
-        validatedMoves = [
-            (*target, boardCommands)
-            for (bm, filteredBits) in filteredPositions
-            for bit in self.getBitPositions(filteredBits)
-            if (target := self._getTarget(bit, bm)) and
-               (boardCommands := self._checkTargetPos(player, (*target, bm), board)) is not None and
-               BoardCommand.Cannot_Move not in boardCommands
-        ]
-
-        if not validatedMoves:
-            gameOver[0] = (DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else
-                           DictMoveEntry.GAME_OVER_RED_WINS if player == Player.Blue else
-                           DictMoveEntry.CONTINUE_GAME)
-
+        validatedMoves = list()
+        if(player == Player.Red):
+            for bitmask in BIT_MASK_ARRAY_PAWN_RED:
+                filteredPositions.append((bitmask,self._filterPositions(player,pawnsPositions, bitmask)))
+            for bitmask in BIT_MASK_ARRAY_KNIGHT_RED:
+                filteredPositions.append((bitmask, self._filterPositions(player, knightPositions, bitmask)))
+            for (bm, filteredBits) in filteredPositions:
+                for bit in self.getBitPositions(filteredBits):
+                    boardCommands = self._checkTargetPos(player, (*self._getTarget(bit,bm),bm),board)
+                    if(boardCommands != None):
+                        if(BoardCommand.Cannot_Move in boardCommands):
+                            continue
+                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))
+        elif(player == Player.Blue):
+            for bitmask in BIT_MASK_ARRAY_PAWN_BLUE:
+                filteredPositions.append((bitmask,self._filterPositions(player,pawnsPositions, bitmask)))
+            for bitmask in BIT_MASK_ARRAY_KNIGHT_BLUE:
+                filteredPositions.append((bitmask, self._filterPositions(player, knightPositions, bitmask)))
+            for (bm, filteredBits) in filteredPositions:
+                for bit in self.getBitPositions(filteredBits):
+                    boardCommands = self._checkTargetPos(player, (*self._getTarget(bit,bm),bm),board)
+                    if(boardCommands != None):
+                        if(BoardCommand.Cannot_Move in boardCommands):
+                            continue
+                    validatedMoves.append((*self._getTarget(bit,bm), boardCommands))        
+        else:
+            raise TypeError("player is not from Type Player")
+        
+        if(len(validatedMoves) == 0):
+            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            return validatedMoves
+            
+        gameOver[0] = DictMoveEntry.CONTINUE_GAME
         return validatedMoves
 
     @classmethod
@@ -237,11 +343,60 @@ class MoveGenerator:
                           BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]: lambda x: x << DICT_MOVE[
                               DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT], }
 
-    def _getTarget(self, filteredPos: np.uint64, bitmask: np.uint64):
-        if filteredPos == 0:
-            return np.uint64(0), np.uint64(0)
-
-        return filteredPos, self.BITMASK_OPERATIONS[bitmask](filteredPos)
+    def _getTarget(self, filteredPos: np.uint64, bitmask:np.uint64):
+        """ Gets target field of concerned  bitmask
+            ***Need to be optimized via dict which holds a function to make bit shifting***
+        Arguments:
+            filteredPos (np.uint64): SINGLE POSITION which can move onto direction described in Bitmask
+            bitmask (Bitmask): The Bitmask in this function is used to determine the direction of the move
+        Returns:
+            (Tuple(np.uint64, np.uint64): (startPosition, targetposition)
+            returns (0,0) if parameter filterPos= 0"""
+        if(filteredPos == 0):
+            return (np.uint64(0),np.uint64(0))
+        
+        targetPosition = np.uint64(0)
+        if(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.PAWN_TO_LEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.PAWN_TO_RIGHT]
+        
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM]
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_LEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_RIGHT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]
+        
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP]
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_LEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_RIGHT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]
+        
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]):
+            targetPosition |= filteredPos >> DICT_MOVE[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT]
+        
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT]
+        elif(bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]):
+            targetPosition |= filteredPos << DICT_MOVE[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT]
+        else:
+            raise ValueError("bitmask not recognized, please check Bitmask class or bitmask value")
+        if(targetPosition == 0):
+            raise ValueError("Something went wrong with bit shifting")
+        return (filteredPos,targetPosition)
 
     def _getAllPawns(self, player: Player, board: list[np.uint64]):
         """Gets all Pawns of player Blue or Red which can Move
@@ -266,7 +421,7 @@ class MoveGenerator:
         else:
             raise TypeError("parameter player is not from class Player, please use model.py: e.g. Player.Blue..")
 
-    def _filterPositions(self, player: Player, positions: np.uint64, bitmask: np.uint64):
+    def _filterPositions(self, player:Player, positions: np.uint64, bitmask: np.uint64):
         """ Assuming Red starts at top
             ***optimize case pattern with Dict lookup later***
             Filters the positions of figures which can theoretically move in the direction described by Bitmask
@@ -277,26 +432,32 @@ class MoveGenerator:
             bitmask (BitMaskDict[DictMoveEntry): Filtermask for processing possible Moves
 
         Returns:
-            positions (np.uint64): All possible Positions which can move in direction described by Bitmask
+            positions (np.uint64): All possible Positions which can move in direction described by Bitmask 
         """
-        if ((player == Player.Red and (bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or bitmask == BitMaskDict[
-            DictMoveEntry.PAWN_TO_RIGHT] or bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM] or bitmask ==
-                                       BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or bitmask == BitMaskDict[
-                                           DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT] or bitmask == BitMaskDict[
-                                           DictMoveEntry.RED_KNIGHT_LEFT] or bitmask == BitMaskDict[
-                                           DictMoveEntry.RED_KNIGHT_RIGHT] or bitmask == BitMaskDict[
-                                           DictMoveEntry.RED_KNIGHT_TO_BOTLEFT] or bitmask == BitMaskDict[
-                                           DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT])) or (player == Player.Blue and (
-                bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or bitmask == BitMaskDict[
-            DictMoveEntry.PAWN_TO_RIGHT] or bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP] or bitmask ==
-                BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or bitmask == BitMaskDict[
-                    DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT] or bitmask == BitMaskDict[
-                    DictMoveEntry.BLUE_KNIGHT_LEFT] or bitmask == BitMaskDict[
-                    DictMoveEntry.BLUE_KNIGHT_RIGHT] or bitmask == BitMaskDict[
-                    DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT] or bitmask == BitMaskDict[
-                    DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]))):
-            # only positions which can move in direction of description of bitmask
-            positions = positions & bitmask
+        if(
+            (player == Player.Red and (
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_PAWN_TO_BOTTOM_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTLEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.RED_KNIGHT_TO_BOTRIGHT]))
+           or 
+            (player == Player.Blue and (
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.PAWN_TO_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_PAWN_TO_TOP_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_LEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_RIGHT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPLEFT] or
+            bitmask == BitMaskDict[DictMoveEntry.BLUE_KNIGHT_TO_TOPRIGHT]))):
+            #only positions which can move in direction of description of bitmask
+            positions = positions & (bitmask)
         else:
             raise ValueError("Bitmask and choosed Player are wrong")
         return positions

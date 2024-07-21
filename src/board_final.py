@@ -1,7 +1,10 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
-from gamestate import GameState
-from gui import Gui
 import random
+from src.gamestate import GameState
+from src.gui import Gui
+from src.alt_eval import *
 
 """
 Notes:
@@ -57,10 +60,14 @@ class Board():
         Format of the returned list:
         [(source1, [dest1, dest2, ...]), (source2, [dest1, dest2, ...]), ...]
         """
+        list = []
         if Board.blue_turn:
-            return Board.blue_generation()
+                list = Board.blue_generation()
         else:
-            return Board.red_generation()
+                list = Board.red_generation()
+        return list
+            
+            
     
     @staticmethod
     def exec_move(source:np.uint64, dest:np.uint64) -> tuple:

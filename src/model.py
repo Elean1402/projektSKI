@@ -1,6 +1,6 @@
 from collections import Counter
 from enum import Enum
-
+import heapq
 import numpy as np
 
 
@@ -276,3 +276,16 @@ class GameServerModel(Enum):
     CURRENT_PLAYER_STRING = 1
     PLAYER1 = 2
     PLAYER2 = 3
+
+import heapq
+
+class MaxHeap:
+    def __init__(self):
+        self._heap = []
+    
+    def push(self, item):
+        heapq.heappush(self._heap, (-item[2],item))
+    
+    def pop(self):
+        return heapq.heappop(self._heap)[1]
+

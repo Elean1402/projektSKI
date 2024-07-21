@@ -177,6 +177,8 @@ class AlphaBetaSearch:
             return stored_score, stored_move
 
         moves = self.move_gen.generate_moves()
+        #Züge sind nach score aufsteigend sortiert
+        moves = self.eval_func.sortMoveList(moves,self.move_gen)
         best_score = -float('inf')
         best_move = None
 
@@ -194,7 +196,12 @@ class AlphaBetaSearch:
                 alpha = max(alpha, best_score)
                 if alpha >= beta:
                     break
-
+        
+        mvlen = range(len(moves)-1,-1,-1)
+        
+        for moveIndex in  mvlen:
+        
+        
         flag = 'EXACT'
         if best_score <= alpha:
             flag = 'UPPERBOUND'
