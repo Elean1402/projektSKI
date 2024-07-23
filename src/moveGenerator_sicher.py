@@ -5,9 +5,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import *
 from src.model import Player, BitMaskDict, DICT_MOVE, DictMoveEntry, BIT_MASK_ARRAY_KNIGHT_BLUE, \
     BIT_MASK_ARRAY_KNIGHT_RED, BIT_MASK_ARRAY_PAWN_BLUE, BIT_MASK_ARRAY_PAWN_RED, FilteredPositionsArray, \
-    NotAccessiblePos, BoardCommand
+    NotAccessiblePos, BoardCommand, BC_TO_BOARD_OPS_DICT
 from src.moveLib import MoveLib as mv
-
+from collections import deque
 
 class MoveGenerator:
     # _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
@@ -15,7 +15,7 @@ class MoveGenerator:
     # _gameover = False
     # _WinnerIs = Player.NoOne
 
-    def __init__(self, board: list[np.uint64] = [np.uint64(0)]):
+    def __init__(self, board: list[np.uint64] = [np.uint64(0)], useTakeback: bool = False):
         """ Must use Gamestate._ZARR_... constants as indices
             for board.
             e.g. board[Gamestate._ZARR_INDEX_R_PAWNS] ...
@@ -25,6 +25,9 @@ class MoveGenerator:
         if(board[0] !=0):
             print("Board init:")
             self.prettyPrintBoard(board)
+        if(useTakeback):
+            self.useTakeback = useTakeback
+            self.stack = deque([])
 
     def genMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
         """Generates all possible Moves
@@ -124,7 +127,7 @@ class MoveGenerator:
                     #on target is an enemy knight
                     if(target & board[GameState._ZARR_INDEX_R_KNIGHTS] 
                        == target):
-                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change, BoardCommand.Delete_Blue_Pawn_from_StartPos]
                     #on target is only a enemy pawn        
                     elif(target & ( board[GameState._ZARR_INDEX_R_PAWNS] & 
                                     ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
@@ -193,7 +196,7 @@ class MoveGenerator:
                     #on target is an enemy knight
                     if(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
                        == target):
-                        return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change]
+                        return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change, BoardCommand.Delete_Red_Pawn_from_StartPos]
                     #on target is only a enemy pawn        
                     elif(target & ( board[GameState._ZARR_INDEX_B_PAWNS] & 
                                     ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
@@ -482,30 +485,32 @@ class MoveGenerator:
                 print("Game Over")
                 cls.prettyPrintBoard(cls, board, gameOver)
 
-    def execSingleMove(self, move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64],
-                       printB: bool = False):
+    def execSingleMove(self, move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64],printB: bool = False):
         """Executes single Move and updates the Board and checks if Game Over
 
         Args:
-            move (tuple): (startpos: uint64, targetpos: uint64, moveScore: int, totalscore: int,  list[BoardCommands])
+            move (tuple): (startpos: uint64, targetpos: uint64, list[BoardCommands])
             player (Player): Red or Blue
             gameOver (list[DictMoveEntry]):
             board (list[np.uint64]): _description_
             printB (bool, optional): _description_. Defaults to False.
+            usetakeback (bool): if true, no copy of board is made. 
 
         Returns:
-             (Array[uint64]): Copy of Board
+             (Array[uint64]): Board
         """
-
-        boardCopy = board.copy()
+        boardCopy = np.uint64(0)
+        if(not self.useTakeback):
+            boardCopy = board.copy()
+        else:
+            boardCopy = board
         # TODO check if Board is initialized
         # if(not boardIsInitialized):
         #     raise ValueError("Board is not initialized!")
         # Can this happen?
         if len(move) == 0:
             print("move is empty, Game Over")
-            gameOver[
-                0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
+            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
             return boardCopy
         startpos = move[0]
         targetpos = move[1]
@@ -545,13 +550,70 @@ class MoveGenerator:
             elif bc == BoardCommand.Move_Red_Pawn_no_Change:
                 boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
                 boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+            elif bc == BoardCommand.Delete_Red_Pawn_from_StartPos:
+                boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+            elif bc == BoardCommand.Delete_Blue_Pawn_from_StartPos:
+                boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
+            
 
         self.checkBoardIfGameOver(gameOver, boardCopy, printB)
+        if(self.useTakeback):
+            self.stack.append(move)
         if printB == True:
             print("move executed, new Board ist:\n")
             self.prettyPrintBoard(boardCopy, gameOver)
         return boardCopy
 
+    def takeback(self, board:list[np.uint64]):
+        if(self.useTakeback and len(self.stack) > 0):
+            move = self.stack.pop()
+            bcommands = move[3]
+            [self._Board_Exec_Move(board, BC_TO_BOARD_OPS_DICT[command], move[0], move[1], unmake=True) for command in bcommands]
+        else:
+            raise Exception("useTakeback is False or stack is empty")
+    
+    def _Board_Exec_Move(bitboard:list[np.uint64],infoList:tuple[list,bool,bool] , startPos:np.uint64, targetPos:np.uint64, unmake:bool = False)-> None:
+        """_summary_
+
+        Args:
+            bitboard (list[np.uint64]): _description_
+            infoList (tuple[list,bool,bool]): (bitboard_indices, BitOps,FirstPosition), 
+            startPos (np.uint64): Position
+            targetPos (np.uint64): Position
+            unmake (bool): if False: Firstposition= True -> use toPos first and BitOps = True -> use &= ~ Operation, False -> use |= and &= ~
+                if True: Firstposition= True -> use toPos first
+                BitOps = True -> use |=  Operation, False -> use &= ~ and |=
+        """
+        #TODO
+        boardIndices = infoList[0]
+        if(unmake):
+            #Bitops
+            if(infoList[1]):
+                #Firstpos = toPos: undo deleted Figure on targetPos 
+                if(infoList([2])):
+                    bitboard[boardIndices[0]] |= targetPos
+                #Firstpos = startpos: undo deleted Figure on startpos
+                else:
+                    bitboard[boardIndices[0]] |= startPos
+            #use first &= then |=: remove Figure from targetPos and add Figure on startPos
+            else:
+                
+                bitboard[boardIndices[0]] &= ~ targetPos
+                bitboard[boardIndices[1]] |= startPos
+        else:
+            if(infoList[1]):
+                #Firstpos = toPos: delete Figure on targetPos 
+                if(infoList([2])):
+                    bitboard[boardIndices[0]] &= ~ targetPos
+                #Firstpos = startpos: delete Figure on startpos
+                else:
+                    bitboard[boardIndices[0]] &= ~ startPos
+            #use first |= then &= ~: add Figure to targetPos and remove it from startPos
+            else:
+                bitboard[boardIndices[0]] |=  targetPos
+                bitboard[boardIndices[1]] &= ~ startPos
+    
+            
     def prettyPrintBoard(self, board: list[np.uint64], *gameOver: list[DictMoveEntry]):
         # print("internal board", board)
         print("current Board\n", GameState.fromBitBoardToMatrix(board, True))

@@ -269,7 +269,8 @@ class BoardCommand(Enum):
     Move_Blue_Pawn_no_Change = 10
     Move_Red_Pawn_no_Change = 11
     Cannot_Move = 12
-
+    Delete_Red_Pawn_from_StartPos =13
+    Delete_Blue_Pawn_from_StartPos =14
 
 class GameServerModel(Enum):
     FEN_BOARD = 0
