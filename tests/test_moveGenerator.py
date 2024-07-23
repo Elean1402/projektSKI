@@ -566,7 +566,7 @@ class moveGenerator(unittest.TestCase):
         self.assertEqual(len(moves), 0)
         self.assertEqual(gameOver[0], DictMoveEntry.GAME_OVER_BLUE_WINS)
         
-    def test_TOTAL_ISIS_TEST(self):
+    def test_TOTAL_ISIS_TEST1(self):
         fdscr = open('test_data.json')
         moves = json.load(fdscr)
         
@@ -595,20 +595,251 @@ class moveGenerator(unittest.TestCase):
             self.assertEqual(genmoves,movelist)
     
     def test_GameTest_move_exec1(self):
-        fen = "r05/8/8/8/8/8/8/b05"
+        fen = "b05/8/8/8/8/8/8/r05"
         bb = GameState.createBitBoardFromFEN(fen)
         mv = MoveGenerator(bb)
         gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = True
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
-            RorB = True
-            player = Player.Red if RorB else Player.Red
+            
+            player = Player.Red if RorB else Player.Blue
             moves = mv.genMoves(player,gameover,bb)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            mv.prettyPrintMoves(moves)
             a,b = 0, len(moves)
             move = moves[random.randint(a,b-1)]
-            bb = mv.execSingleMove(move,player, gameover,bb,printB=True)
+            bb = mv.execSingleMove(move,player, gameover,bb)
+            #mv.prettyPrintBoard(bb,gameover)
             RorB = not RorB
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+    
+    def test_GameTest_move_exec2(self):
+        fen = "b0br4/rrbrrr5/8/8/8/8/8/6"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = False
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            
+            player = Player.Red if RorB else Player.Blue
+            moves = mv.genMoves(player,gameover,bb)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            mv.prettyPrintMoves(moves)
+            a,b = 0, len(moves)
+            move = moves[random.randint(a,b-1)]
+            bb = mv.execSingleMove(move,player, gameover,bb)
+            #mv.prettyPrintBoard(bb,gameover)
+            RorB = not RorB
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+    
+    def test_GameTest_move_exec3(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
         
-        self.assertEqual(True,False)
+        fen = "bb5/8/rr7/8/8/8/8/6"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = False
+        before = figureCount(bb)
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            
+            player = Player.Red if RorB else Player.Blue
+            moves = mv.genMoves(player,gameover,bb)
+            #print(moves)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            #mv.prettyPrintMoves(moves)
+            #a,b = 0, len(moves)
+            #move = moves[random.randint(a,b-1)]
+            move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
+            print(move)
+            mv.prettyPrintMoves(move)
+            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            print("Figure count r and b before move exec:", before)
+            after = figureCount(bb)
+            print("Figure count r and b after move exec:", after )
+            correctness = checkCount(before,after)
+            self.assertEqual(True, correctness)
+            RorB = not RorB
+            gameover=[DictMoveEntry.GAME_OVER_BLUE_WINS]
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+    
+    def test_GameTest_move_exec3(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
+        
+        fen = "bb5/8/br7/8/8/8/8/6"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = False
+        before = figureCount(bb)
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            
+            player = Player.Red if RorB else Player.Blue
+            moves = mv.genMoves(player,gameover,bb)
+            #print(moves)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            #mv.prettyPrintMoves(moves)
+            #a,b = 0, len(moves)
+            #move = moves[random.randint(a,b-1)]
+            move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
+            print(move)
+            mv.prettyPrintMoves(move)
+            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            print("Figure count r and b before move exec:", before)
+            after = figureCount(bb)
+            print("Figure count r and b after move exec:", after )
+            correctness = checkCount(before,after)
+            self.assertEqual(True, correctness)
+            RorB = not RorB
+            gameover=[DictMoveEntry.GAME_OVER_BLUE_WINS]
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+    
+    def test_GameTest_move_exec3(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
+        
+        fen = "bb5/8/r07/8/8/8/8/6"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = False
+        before = figureCount(bb)
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            
+            player = Player.Red if RorB else Player.Blue
+            moves = mv.genMoves(player,gameover,bb)
+            #print(moves)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            #mv.prettyPrintMoves(moves)
+            #a,b = 0, len(moves)
+            #move = moves[random.randint(a,b-1)]
+            move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
+            print(move)
+            mv.prettyPrintMoves(move)
+            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            print("Figure count r and b before move exec:", before)
+            after = figureCount(bb)
+            print("Figure count r and b after move exec:", after )
+            correctness = checkCount(before,after)
+            self.assertEqual(True, correctness)
+            RorB = not RorB
+            gameover=[DictMoveEntry.GAME_OVER_BLUE_WINS]
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+        
+        
+    def test_GameTest_move_exec2(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
+        
+        fen = "b0b0b0b0b0b0/8/8/8/8/8/8/r0r0r0r0r0r0"
+        bb = GameState.createBitBoardFromFEN(fen)
+        mv = MoveGenerator(bb)
+        gameover = [DictMoveEntry.CONTINUE_GAME]
+        RorB = True
+        before = figureCount(bb)
+        while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            
+            player = Player.Red if RorB else Player.Blue
+            moves = mv.genMoves(player,gameover,bb)
+            mv.prettyPrintBoard(bb,gameover)
+            print("Players turn: ", player)
+            
+            a,b = 0, len(moves)
+            move = moves[random.randint(a,b-1)]
+            mv.prettyPrintMoves([move])
+            bb = mv.execSingleMove(move,player, gameover,bb)
+            print("Figure count r and b before move exec:", before)
+            after = figureCount(bb)
+            print("Figure count r and b after move exec:", after )
+            correctness = checkCount(before,after)
+            self.assertEqual(True, correctness)
+            before = after
+            #mv.prettyPrintBoard(bb,gameover)
+            RorB = not RorB
+        print("end status:\n")
+        mv.prettyPrintBoard(bb,gameover)
+        self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+        #self.assertEqual(True,False)
+            
+    def test_TOTAL_ISIS_gameplay(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
+        
+        fdscr = open('test_data.json')
+        moves = json.load(fdscr)
+        
+        testcases = [(move['board'],move['moves']) for move in moves]
+        
+        for case in testcases:
+            fen,player = np.array(case[0].split(" "))
+            #movelist = np.array([move.replace(" ","") for move in case[1].split(",")])
+            print("FEN:", fen)
+           
+            bb = GameState.createBitBoardFromFEN(fen)
+            mv = MoveGenerator(bb)
+            gameover = [DictMoveEntry.CONTINUE_GAME]
+            RedsTurn = True if player =="r" else False
+            before = figureCount(bb)
+            while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+
+                player = Player.Red if RedsTurn else Player.Blue
+                moves = mv.genMoves(player,gameover,bb)
+                
+                print("Players turn: ", player)
+
+                a,b = 0, len(moves)
+                move = moves[random.randint(a,b-1)]
+                mv.prettyPrintMoves([move])
+                bb = mv.execSingleMove(move,player, gameover,bb)
+                mv.prettyPrintBoard(bb,gameover)
+                print("Figure count r and b before move exec:", before)
+                after = figureCount(bb)
+                print("Figure count r and b after move exec:", after )
+                correctness = checkCount(before,after)
+                self.assertEqual(True, correctness)
+                before = after
+                #mv.prettyPrintBoard(bb,gameover)
+                RedsTurn = not RedsTurn
+            print("end status:\n")
+            mv.prettyPrintBoard(bb,gameover)
+            self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
             
         
             
