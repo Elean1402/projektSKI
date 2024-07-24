@@ -9,7 +9,7 @@ from src.moveLib import *
 from src.model import *
 import json
 import random
-
+from collections import deque
 class moveGenerator(unittest.TestCase):
     @unittest.skip("not implemented yet")
     def test_updateBoard_1(self):
@@ -408,7 +408,7 @@ class moveGenerator(unittest.TestCase):
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
         
-        self.assertListEqual(l, [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change])])
+        self.assertListEqual(l, [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos])])
     
     def test_checkTargetPos_12(self):
         """At this moment only for blue player implemented
@@ -424,7 +424,7 @@ class moveGenerator(unittest.TestCase):
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
         
-        self.assertListEqual(l, [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change])])
+        self.assertListEqual(l, [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change, BoardCommand.Delete_Blue_Pawn_from_StartPos]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos])])
     
     def test_checkTargetPos_13(self):
         """At this moment only for blue player implemented
@@ -439,7 +439,7 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-A2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change])]
+        t = [("B1-C2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]),("B1-C1",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]),("B1-A2",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -459,7 +459,7 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-A3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        t = [("B1-A3",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -479,7 +479,7 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-A3",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        t = [("B1-A3",[BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -499,7 +499,7 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-A3",[BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        t = [("B1-A3",[BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -520,8 +520,8 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget]),
-             ("A3-B5",[BoardCommand.Degrade_Blue_KnightOnTarget]),("A3-C4",[BoardCommand.Degrade_Blue_KnightOnTarget])]
+        t = [("B1-C3",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("B1-D2",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),
+             ("A3-B5",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]),("A3-C4",[BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -541,8 +541,8 @@ class moveGenerator(unittest.TestCase):
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
         l = [ (MoveLib.move(start,target,3),bc)  for start,target,bc in moves]
-        t = [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change]),("B1-C1",[BoardCommand.Upgrade_Blue_KnightOnTarget]),
-             ("C1-B1",[BoardCommand.Upgrade_Blue_KnightOnTarget]), ("C1-C2",[BoardCommand.Move_Blue_Pawn_no_Change]),("C1-D1",[BoardCommand.Move_Blue_Pawn_no_Change])]
+        t = [("B1-B2",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]),("B1-C1",[BoardCommand.Upgrade_Blue_KnightOnTarget, BoardCommand.Delete_Blue_Pawn_from_StartPos]),
+             ("C1-B1",[BoardCommand.Upgrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Pawn_from_StartPos]), ("C1-C2",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]),("C1-D1",[BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos])]
         
         l.sort(key=lambda x: x[0])
         t.sort(key=lambda x: x[0])
@@ -840,6 +840,81 @@ class moveGenerator(unittest.TestCase):
             print("end status:\n")
             mv.prettyPrintBoard(bb,gameover)
             self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+            
+    def test_TOTAL_ISIS_gameplay2_unmakeMove(self):
+        def figureCount(bb: np.ndarray[np.uint64]):
+                val1 = bin(bb[GameState._ZARR_INDEX_R_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")
+                val2 = bin(bb[GameState._ZARR_INDEX_B_PAWNS])[2:].count("1")+ bin(bb[GameState._ZARR_INDEX_B_KNIGHTS])[2:].count("1")
+                return val1,val2
+        def checkCount(before,after):
+            return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
+        
+        fdscr = open('test_data.json')
+        moves = json.load(fdscr)
+        
+        testcases = [(move['board'],move['moves']) for move in moves]
+        
+        for case in testcases:
+            fen,player = np.array(case[0].split(" "))
+            #movelist = np.array([move.replace(" ","") for move in case[1].split(",")])
+            print("FEN:", fen)
+           
+            bb = GameState.createBitBoardFromFEN(fen)
+            initalBoard = bb.copy()
+            mv = MoveGenerator(bb,True)
+            gameover = [DictMoveEntry.CONTINUE_GAME]
+            RedsTurn = True if player =="r" else False
+            before = figureCount(bb)
+            logstack = deque([])
+            logstack.append([initalBoard,list([()])])
+            while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+
+                player = Player.Red if RedsTurn else Player.Blue
+                moves = mv.genMoves(player,gameover,bb)
+                
+                print("Players turn: ", player)
+
+                a,b = 0, len(moves)
+                move = moves[random.randint(a,b-1)]
+                mv.prettyPrintMoves([move])
+                #bb = mv.execSingleMove(move,player, gameover,bb)
+                mv.execSingleMove(move,player, gameover,bb)
+                logstack.append([bb.copy(), list([move])])
+                mv.prettyPrintBoard(bb,gameover)
+                print("Figure count r and b before move exec:", before)
+                after = figureCount(bb)
+                print("Figure count r and b after move exec:", after )
+                correctness = checkCount(before,after)
+                self.assertEqual(True, correctness)
+                before = after
+                #mv.prettyPrintBoard(bb,gameover)
+                RedsTurn = not RedsTurn
+            print("end status:\n")
+            mv.prettyPrintBoard(bb,gameover)
+            self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+
+            sizeOfStack = len(mv._stack)
+            
+            
+            for x in range(sizeOfStack):
+                correctRes = logstack.pop()
+                print("stack item : ", correctRes)
+                print("stack[0]:", correctRes[0])
+                cplist = list(zip(bb, correctRes[0]))
+                print("reconstr. Board and correct Board as (a,b) per item:\n",cplist )
+                print("comparing (recB,corrB):\n",list(map(lambda x: x[0] == x[1], cplist)))
+                print("reco Board visual\n")
+                mv.prettyPrintBoard(bb,[DictMoveEntry.CONTINUE_GAME])
+                print("correct Board visual\n")
+                mv.prettyPrintBoard(correctRes[0],[DictMoveEntry.CONTINUE_GAME])
+                mv.prettyPrintMoves(list((correctRes[1]))) if x != sizeOfStack-1 else print("no moves left")
+                
+                self.assertEqual((bb==correctRes[0]).all(),True)
+                mv.takeback(bb)
+                
+            
+             
+        #self.assertEqual(True,False)
             
         
             

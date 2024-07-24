@@ -2,7 +2,12 @@ from collections import Counter
 from enum import Enum
 import heapq
 import numpy as np
+import os
+import sys
+import heapq
 
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.gamestate import GameState
 
 class ScoredMoveList(list):
     def append(self, item):
@@ -39,8 +44,8 @@ class ScoreListForMerging(list):
         """
         if (isinstance(item, list)):
             if (isinstance(item[0], tuple) and
-                    isinstance(item[0][0], np.uint64) and
-                    isinstance(item[0][1], dict)):
+                    isinstance(item[0,0], np.uint64) and
+                    isinstance(item[0,1], dict)):
                 super().extend(item)
 
 
@@ -214,8 +219,8 @@ class FilteredPositionsArray(list):
         if (len(items) > 0):
             if (isinstance(items, list) and
                     isinstance(items[0], tuple) and
-                    isinstance(items[0][0], np.uint64) and
-                    isinstance(items[0][1], np.uint64)):
+                    isinstance(items[0,0], np.uint64) and
+                    isinstance(items[0,1], np.uint64)):
                 super().extend(items)
             elif (
                     isinstance(items, tuple) and
@@ -238,9 +243,9 @@ class UnvalidateMovesArray(list):
         if (len(items) > 0):
             if (isinstance(items, list) and
                     isinstance(items[0], tuple) and
-                    isinstance(items[0][0], np.uint64) and
-                    isinstance(items[0][1], np.uint64) and
-                    isinstance(items[0][2], np.uint64)):
+                    isinstance(items[0,0], np.uint64) and
+                    isinstance(items[0,1], np.uint64) and
+                    isinstance(items[0,2], np.uint64)):
                 super().extend(items)
             elif (
                     isinstance(items, tuple) and
@@ -271,6 +276,8 @@ class BoardCommand(Enum):
     Cannot_Move = 12
     Delete_Red_Pawn_from_StartPos =13
     Delete_Blue_Pawn_from_StartPos =14
+    Delete_Red_Knight_from_StartPos = 15
+    Delete_Blue_Knight_from_StartPos = 16
 
 class GameServerModel(Enum):
     FEN_BOARD = 0
@@ -278,7 +285,7 @@ class GameServerModel(Enum):
     PLAYER1 = 2
     PLAYER2 = 3
 
-import heapq
+
 
 class MaxHeap:
     def __init__(self):
@@ -289,4 +296,31 @@ class MaxHeap:
     
     def pop(self):
         return heapq.heappop(self._heap)[1]
+
+BC_TO_BOARD_OPS_DICT = {
+    BoardCommand.Hit_Red_PawnOnTarget:              [[GameState._ZARR_INDEX_R_PAWNS],True,True],
+    BoardCommand.Hit_Blue_PawnOnTarget:             [[GameState._ZARR_INDEX_B_PAWNS],True,True],
+    BoardCommand.Hit_Red_KnightOnTarget:            [[GameState._ZARR_INDEX_R_KNIGHTS],True,True],
+    BoardCommand.Hit_Blue_KnightOnTarget:           [[GameState._ZARR_INDEX_B_KNIGHTS],True,True], 
+    
+    BoardCommand.Upgrade_Blue_KnightOnTarget:       [[GameState._ZARR_INDEX_B_KNIGHTS],False,True],  
+    BoardCommand.Upgrade_Red_KnightOnTarget:        [[GameState._ZARR_INDEX_R_KNIGHTS],False,True],  
+    
+    BoardCommand.Degrade_Blue_KnightOnTarget:       [[GameState._ZARR_INDEX_B_PAWNS],False,True],  
+    BoardCommand.Degrade_Red_KnightOnTarget:        [[GameState._ZARR_INDEX_R_PAWNS],False,True],  
+    
+    BoardCommand.Move_Blue_Knight_no_Change:        [[GameState._ZARR_INDEX_B_KNIGHTS],False,True], 
+    BoardCommand.Move_Red_Knight_no_Change:         [[GameState._ZARR_INDEX_R_KNIGHTS],False,True], 
+    BoardCommand.Move_Blue_Pawn_no_Change:          [[GameState._ZARR_INDEX_B_PAWNS],False,True], 
+    BoardCommand.Move_Red_Pawn_no_Change:           [[GameState._ZARR_INDEX_R_PAWNS],False,True], 
+    
+    BoardCommand.Delete_Red_Pawn_from_StartPos:     [[GameState._ZARR_INDEX_R_PAWNS],True,False], 
+    BoardCommand.Delete_Blue_Pawn_from_StartPos:    [[GameState._ZARR_INDEX_B_PAWNS],True,False],
+    
+    BoardCommand.Delete_Red_Knight_from_StartPos:   [[GameState._ZARR_INDEX_R_KNIGHTS],True,False], 
+    BoardCommand.Delete_Blue_Knight_from_StartPos:  [[GameState._ZARR_INDEX_B_KNIGHTS],True,False],     
+}
+
+
+
 

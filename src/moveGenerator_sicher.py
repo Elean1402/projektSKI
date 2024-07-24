@@ -14,7 +14,8 @@ class MoveGenerator:
     # _boardIsInitialized = False
     # _gameover = False
     # _WinnerIs = Player.NoOne
-
+    _useTakeback = False
+    _stack = []
     def __init__(self, board: list[np.uint64] = [np.uint64(0)], useTakeback: bool = False):
         """ Must use Gamestate._ZARR_... constants as indices
             for board.
@@ -26,8 +27,8 @@ class MoveGenerator:
             print("Board init:")
             self.prettyPrintBoard(board)
         if(useTakeback):
-            self.useTakeback = useTakeback
-            self.stack = deque([])
+            self._useTakeback = useTakeback
+            self._stack = deque([])
 
     def genMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
         """Generates all possible Moves
@@ -127,13 +128,13 @@ class MoveGenerator:
                     #on target is an enemy knight
                     if(target & board[GameState._ZARR_INDEX_R_KNIGHTS] 
                        == target):
-                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change, BoardCommand.Delete_Blue_Pawn_from_StartPos]
+                        return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Delete_Blue_Pawn_from_StartPos]
                     #on target is only a enemy pawn        
                     elif(target & ( board[GameState._ZARR_INDEX_R_PAWNS] & 
                                     ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
                                     board[GameState._ZARR_INDEX_B_KNIGHTS]) )
                          == target):
-                        return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change]
+                        return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]
                     else:
                         return [BoardCommand.Cannot_Move]
                 else:
@@ -143,13 +144,13 @@ class MoveGenerator:
                                     board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                     board[GameState._ZARR_INDEX_R_KNIGHTS]) 
                        == target):
-                        return [BoardCommand.Move_Blue_Pawn_no_Change]
+                        return [BoardCommand.Move_Blue_Pawn_no_Change,BoardCommand.Delete_Blue_Pawn_from_StartPos]
                     #Target not free, only possible if our pawn is on target
                     elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
                                    ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                      board[GameState._ZARR_INDEX_R_KNIGHTS])
                         == target ):
-                        return [BoardCommand.Upgrade_Blue_KnightOnTarget]
+                        return [BoardCommand.Upgrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Pawn_from_StartPos]
                     #move on Target not possible
                     else:    
                         return [BoardCommand.Cannot_Move]
@@ -161,19 +162,19 @@ class MoveGenerator:
                                board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                board[GameState._ZARR_INDEX_R_KNIGHTS])
                    == target):
-                    return [BoardCommand.Degrade_Blue_KnightOnTarget]
+                    return [BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]
                 #Case: only our pawn is on target
                 elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
                      ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                        board[GameState._ZARR_INDEX_R_KNIGHTS])
                      == target):
-                    return [BoardCommand.Move_Blue_Knight_no_Change]
+                    return [BoardCommand.Move_Blue_Knight_no_Change,BoardCommand.Delete_Blue_Knight_from_StartPos]
                 #Case: only a enemy pawn is on target
                 elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
                      ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                        board[GameState._ZARR_INDEX_R_KNIGHTS])
                      == target):
-                    return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget]
+                    return [BoardCommand.Hit_Red_PawnOnTarget,BoardCommand.Degrade_Blue_KnightOnTarget,BoardCommand.Delete_Blue_Knight_from_StartPos]
                     
                 #Case: 2 figures are on target
                     #on target our knight
@@ -183,7 +184,7 @@ class MoveGenerator:
                     #on target enemy knight
                 elif(target & board[GameState._ZARR_INDEX_R_KNIGHTS] 
                      == target):
-                    return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change]
+                    return [BoardCommand.Hit_Red_KnightOnTarget,BoardCommand.Move_Blue_Knight_no_Change,BoardCommand.Delete_Blue_Knight_from_StartPos]
         elif(player == Player.Red):
             # Figure on start is a Pawn
             if(start & board[GameState._ZARR_INDEX_R_PAWNS] & 
@@ -196,13 +197,13 @@ class MoveGenerator:
                     #on target is an enemy knight
                     if(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
                        == target):
-                        return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change, BoardCommand.Delete_Red_Pawn_from_StartPos]
+                        return [BoardCommand.Hit_Blue_KnightOnTarget, BoardCommand.Delete_Red_Pawn_from_StartPos]
                     #on target is only a enemy pawn        
                     elif(target & ( board[GameState._ZARR_INDEX_B_PAWNS] & 
                                     ~(board[GameState._ZARR_INDEX_R_KNIGHTS] |
                                     board[GameState._ZARR_INDEX_B_KNIGHTS]) )
                          == target):
-                        return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Move_Red_Pawn_no_Change]
+                        return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Move_Red_Pawn_no_Change,BoardCommand.Delete_Red_Pawn_from_StartPos]
                     else:
                         return [BoardCommand.Cannot_Move]
                 else:
@@ -212,13 +213,13 @@ class MoveGenerator:
                                     board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                     board[GameState._ZARR_INDEX_R_KNIGHTS]) 
                        == target):
-                        return [BoardCommand.Move_Red_Pawn_no_Change]
+                        return [BoardCommand.Move_Red_Pawn_no_Change,BoardCommand.Delete_Red_Pawn_from_StartPos]
                     #Target not free, only possible if our pawn is on target
                     elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
                                    ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                      board[GameState._ZARR_INDEX_R_KNIGHTS])
                         == target ):
-                        return [BoardCommand.Upgrade_Red_KnightOnTarget]
+                        return [BoardCommand.Upgrade_Red_KnightOnTarget,BoardCommand.Delete_Red_Pawn_from_StartPos]
                     #move on Target not possible
                     else:    
                         return [BoardCommand.Cannot_Move]
@@ -230,19 +231,19 @@ class MoveGenerator:
                                board[GameState._ZARR_INDEX_B_KNIGHTS] |
                                board[GameState._ZARR_INDEX_R_KNIGHTS])
                    == target):
-                    return [BoardCommand.Degrade_Red_KnightOnTarget]
+                    return [BoardCommand.Degrade_Red_KnightOnTarget,BoardCommand.Delete_Red_Knight_from_StartPos]
                 #Case: only our pawn is on target
                 elif(target & board[GameState._ZARR_INDEX_R_PAWNS] &
                      ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                        board[GameState._ZARR_INDEX_R_KNIGHTS])
                      == target):
-                    return [BoardCommand.Move_Red_Knight_no_Change]
+                    return [BoardCommand.Move_Red_Knight_no_Change, BoardCommand.Delete_Red_Knight_from_StartPos]
                 #Case: only a enemy pawn is on target
                 elif(target & board[GameState._ZARR_INDEX_B_PAWNS] &
                      ~(board[GameState._ZARR_INDEX_B_KNIGHTS] |
                        board[GameState._ZARR_INDEX_R_KNIGHTS])
                      == target):
-                    return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Degrade_Red_KnightOnTarget]
+                    return [BoardCommand.Hit_Blue_PawnOnTarget,BoardCommand.Degrade_Red_KnightOnTarget,BoardCommand.Delete_Red_Knight_from_StartPos]
                     
                 #Case: 2 figures are on target
                     #on target our knight
@@ -252,7 +253,7 @@ class MoveGenerator:
                     #on target enemy knight
                 elif(target & board[GameState._ZARR_INDEX_B_KNIGHTS] 
                      == target):
-                    return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change] 
+                    return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change,BoardCommand.Delete_Red_Knight_from_StartPos] 
 
     def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry],board: list[np.uint64])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
         """Generates all unvalidated Moves of Player Blue or Red
@@ -500,7 +501,7 @@ class MoveGenerator:
              (Array[uint64]): Board
         """
         boardCopy = np.uint64(0)
-        if(not self.useTakeback):
+        if(not self._useTakeback):
             boardCopy = board.copy()
         else:
             boardCopy = board
@@ -526,92 +527,100 @@ class MoveGenerator:
                 boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
             elif bc == BoardCommand.Hit_Blue_KnightOnTarget:
                 boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~targetpos
+           
             elif bc == BoardCommand.Upgrade_Blue_KnightOnTarget:
                 boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~ startpos
             elif bc == BoardCommand.Upgrade_Red_KnightOnTarget:
                 boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~ startpos
+           
             elif bc == BoardCommand.Degrade_Blue_KnightOnTarget:
                 boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~ startpos
             elif bc == BoardCommand.Degrade_Red_KnightOnTarget:
                 boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~ startpos
+            
             elif bc == BoardCommand.Move_Blue_Knight_no_Change:
                 boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
             elif bc == BoardCommand.Move_Red_Knight_no_Change:
                 boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
             elif bc == BoardCommand.Move_Blue_Pawn_no_Change:
                 boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
             elif bc == BoardCommand.Move_Red_Pawn_no_Change:
                 boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+           
             elif bc == BoardCommand.Delete_Red_Pawn_from_StartPos:
                 boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
             elif bc == BoardCommand.Delete_Blue_Pawn_from_StartPos:
                 boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
+            elif bc == BoardCommand.Delete_Red_Knight_from_StartPos:
+                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
+            elif bc == BoardCommand.Delete_Blue_Knight_from_StartPos:
+                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
             
 
         self.checkBoardIfGameOver(gameOver, boardCopy, printB)
-        if(self.useTakeback):
-            self.stack.append(move)
+        if(self._useTakeback):
+            self._stack.append(move)
         if printB == True:
             print("move executed, new Board ist:\n")
             self.prettyPrintBoard(boardCopy, gameOver)
         return boardCopy
 
     def takeback(self, board:list[np.uint64]):
-        if(self.useTakeback and len(self.stack) > 0):
-            move = self.stack.pop()
-            bcommands = move[3]
-            [self._Board_Exec_Move(board, BC_TO_BOARD_OPS_DICT[command], move[0], move[1], unmake=True) for command in bcommands]
+        if(self._useTakeback and len(self._stack) > 0):
+            move = self._stack.pop()
+            
+            bcommands = move[2]
+            
+            [self._Board_Exec_Move(board, BC_TO_BOARD_OPS_DICT[command], move[0], move[1], True) for command in bcommands]
         else:
             raise Exception("useTakeback is False or stack is empty")
     
-    def _Board_Exec_Move(bitboard:list[np.uint64],infoList:tuple[list,bool,bool] , startPos:np.uint64, targetPos:np.uint64, unmake:bool = False)-> None:
-        """_summary_
+    def _Board_Exec_Move(self,bitboard: list[np.uint64], infoList:dict[BoardCommand,list], startPos: np.uint64, targetPos: np.uint64, unmake:bool = False)-> None:
+        """Example:
+            unmake = False: Delete = True -> use &= ~ operators, Delete = False -> use |= operators
+            unmake = True: Delete = True -> use |= operators, Delete = False -> use &= ~ operators
 
         Args:
             bitboard (list[np.uint64]): _description_
-            infoList (tuple[list,bool,bool]): (bitboard_indices, BitOps,FirstPosition), 
+            infoList (tuple[list,bool,bool]): (bitboard_indices, Delete, onTargetPosition), 
             startPos (np.uint64): Position
             targetPos (np.uint64): Position
-            unmake (bool): if False: Firstposition= True -> use toPos first and BitOps = True -> use &= ~ Operation, False -> use |= and &= ~
-                if True: Firstposition= True -> use toPos first
-                BitOps = True -> use |=  Operation, False -> use &= ~ and |=
+            unmake (bool): If True, then unmake move otherwise exec move
         """
         #TODO
         boardIndices = infoList[0]
+        delete = infoList[1]
+        onTargetPosition = infoList[2]
         if(unmake):
-            #Bitops
-            if(infoList[1]):
-                #Firstpos = toPos: undo deleted Figure on targetPos 
-                if(infoList([2])):
+            
+            if(delete):
+                #undo deleted Figure on targetPos 
+                if(onTargetPosition):
                     bitboard[boardIndices[0]] |= targetPos
                 #Firstpos = startpos: undo deleted Figure on startpos
                 else:
                     bitboard[boardIndices[0]] |= startPos
-            #use first &= then |=: remove Figure from targetPos and add Figure on startPos
+            #delete = False
             else:
+                if(onTargetPosition):
+                    bitboard[boardIndices[0]] &= ~ targetPos
+                else:
+                    bitboard[boardIndices[0]] &= ~ startPos
                 
-                bitboard[boardIndices[0]] &= ~ targetPos
-                bitboard[boardIndices[1]] |= startPos
         else:
-            if(infoList[1]):
-                #Firstpos = toPos: delete Figure on targetPos 
-                if(infoList([2])):
+            if(delete):
+                #exec bc
+                if(onTargetPosition):
                     bitboard[boardIndices[0]] &= ~ targetPos
                 #Firstpos = startpos: delete Figure on startpos
                 else:
                     bitboard[boardIndices[0]] &= ~ startPos
             #use first |= then &= ~: add Figure to targetPos and remove it from startPos
             else:
-                bitboard[boardIndices[0]] |=  targetPos
-                bitboard[boardIndices[1]] &= ~ startPos
+                if(onTargetPosition):
+                    bitboard[boardIndices[0]] |=  targetPos
+                else:
+                    bitboard[boardIndices[1]] |=  startPos
     
             
     def prettyPrintBoard(self, board: list[np.uint64], *gameOver: list[DictMoveEntry]):
