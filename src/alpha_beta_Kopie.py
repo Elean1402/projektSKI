@@ -220,24 +220,26 @@ class AlphaBetaSearch:
         if stored_score is not None:
             return stored_score, stored_move
 
-        moves = self.move_gen.generate_moves()
+        moves = self.move_gen.genMoves(self.opponent,bitboards,[DictMoveEntry.CONTINUE_GAME])
+        moves = self.eval_func_opponent.sortMoveList(self.opponent,moves,self.move_gen,bitboards)
         best_score = float('inf')
         best_move = None
 
         for piece in moves:
-            for dest in piece[1]:
-                self.total_move_count += 1
-                if self.is_time_exceeded():
-                    raise TimeExceeded()
-                new_bitboards = self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards, age)
-                self.move_gen.takeback()
-                if score < best_score:
-                    best_score = score
-                    best_move = [piece[0], dest]
-                beta = min(beta, best_score)
-                if beta <= alpha:
-                    break
+            #for dest in piece[1]:
+            self.total_move_count += 1
+            if self.is_time_exceeded():
+                raise TimeExceeded()
+            #new_bitboards = self.move_gen.exec_move(piece[0], dest)
+            new_bitboards = self.move_gen.execSingleMove(piece,self.opponent,bitboards,[DictMoveEntry.CONTINUE_GAME])
+            score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards, age)
+            self.move_gen.takeback()
+            if score < best_score:
+                best_score = score
+                best_move = [piece]
+            beta = min(beta, best_score)
+            if beta <= alpha:
+                break
 
         flag = 'EXACT'
         if best_score <= alpha:
