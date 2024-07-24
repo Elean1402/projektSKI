@@ -288,6 +288,7 @@ class GameServerModel(Enum):
 
 
 class MaxHeap:
+    _heap = []
     def __init__(self):
         self._heap = []
     
@@ -320,6 +321,9 @@ BC_TO_BOARD_OPS_DICT = {
     BoardCommand.Delete_Red_Knight_from_StartPos:   [[GameState._ZARR_INDEX_R_KNIGHTS],True,False], 
     BoardCommand.Delete_Blue_Knight_from_StartPos:  [[GameState._ZARR_INDEX_B_KNIGHTS],True,False],     
 }
+
+BITMASK_MIDGAME =   np.uint64(0b0000000000000000000000001111111111111111000000000000000000000000)
+                    
 
 
 

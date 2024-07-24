@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.scoreConfig_evalFunc import ScoreConfig
 from src.alt_eval import EvalFunction
 from src.model import *
-from src.board_final import Board
+from src.moveGenerator_sicher import MoveGenerator as mvg
 from src.moveLib import MoveLib
 
 import random
@@ -86,17 +86,20 @@ class AlphaBetaSearch:
         self.eval_func = EvalFunction(ScoreConfig.Version2(self.player, self.player))
         self.eval_func_opponent = EvalFunction(ScoreConfig.Version2(self.player, self.opponent))
         self.bitboards = game["bitboards"]
-        self.move_gen = Board()
-        self.move_gen.initBoard(*self.bitboards, self.turn)
+        self.move_gen = mvg(useTakeback=True)
+        #self.move_gen.initBoard(*self.bitboards, self.turn)
         self.best_move = None
         self.time_limit = 100  # Default time limit in seconds
         self.zobrist = ZobristHashing(num_positions=64, num_piece_types=4)
 
     def random_move(self, opening=False):
-        moves = self.move_gen.generate_moves()
+        #moves = self.move_gen.generate_moves()
+        moves = self.move_gen.genMoves()
         piece = random.choice(moves)
-        move = piece[1][0]
-        self.best_move = piece[0], move
+        #move = piece[1][0]
+        move = piece
+        #self.best_move = piece[0], move
+        self.best_move = move
         
     def count_pieces(self, fen_string):
         count_b = 0
@@ -112,8 +115,8 @@ class AlphaBetaSearch:
             return count_b, count_r       
         return count_r, count_b
     
-    def set_time(self):
-        if self.move_gen.isOpening:
+    def set_time(self,board):
+        if self.move_gen.isOpening(board):
             self.random_move(opening=True)
             raise TimeExceeded()
         elif self.total_time < 100:
@@ -176,31 +179,27 @@ class AlphaBetaSearch:
         if stored_score is not None:
             return stored_score, stored_move
 
-        moves = self.move_gen.generate_moves()
-        #Züge sind nach score aufsteigend sortiert
-        moves = self.eval_func.sortMoveList(moves,self.move_gen)
+        moves = self.move_gen.genMoves(self.player,bitboards [DictMoveEntry.CONTINUE_GAME])
+        #Züge sind nach score abssteigend sortiert
+        moves = self.eval_func.sortMoveList(self.player,moves,self.move_gen,bitboards)
         best_score = -float('inf')
         best_move = None
 
         for piece in moves:
-            for dest in piece[1]:
-                self.total_move_count += 1
-                if self.is_time_exceeded():
-                    raise TimeExceeded()
-                new_bitboards = self.move_gen.exec_move(piece[0], dest)
-                score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards, age)
-                self.move_gen.takeback()
-                if score > best_score:
-                    best_score = score
-                    best_move = [piece[0], dest]
-                alpha = max(alpha, best_score)
-                if alpha >= beta:
-                    break
-        
-        mvlen = range(len(moves)-1,-1,-1)
-        
-        for moveIndex in  mvlen:
-        
+            #for dest in piece[1]:
+            self.total_move_count += 1
+            if self.is_time_exceeded():
+                raise TimeExceeded()
+            #new_bitboards = self.move_gen.exec_move(piece[0], dest)
+            new_bitboards = self.move_gen.execSingleMove(piece,self.player,bitboards,[DictMoveEntry.CONTINUE_GAME])
+            score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards, age)
+            self.move_gen.takeback()
+            if score > best_score:
+                best_score = score
+                best_move = [piece]
+            alpha = max(alpha, best_score)
+            if alpha >= beta:
+                break
         
         flag = 'EXACT'
         if best_score <= alpha:

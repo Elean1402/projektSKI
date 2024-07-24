@@ -2,13 +2,13 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from src.scoreConfig_evalFunc import ScoreConfig
-from src.evalFunction import EvalFunction
+from src.alt_eval import EvalFunction
 
 from src.gui import Gui
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import*
-from src.moveGenerator import MoveGenerator
+from src.moveGenerator_sicher import MoveGenerator
 
 class EvalFunc(unittest.TestCase):
     # def version0(self):

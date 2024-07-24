@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import MoveLib
-from src.moveGenerator import MoveGenerator1 as MoveGenerator
+from src.moveGenerator_sicher import MoveGenerator
 from collections import deque
 from src.board_final import *
 # Precomputed table of bit counts for 16-bit numbers
@@ -168,20 +168,35 @@ class EvalFunction:
         totalScore += self._computeActualPositionalPoints(bitboards)
         return totalScore
     
-    def sortMoveList(self, moveList, boardObjClass: Board) -> list:
-        #maxheap = MaxHeap()
+    def sortMoveList(self,player:Player, moveList, moveGen: MoveGenerator, board: list[np.uint64]) -> list[tuple[int,int,BoardCommand,int]]:
+        """Sorts the move list in descending order depending on Score
+
+        Args:
+            player (Player): _description_
+            moveList (_type_): _description_
+            moveGen (MoveGenerator): _description_
+            board (list[np.uint64]): _description_
+
+        Raises:
+            Exception: movegen only with unmake() (useTakeback) configuration
+
+        Returns:
+            list[tuple[int,int,BoardCommand,int]]: [(src,dest, bcs, score)]
+        """
+        maxheap = MaxHeap()
         #[[maxheap.push(itemTuple[0], dest, self._evalSingleMove(boardObjClass, itemTuple[0],dest)) #for dest in itemTuple[1]] 
         #for itemTuple in moveList]
         #return maxheap
-        scorelist = [[(itemTuple[0], dest, self._evalSingleMove(boardObjClass, itemTuple[0],dest)) for dest in itemTuple[1]] 
-        for itemTuple in moveList]
-        dtype = [('src',int),('dest',int), ('score',int)]
-        scorelist = np.array(scorelist,dtype=dtype)
-        scorelist = np.sort(scorelist, order="score", kind="mergesort")
-        return scorelist
+        def _evalSingleMove(move) -> int:
+            bitboards = moveGen.execSingleMove(move,player,board,[DictMoveEntry.CONTINUE_GAME])
+            score  = self.computeEvaluationScore(bitboards)
+            moveGen.takeback(board)
+            return score
+        if(not moveGen._useTakeback):
+            raise Exception("sortMoveList: MoveGenerator not for takeback configured")
+        maxheap.push([(move[0],move[1],move[2], _evalSingleMove(move)) for move in moveList])
+        
+        
+        return [maxheap.pop() for x in range(len(maxheap._heap))]
     
-    def _evalSingleMove(self,boardObjClass: Board, move:tuple) -> int:
-        bitboards = boardObjClass.exec_move(*move)
-        score  = self.computeEvaluationScore(bitboards)
-        boardObjClass.takeback()
-        return score
+    

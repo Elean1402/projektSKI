@@ -24,7 +24,7 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/8/8/8/8/8/8/r05")
         mvg = MoveGenerator(BB)
-        list1 = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        list1 = mvg._genValidatedMoves(Player.Red,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         
         print([MoveLib.move(move[0],move[1],3) for move in list1])
@@ -36,7 +36,7 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/r07/8/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Red,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-B2"])
@@ -45,7 +45,7 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/br7/8/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Red,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["A2-C1"])
@@ -54,7 +54,7 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/2rr5/8/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Red,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["C2-E1"])
@@ -63,7 +63,7 @@ class moveGenerator(unittest.TestCase):
         """At this moment, only for red player functional"""
         BB = GameState.createBitBoardFromFEN("6/8/6br1/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Red,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Red,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],["G3-F1","G3-E2"])
@@ -72,7 +72,7 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/8/6br1/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         self.assertEqual([MoveLib.move(x,y,3) for x,y,z in list],[])
@@ -81,7 +81,7 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/8/1bb6/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         
@@ -91,7 +91,7 @@ class moveGenerator(unittest.TestCase):
         
         BB = GameState.createBitBoardFromFEN("6/8/1bb6/8/8/8/8/6")
         mvg = MoveGenerator(BB)
-        list = mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        list = mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
         mvg.prettyPrintMoves(list)
         
@@ -400,7 +400,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         
         print(moves)
         mvg.prettyPrintMoves(moves)
@@ -418,7 +418,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -434,7 +434,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -454,7 +454,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -474,7 +474,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -494,7 +494,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -515,7 +515,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -536,7 +536,7 @@ class moveGenerator(unittest.TestCase):
         mvg = MoveGenerator(BB)
         mvg.prettyPrintBoard(BB,[DictMoveEntry.CONTINUE_GAME])
        
-        moves= mvg._genValidatedMoves(Player.Blue,[DictMoveEntry.CONTINUE_GAME],BB)
+        moves= mvg._genValidatedMoves(Player.Blue,BB,[DictMoveEntry.CONTINUE_GAME])
         print(moves)
         mvg.prettyPrintMoves(moves)
         #boardcommands = [mvg._checkTargetPos(Player.Blue, move) for move in moves]
@@ -562,7 +562,7 @@ class moveGenerator(unittest.TestCase):
         bb = GameState.createBitBoardFromFEN(fen)
         mvg = MoveGenerator()
         gameOver =[DictMoveEntry.CONTINUE_GAME]
-        moves = mvg.genMoves(Player.Red,gameOver,bb)
+        moves = mvg.genMoves(Player.Red,bb,gameOver)
         self.assertEqual(len(moves), 0)
         self.assertEqual(gameOver[0], DictMoveEntry.GAME_OVER_BLUE_WINS)
         
@@ -582,7 +582,7 @@ class moveGenerator(unittest.TestCase):
             bb = GameState.createBitBoardFromFEN(fen)
             mvg = MoveGenerator()
             mvg.prettyPrintBoard(bb,[DictMoveEntry.CONTINUE_GAME])
-            genmoves = np.array(list(map(lambda x: MoveLib.move(x[0],x[1],3) ,mvg.genMoves(Player.Blue if player=="b" else Player.Red,[DictMoveEntry.CONTINUE_GAME], bb ))))
+            genmoves = np.array(list(map(lambda x: MoveLib.move(x[0],x[1],3) ,mvg.genMoves(Player.Blue if player=="b" else Player.Red, bb,[DictMoveEntry.CONTINUE_GAME] ))))
             movelist.sort()
             genmoves.sort()
             print("targelist:\n",movelist)
@@ -603,17 +603,20 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
+            print("moves\n")
+            mv.prettyPrintMoves(moves)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
             mv.prettyPrintMoves(moves)
             a,b = 0, len(moves)
             move = moves[random.randint(a,b-1)]
-            bb = mv.execSingleMove(move,player, gameover,bb)
+            bb = mv.execSingleMove(move,player,bb,gameover)
             #mv.prettyPrintBoard(bb,gameover)
             RorB = not RorB
         print("end status:\n")
         mv.prettyPrintBoard(bb,gameover)
+        #self.assertEqual(True,False)
         self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
     
     def test_GameTest_move_exec2(self):
@@ -625,13 +628,13 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
             mv.prettyPrintMoves(moves)
             a,b = 0, len(moves)
             move = moves[random.randint(a,b-1)]
-            bb = mv.execSingleMove(move,player, gameover,bb)
+            bb = mv.execSingleMove(move,player,bb, gameover)
             #mv.prettyPrintBoard(bb,gameover)
             RorB = not RorB
         print("end status:\n")
@@ -655,7 +658,7 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
             #print(moves)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
@@ -665,7 +668,7 @@ class moveGenerator(unittest.TestCase):
             move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
             print(move)
             mv.prettyPrintMoves(move)
-            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            bb = mv.execSingleMove(move[0],player,bb, gameover)
             print("Figure count r and b before move exec:", before)
             after = figureCount(bb)
             print("Figure count r and b after move exec:", after )
@@ -694,7 +697,7 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
             #print(moves)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
@@ -704,7 +707,7 @@ class moveGenerator(unittest.TestCase):
             move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
             print(move)
             mv.prettyPrintMoves(move)
-            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            bb = mv.execSingleMove(move[0],player,bb, gameover)
             print("Figure count r and b before move exec:", before)
             after = figureCount(bb)
             print("Figure count r and b after move exec:", after )
@@ -733,7 +736,7 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
             #print(moves)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
@@ -743,7 +746,7 @@ class moveGenerator(unittest.TestCase):
             move = list(filter(lambda x: MoveLib.move(x[0],x[1],3) == "B1-A3" , moves))
             print(move)
             mv.prettyPrintMoves(move)
-            bb = mv.execSingleMove(move[0],player, gameover,bb)
+            bb = mv.execSingleMove(move[0],player,bb, gameover)
             print("Figure count r and b before move exec:", before)
             after = figureCount(bb)
             print("Figure count r and b after move exec:", after )
@@ -773,14 +776,14 @@ class moveGenerator(unittest.TestCase):
         while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
             
             player = Player.Red if RorB else Player.Blue
-            moves = mv.genMoves(player,gameover,bb)
+            moves = mv.genMoves(player,bb,gameover)
             mv.prettyPrintBoard(bb,gameover)
             print("Players turn: ", player)
             
             a,b = 0, len(moves)
             move = moves[random.randint(a,b-1)]
             mv.prettyPrintMoves([move])
-            bb = mv.execSingleMove(move,player, gameover,bb)
+            bb = mv.execSingleMove(move,player,bb, gameover)
             print("Figure count r and b before move exec:", before)
             after = figureCount(bb)
             print("Figure count r and b after move exec:", after )
@@ -820,14 +823,14 @@ class moveGenerator(unittest.TestCase):
             while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
 
                 player = Player.Red if RedsTurn else Player.Blue
-                moves = mv.genMoves(player,gameover,bb)
+                moves = mv.genMoves(player,bb,gameover)
                 
                 print("Players turn: ", player)
 
                 a,b = 0, len(moves)
                 move = moves[random.randint(a,b-1)]
                 mv.prettyPrintMoves([move])
-                bb = mv.execSingleMove(move,player, gameover,bb)
+                bb = mv.execSingleMove(move,player,bb, gameover)
                 mv.prettyPrintBoard(bb,gameover)
                 print("Figure count r and b before move exec:", before)
                 after = figureCount(bb)
@@ -867,18 +870,18 @@ class moveGenerator(unittest.TestCase):
             before = figureCount(bb)
             logstack = deque([])
             logstack.append([initalBoard,list([()])])
-            while(gameover[0] is DictMoveEntry.CONTINUE_GAME):
+            while(mv._gameover is DictMoveEntry.CONTINUE_GAME):
 
                 player = Player.Red if RedsTurn else Player.Blue
-                moves = mv.genMoves(player,gameover,bb)
+                moves = mv.genMoves(player,bb,gameover)
                 
                 print("Players turn: ", player)
 
                 a,b = 0, len(moves)
                 move = moves[random.randint(a,b-1)]
                 mv.prettyPrintMoves([move])
-                #bb = mv.execSingleMove(move,player, gameover,bb)
-                mv.execSingleMove(move,player, gameover,bb)
+                #bb = mv.execSingleMove(move,player,bb, gameover)
+                mv.execSingleMove(move,player,bb, gameover)
                 logstack.append([bb.copy(), list([move])])
                 mv.prettyPrintBoard(bb,gameover)
                 print("Figure count r and b before move exec:", before)
@@ -890,8 +893,8 @@ class moveGenerator(unittest.TestCase):
                 #mv.prettyPrintBoard(bb,gameover)
                 RedsTurn = not RedsTurn
             print("end status:\n")
-            mv.prettyPrintBoard(bb,gameover)
-            self.assertIsNot(gameover[0],DictMoveEntry.CONTINUE_GAME )
+            mv.prettyPrintBoard(bb,mv._gameover)
+            self.assertIsNot(mv._gameover,DictMoveEntry.CONTINUE_GAME )
 
             sizeOfStack = len(mv._stack)
             

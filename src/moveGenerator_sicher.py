@@ -5,14 +5,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import *
 from src.model import Player, BitMaskDict, DICT_MOVE, DictMoveEntry, BIT_MASK_ARRAY_KNIGHT_BLUE, \
     BIT_MASK_ARRAY_KNIGHT_RED, BIT_MASK_ARRAY_PAWN_BLUE, BIT_MASK_ARRAY_PAWN_RED, FilteredPositionsArray, \
-    NotAccessiblePos, BoardCommand, BC_TO_BOARD_OPS_DICT
+    NotAccessiblePos, BoardCommand, BC_TO_BOARD_OPS_DICT, BITMASK_MIDGAME
 from src.moveLib import MoveLib as mv
 from collections import deque
 
 class MoveGenerator:
     # _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
     # _boardIsInitialized = False
-    # _gameover = False
+    _gameover = DictMoveEntry.CONTINUE_GAME
     # _WinnerIs = Player.NoOne
     _useTakeback = False
     _stack = []
@@ -30,7 +30,7 @@ class MoveGenerator:
             self._useTakeback = useTakeback
             self._stack = deque([])
 
-    def genMoves(self, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64]):
+    def genMoves(self, player: Player, board: list[np.uint64],gameOver: list[DictMoveEntry]):
         """Generates all possible Moves
            ATTENTION IF LIST IS EMPTY GAME OVER
 
@@ -41,11 +41,12 @@ class MoveGenerator:
             list[Tuple[start,target,list[Boardcommands]]]
             if no possible Move empty list and this should lead into Gameover
         """
+     
         if not isinstance(gameOver, list) or not isinstance(*gameOver, DictMoveEntry):
-            raise TypeError("Please use for param. gameOver: e.g gameOver = [DictMoveEntry.CONTINUE]")
+                raise TypeError("Please use for param. gameOver: e.g gameOver = [DictMoveEntry.CONTINUE]")
         # check if game is over
         # TODO
-        return self._genValidatedMoves(player, gameOver, board)
+        return self._genValidatedMoves(player, board, gameOver)
 
     def _startPosBelongsToPlayer(self,player: Player, pos: np.uint64, board: list[np.uint64]):
         """Double Check if startpos belongs to player
@@ -255,7 +256,7 @@ class MoveGenerator:
                      == target):
                     return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change,BoardCommand.Delete_Red_Knight_from_StartPos] 
 
-    def _genValidatedMoves(self, player:Player, gameOver: list[DictMoveEntry],board: list[np.uint64])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
+    def _genValidatedMoves(self, player:Player,board: list[np.uint64],gameOver: list[DictMoveEntry])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
         """Generates all unvalidated Moves of Player Blue or Red
 
         Args:
@@ -297,9 +298,10 @@ class MoveGenerator:
         
         if(len(validatedMoves) == 0):
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
-            return validatedMoves
+            self._gameover = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            #return validatedMoves
             
-        gameOver[0] = DictMoveEntry.CONTINUE_GAME
+        
         return validatedMoves
 
     @classmethod
@@ -467,26 +469,28 @@ class MoveGenerator:
         return positions
 
     @classmethod
-    def checkBoardIfGameOver(cls, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
+    def checkBoardIfGameOver(self, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
         """Game is over if last Row is reached or no possible Moves
         Returns: Boolean: True for win else loose"""
         if printBoard:
-            cls.prettyPrintBoard(cls, board, gameOver)
+            self.prettyPrintBoard(self, board, gameOver)
 
         blue_pieces = board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_B_PAWNS]
         red_pieces = board[GameState._ZARR_INDEX_R_KNIGHTS] | board[GameState._ZARR_INDEX_R_PAWNS]
 
         if (blue_pieces & BitMaskDict[DictMoveEntry.GAME_OVER_BLUE_WINS]) != 0 or red_pieces == 0:
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS
+            self._gameover = DictMoveEntry.GAME_OVER_BLUE_WINS
         elif (red_pieces & BitMaskDict[DictMoveEntry.GAME_OVER_RED_WINS]) != 0 or blue_pieces == 0:
             gameOver[0] = DictMoveEntry.GAME_OVER_RED_WINS
-
-        if gameOver[0] != DictMoveEntry.CONTINUE_GAME:
+            self._gameover = DictMoveEntry.GAME_OVER_RED_WINS
+                
+        if gameOver[0] != DictMoveEntry.CONTINUE_GAME or self._gameover != DictMoveEntry.CONTINUE_GAME:
             if printBoard:
                 print("Game Over")
-                cls.prettyPrintBoard(cls, board, gameOver)
+                self.prettyPrintBoard(self, board, gameOver)
 
-    def execSingleMove(self, move: tuple, player: Player, gameOver: list[DictMoveEntry], board: list[np.uint64],printB: bool = False):
+    def execSingleMove(self, move: tuple, player: Player, board: list[np.uint64],gameOver: list[DictMoveEntry],printB: bool = False):
         """Executes single Move and updates the Board and checks if Game Over
 
         Args:
@@ -512,6 +516,7 @@ class MoveGenerator:
         if len(move) == 0:
             print("move is empty, Game Over")
             gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
+            self._gameover = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Blue else DictMoveEntry.GAME_OVER_RED_WINS
             return boardCopy
         startpos = move[0]
         targetpos = move[1]
@@ -559,14 +564,15 @@ class MoveGenerator:
 
         self.checkBoardIfGameOver(gameOver, boardCopy, printB)
         if(self._useTakeback):
-            self._stack.append(move)
+            self._stack.append((move[0],move[1],move[2]))
         if printB == True:
             print("move executed, new Board ist:\n")
-            self.prettyPrintBoard(boardCopy, gameOver)
+            self.prettyPrintBoard(boardCopy, gameOver) if not self._useTakeback else self.prettyPrintBoard(boardCopy, self._gameover)
         return boardCopy
 
     def takeback(self, board:list[np.uint64]):
         if(self._useTakeback and len(self._stack) > 0):
+            self._gameover = DictMoveEntry.CONTINUE_GAME
             move = self._stack.pop()
             
             bcommands = move[2]
@@ -622,6 +628,12 @@ class MoveGenerator:
                 else:
                     bitboard[boardIndices[1]] |=  startPos
     
+    @staticmethod
+    def isOpening(board:list[np.uint64]) -> bool:
+        return ((board[0] & BITMASK_MIDGAME == 0) or 
+                (board[1] & BITMASK_MIDGAME == 0) or
+                (board[2] & BITMASK_MIDGAME == 0) or
+                (board[3] & BITMASK_MIDGAME == 0))
             
     def prettyPrintBoard(self, board: list[np.uint64], *gameOver: list[DictMoveEntry]):
         # print("internal board", board)
