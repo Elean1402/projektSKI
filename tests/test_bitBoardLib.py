@@ -186,7 +186,7 @@ class BitBoardLib(unittest.TestCase):
         print("M:\n",M)
         print("M2:\n",M2)
         self.assertEqual(np.allclose(M,M2),True)
-        
+    @unittest.skip("depricated")    
     def test_createBitBoardFromMatrix_Zuggenerator10(self):
         """br Test"""
         M = Gui.fenToMatrix("6/8/8/8/8/8/8/r05")

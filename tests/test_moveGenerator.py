@@ -568,7 +568,8 @@ class moveGenerator(unittest.TestCase):
         self.assertEqual(gameOver[0], DictMoveEntry.GAME_OVER_BLUE_WINS)
         
     def test_TOTAL_ISIS_TEST1(self):
-        fdscr = open('test_data.json')
+        path="./tests/"
+        fdscr = open(path + 'test_data.json')
         moves = json.load(fdscr)
         
         testcases = [(move['board'],move['moves']) for move in moves]
@@ -805,8 +806,8 @@ class moveGenerator(unittest.TestCase):
                 return val1,val2
         def checkCount(before,after):
             return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
-        
-        fdscr = open('test_data.json')
+        path="./tests/"
+        fdscr = open(path+ 'test_data.json')
         moves = json.load(fdscr)
         
         testcases = [(move['board'],move['moves']) for move in moves]
@@ -852,8 +853,8 @@ class moveGenerator(unittest.TestCase):
                 return val1,val2
         def checkCount(before,after):
             return all(list(map(lambda t: t[0] >= t[1], zip(before,after))))
-        
-        fdscr = open('test_data.json')
+        path="./tests/"
+        fdscr = open(path+'test_data.json')
         moves = json.load(fdscr)
         
         testcases = [(move['board'],move['moves']) for move in moves]

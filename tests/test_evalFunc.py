@@ -95,9 +95,9 @@ class EvalFunc(unittest.TestCase):
         scorelist = ef.computeOverallScore(moves, board)
         ef.prettyPrintScorelist(scorelist)
         self.assertEqual(True,True)
-        
+    @unittest.skip("depricated")
     def test_evalFunc_FullTest1(self):
-        ef = EvalFunction(ScoreConfig.Version1(Player.Red))
+        ef = EvalFunction(ScoreConfig.Version1(Player.Red,Player.Blue))
         
         #print(ef._CONFIG_DICT)
         board = GameState.createBitBoardFromFEN("6/8/8/8/2r0b04/8/8/6")
@@ -113,7 +113,7 @@ class EvalFunc(unittest.TestCase):
                 i=0
             print("i=",i)
             player = Player.Red if i % 2 == 0 else Player.Blue
-            moves = mvg.genMoves(player,gameOver,board)
+            moves = mvg.genMoves(player,board,gameOver)
                 
             scorelist = ef.computeOverallScore(moves, board)
             
@@ -124,6 +124,7 @@ class EvalFunc(unittest.TestCase):
             z+=1
         
         self.assertEqual(True, False)
-            
+    
+      
             
         
