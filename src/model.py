@@ -5,7 +5,7 @@ import numpy as np
 import os
 import sys
 import heapq
-
+import fastenum
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 
@@ -70,7 +70,31 @@ class ScoreListForMerging(list):
             self.append(args)
 
 
-class Config(Enum):
+# class Config(Enum):
+#     MOBILITY = "MOBILITY"
+#     TURN_OPTIONS = "TURN_OPTIONS"
+#     PROTECTION_PAWNS = "PROTECTION_PAWNS"
+#     PROTECTION_KNIGHTS = "PROTECTION_KNIGHTS"
+#     UNPROTECTED_PAWNS = "UNPROTECTED_PAWNS"
+#     UNPROTECTED_KNIGHTS = "UNPROTECTED_KNIGHTS"
+#     UPGRADE_TO_KNIGHT = "UPGRADE_TO_KNIGHT"
+#     BLOCKED_FIGURES = "BLOCKED_FIGURES"
+#     MAT_PAWN = "MAT_PAWN"
+#     MAT_KNIGHT = "MAT_KNIGHT"
+#     ENDGAME_MAT_PAWN = "ENDGAME_MAT_PAWN"
+#     ENDGAME_MAT_KNIGHT = "ENDGAME_MAT_KNIGHT"
+#     PIECESQUARE_TABLE_PAWN_Blue = "PIECESQUARE_TABLE_PAWN_Blue"
+#     PIECESQUARE_TABLE_KNIGHT_Blue = "PIECESQUARE_TABLE_KNIGHT_Blue"
+#     PIECESQUARE_TABLE_PAWN_Red = "PIECESQUARE_TABLE_PAWN_Red"
+#     PIECESQUARE_TABLE_KNIGHT_Red = "PIECESQUARE_TABLE_KNIGHT_Red"
+#     TOTAL_SCORE_RATING_PAWN_BLUE = "TOTAL_SCORE_RATING_BLUE"
+#     TOTAL_SCORE_RATING_KNIGHT_BLUE = "TOTAL_SCORE_RATING_KNIGHT_BLUE"
+#     TOTAL_SCORE_RATING_PAWN_RED = "TOTAL_SCORE_RATING_PAWN_RED"
+#     TOTAL_SCORE_RATING_KNIGHT_RED = "TOTAL_SCORE_RATING_KNIGHT_RED"
+#     MaxPlayer = "MaxPlayer"
+#     Player = "Player"
+#     CONFIGVERSION = "CONFIGVERSION"
+class Config(fastenum.Enum):
     MOBILITY = "MOBILITY"
     TURN_OPTIONS = "TURN_OPTIONS"
     PROTECTION_PAWNS = "PROTECTION_PAWNS"
@@ -95,8 +119,14 @@ class Config(Enum):
     Player = "Player"
     CONFIGVERSION = "CONFIGVERSION"
 
-
-class Player(Enum):
+# class Player(Enum):
+#     """ Blue (Bottom) = Alpha?? (from Zuggenerator)
+#         Rot (Top) = Beta?? (from Zuggenerator)
+#     """
+#     Red = 0
+#     Blue = 1
+#     NoOne = 3
+class Player(fastenum.Enum):
     """ Blue (Bottom) = Alpha?? (from Zuggenerator)
         Rot (Top) = Beta?? (from Zuggenerator)
     """
@@ -104,8 +134,30 @@ class Player(Enum):
     Blue = 1
     NoOne = 3
 
+# class DictMoveEntry(Enum):
+#     BLUE_PAWN_TO_TOP = 0
+#     RED_PAWN_TO_BOTTOM = 1
+#     PAWN_TO_LEFT = 2
+#     PAWN_TO_RIGHT = 3
 
-class DictMoveEntry(Enum):
+#     BLUE_KNIGHT_TO_TOPLEFT = 4
+#     BLUE_KNIGHT_TO_TOPRIGHT = 5
+#     BLUE_KNIGHT_LEFT = 6
+#     BLUE_KNIGHT_RIGHT = 7
+
+#     RED_KNIGHT_TO_BOTLEFT = 8
+#     RED_KNIGHT_TO_BOTRIGHT = 9
+#     RED_KNIGHT_LEFT = 10
+#     RED_KNIGHT_RIGHT = 11
+
+#     BLUE_PAWN_TO_TOP_RIGHT = 12
+#     BLUE_PAWN_TO_TOP_LEFT = 13
+#     RED_PAWN_TO_BOTTOM_LEFT = 14
+#     RED_PAWN_TO_BOTTOM_RIGHT = 15
+#     GAME_OVER_BLUE_WINS = 16
+#     GAME_OVER_RED_WINS = 17
+#     CONTINUE_GAME = 18
+class DictMoveEntry(fastenum.Enum):
     BLUE_PAWN_TO_TOP = 0
     RED_PAWN_TO_BOTTOM = 1
     PAWN_TO_LEFT = 2
@@ -260,7 +312,26 @@ class UnvalidateMovesArray(list):
 NotAccessiblePos = np.uint64(2 ** 63 + 2 ** 56 + 2 ** 7 + 2 ** 0)
 
 
-class BoardCommand(Enum):
+# class BoardCommand(Enum):
+#     Hit_Red_PawnOnTarget = 0
+#     Hit_Blue_PawnOnTarget = 1
+#     Hit_Red_KnightOnTarget = 2
+#     Hit_Blue_KnightOnTarget = 3
+#     Upgrade_Blue_KnightOnTarget = 4
+#     Upgrade_Red_KnightOnTarget = 5
+#     Degrade_Blue_KnightOnTarget = 6
+#     Degrade_Red_KnightOnTarget = 7
+#     Move_Blue_Knight_no_Change = 8
+#     Move_Red_Knight_no_Change = 9
+#     Move_Blue_Pawn_no_Change = 10
+#     Move_Red_Pawn_no_Change = 11
+#     Cannot_Move = 12
+#     Delete_Red_Pawn_from_StartPos =13
+#     Delete_Blue_Pawn_from_StartPos =14
+#     Delete_Red_Knight_from_StartPos = 15
+#     Delete_Blue_Knight_from_StartPos = 16
+
+class BoardCommand(fastenum.Enum):
     Hit_Red_PawnOnTarget = 0
     Hit_Blue_PawnOnTarget = 1
     Hit_Red_KnightOnTarget = 2
@@ -279,24 +350,29 @@ class BoardCommand(Enum):
     Delete_Red_Knight_from_StartPos = 15
     Delete_Blue_Knight_from_StartPos = 16
 
-class GameServerModel(Enum):
+# class GameServerModel(Enum):
+#     FEN_BOARD = 0
+#     CURRENT_PLAYER_STRING = 1
+#     PLAYER1 = 2
+#     PLAYER2 = 3
+class GameServerModel(fastenum.Enum):
     FEN_BOARD = 0
     CURRENT_PLAYER_STRING = 1
     PLAYER1 = 2
     PLAYER2 = 3
 
 
-
 class MaxHeap:
-    _heap = []
+    _heap =[]
     def __init__(self):
         self._heap = []
     
-    def push(self, item):
-        heapq.heappush(self._heap, (-item[2],item))
-    
+    def push(self, mvlist):
+        [heapq.heappush(self._heap, (-mv[3],mv[0],mv[1],mv[2]) ) for mv in mvlist]    
     def pop(self):
-        return heapq.heappop(self._heap)[1]
+        mv = heapq.heappop(self._heap)
+        mv = (mv[1],mv[2],mv[3],-mv[0])
+        return mv
 
 BC_TO_BOARD_OPS_DICT = {
     BoardCommand.Hit_Red_PawnOnTarget:              [[GameState._ZARR_INDEX_R_PAWNS],True,True],

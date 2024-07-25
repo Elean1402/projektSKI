@@ -158,7 +158,8 @@ class AlphaBetaSearch:
         
         print(f"Total moves looked at: {self.total_move_count}")
         if self.best_move is not None:
-            move_string = f"{MoveLib.BitsToPosition(self.best_move[0])}-{MoveLib.BitsToPosition(self.best_move[1])}"
+            #print(self.best_move)
+            move_string = f"{MoveLib.BitsToPosition(self.best_move[0][0])}-{MoveLib.BitsToPosition(self.best_move[0][1])}"
             print(move_string)
         else:
             move_string = None
@@ -179,7 +180,7 @@ class AlphaBetaSearch:
         if stored_score is not None:
             return stored_score, stored_move
 
-        moves = self.move_gen.genMoves(self.player,bitboards [DictMoveEntry.CONTINUE_GAME])
+        moves = self.move_gen.genMoves(self.player,bitboards, [DictMoveEntry.CONTINUE_GAME])
         #Züge sind nach score abssteigend sortiert
         moves = self.eval_func.sortMoveList(self.player,moves,self.move_gen,bitboards)
         best_score = -float('inf')
@@ -193,7 +194,7 @@ class AlphaBetaSearch:
             #new_bitboards = self.move_gen.exec_move(piece[0], dest)
             new_bitboards = self.move_gen.execSingleMove(piece,self.player,bitboards,[DictMoveEntry.CONTINUE_GAME])
             score, _ = self.alpha_beta_min(alpha, beta, depth_left - 1, new_bitboards, age)
-            self.move_gen.takeback()
+            self.move_gen.takeback(bitboards)
             if score > best_score:
                 best_score = score
                 best_move = [piece]
@@ -233,7 +234,7 @@ class AlphaBetaSearch:
             #new_bitboards = self.move_gen.exec_move(piece[0], dest)
             new_bitboards = self.move_gen.execSingleMove(piece,self.opponent,bitboards,[DictMoveEntry.CONTINUE_GAME])
             score, _ = self.alpha_beta_max(alpha, beta, depth_left - 1, new_bitboards, age)
-            self.move_gen.takeback()
+            self.move_gen.takeback(bitboards)
             if score < best_score:
                 best_score = score
                 best_move = [piece]

@@ -6,5 +6,13 @@
         "mean_duration": 5.195394099981058,
         "output": "D1-D2",
         "move_count": 116333
+    },
+    {
+        "function_name": "alpha_beta",
+        "fen": "2b03/1b0b05/6b01/3b02r01/1b01r02r01/2b05/2r03r01/3r02 b",
+        "depth": 5,
+        "mean_duration": 6.899429999990389,
+        "output": "B5-C5",
+        "move_count": 29214
     }
 ]

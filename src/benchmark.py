@@ -152,7 +152,8 @@ def profile(func_with_args: Callable[[], Tuple[Any, int]], func_name: str = "", 
 
     if move_output:
         if output is not None:
-            output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
+            if(isinstance(output[0],np.uint64)):
+                output = [MoveLib.BitsToPosition(output[0]), MoveLib.BitsToPosition(output[1])]
         else:
             output = "No valid move found."
 

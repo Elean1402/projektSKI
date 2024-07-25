@@ -8,6 +8,7 @@ from src.model import Player, BitMaskDict, DICT_MOVE, DictMoveEntry, BIT_MASK_AR
     NotAccessiblePos, BoardCommand, BC_TO_BOARD_OPS_DICT, BITMASK_MIDGAME
 from src.moveLib import MoveLib as mv
 from collections import deque
+from functools import lru_cache
 
 class MoveGenerator:
     # _board = np.array([np.uint64(0),np.uint64(0),np.uint64(0),np.uint64(0)])
@@ -521,45 +522,46 @@ class MoveGenerator:
         startpos = move[0]
         targetpos = move[1]
         boardCommands = move[2]
+        [self._Board_Exec_Move(boardCopy,BC_TO_BOARD_OPS_DICT[bc],startpos,targetpos) for bc in boardCommands]
         # TODO exec Move
-        for bc in boardCommands:
-            bc = BoardCommand(bc)
-            if bc == BoardCommand.Hit_Red_PawnOnTarget:
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
-            elif bc == BoardCommand.Hit_Blue_PawnOnTarget:
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~targetpos
-            elif bc == BoardCommand.Hit_Red_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
-            elif bc == BoardCommand.Hit_Blue_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~targetpos
+        # for bc in boardCommands:
+        #     bc = BoardCommand(bc)
+        #     if bc == BoardCommand.Hit_Red_PawnOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~targetpos
+        #     elif bc == BoardCommand.Hit_Blue_PawnOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~targetpos
+        #     elif bc == BoardCommand.Hit_Red_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~targetpos
+        #     elif bc == BoardCommand.Hit_Blue_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~targetpos
            
-            elif bc == BoardCommand.Upgrade_Blue_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-            elif bc == BoardCommand.Upgrade_Red_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+        #     elif bc == BoardCommand.Upgrade_Blue_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+        #     elif bc == BoardCommand.Upgrade_Red_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
            
-            elif bc == BoardCommand.Degrade_Blue_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-            elif bc == BoardCommand.Degrade_Red_KnightOnTarget:
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+        #     elif bc == BoardCommand.Degrade_Blue_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+        #     elif bc == BoardCommand.Degrade_Red_KnightOnTarget:
+        #         boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
             
-            elif bc == BoardCommand.Move_Blue_Knight_no_Change:
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
-            elif bc == BoardCommand.Move_Red_Knight_no_Change:
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
-            elif bc == BoardCommand.Move_Blue_Pawn_no_Change:
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
-            elif bc == BoardCommand.Move_Red_Pawn_no_Change:
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
+        #     elif bc == BoardCommand.Move_Blue_Knight_no_Change:
+        #         boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] |= targetpos
+        #     elif bc == BoardCommand.Move_Red_Knight_no_Change:
+        #         boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] |= targetpos
+        #     elif bc == BoardCommand.Move_Blue_Pawn_no_Change:
+        #         boardCopy[GameState._ZARR_INDEX_B_PAWNS] |= targetpos
+        #     elif bc == BoardCommand.Move_Red_Pawn_no_Change:
+        #         boardCopy[GameState._ZARR_INDEX_R_PAWNS] |= targetpos
            
-            elif bc == BoardCommand.Delete_Red_Pawn_from_StartPos:
-                boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
-            elif bc == BoardCommand.Delete_Blue_Pawn_from_StartPos:
-                boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
-            elif bc == BoardCommand.Delete_Red_Knight_from_StartPos:
-                boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
-            elif bc == BoardCommand.Delete_Blue_Knight_from_StartPos:
-                boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
+        #     elif bc == BoardCommand.Delete_Red_Pawn_from_StartPos:
+        #         boardCopy[GameState._ZARR_INDEX_R_PAWNS] &= ~startpos
+        #     elif bc == BoardCommand.Delete_Blue_Pawn_from_StartPos:
+        #         boardCopy[GameState._ZARR_INDEX_B_PAWNS] &= ~startpos
+        #     elif bc == BoardCommand.Delete_Red_Knight_from_StartPos:
+        #         boardCopy[GameState._ZARR_INDEX_R_KNIGHTS] &= ~startpos
+        #     elif bc == BoardCommand.Delete_Blue_Knight_from_StartPos:
+        #         boardCopy[GameState._ZARR_INDEX_B_KNIGHTS] &= ~startpos
             
 
         self.checkBoardIfGameOver(gameOver, boardCopy, printB)

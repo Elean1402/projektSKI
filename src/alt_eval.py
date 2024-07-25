@@ -10,13 +10,20 @@ from src.moveLib import MoveLib
 from src.moveGenerator_sicher import MoveGenerator
 from collections import deque
 from src.board_final import *
+#from functools import lru_cache
 # Precomputed table of bit counts for 16-bit numbers
 BIT_COUNTS = [bin(i).count('1') for i in range(2**16)]
 
-def count_bits(mask):
-    if not isinstance(mask, int):
-        mask = int(mask)  # Ensure the mask is an integer
-    return BIT_COUNTS[mask & 0xFFFF] + BIT_COUNTS[(mask >> 16) & 0xFFFF] + BIT_COUNTS[(mask >> 32) & 0xFFFF] + BIT_COUNTS[(mask >> 48) & 0xFFFF]
+# def count_bits(mask):
+#     if not isinstance(mask, int):
+#         mask = int(mask)  # Ensure the mask is an integer
+#     return BIT_COUNTS[mask & 0xFFFF] + BIT_COUNTS[(mask >> 16) & 0xFFFF] + BIT_COUNTS[(mask >> 32) & 0xFFFF] + BIT_COUNTS[(mask >> 48) & 0xFFFF]
+
+
+    
+    
+
+
 
 class EvalFunction_Alt:
     _CONFIG_DICT = {
@@ -124,11 +131,13 @@ class EvalFunction:
             raise ValueError("MaxPlayer not set")
         if self._CONFIG_DICT[Config.CONFIGVERSION] is None:
             raise ValueError("CONFIGVERSION NOT SET")
-
+    
+   
     def _computeActualPositionalPoints(self, bitboards):
         def compute_points(piece_index, score_dict):
             positions = MoveGenerator.getBitPositions(bitboards[piece_index])
-            return np.sum(score_dict[MoveLib.BitsToPosition(bits)] for bits in positions)
+            #return np.sum(score_dict[MoveLib.BitsToPosition(bits)] for bits in positions)
+            return np.add.reduce([score_dict[MoveLib.BitsToPosition(bits)] for bits in positions])
 
         max_player = self._CONFIG_DICT[Config.MaxPlayer]
         if max_player == Player.Red:
@@ -155,13 +164,21 @@ class EvalFunction:
             position_points_min += compute_points(index, score_dict)
 
         return position_points_max - position_points_min
-
+    def count_bits(self,number: np.uint64)-> int:
+        return len(list(MoveGenerator.getBitPositions(number)))
+        
     def _materialPoints(self, bitboards):
-        bp = count_bits(bitboards[GameState._ZARR_INDEX_B_PAWNS] & ~bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
-        bk = count_bits(bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
-        rp = count_bits(bitboards[GameState._ZARR_INDEX_R_PAWNS] & ~bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
-        rk = count_bits(bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+        bp = self.count_bits(bitboards[GameState._ZARR_INDEX_B_PAWNS] & ~bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+        bk = self.count_bits(bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+        rp = self.count_bits(bitboards[GameState._ZARR_INDEX_R_PAWNS] & ~bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+        rk = self.count_bits(bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
         return rp + rk - bp - bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp + bk - rp - rk
+    # def _materialPoints(self, bitboards):
+    #     bp = count_bits(bitboards[GameState._ZARR_INDEX_B_PAWNS] & ~bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+    #     bk = count_bits(bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+    #     rp = count_bits(bitboards[GameState._ZARR_INDEX_R_PAWNS] & ~bitboards[GameState._ZARR_INDEX_B_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_PAWN]
+    #     rk = count_bits(bitboards[GameState._ZARR_INDEX_R_KNIGHTS]) * self._CONFIG_DICT[Config.MAT_KNIGHT]
+    #     return rp + rk - bp - bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp + bk - rp - rk
 
     def computeEvaluationScore(self, bitboards) -> int:
         totalScore = self._materialPoints(bitboards)

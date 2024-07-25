@@ -1,0 +1,86 @@
+         26547017 function calls (26517821 primitive calls) in 15.167 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+  1713974    1.355    0.000    1.625    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveLib.py:156(BitsToPosition)
+  2250340    1.245    0.000    3.930    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:131(<genexpr>)
+  2500755    1.177    0.000    1.177    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:307(getBitPositions)
+  4868339    1.142    0.000    1.792    0.000 C:\Python312\Lib\enum.py:1267(__hash__)
+   536368    0.982    0.000    6.830    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:129(compute_points)
+   536368    0.956    0.000    0.956    0.000 {built-in method _warnings.warn}
+   308411    0.900    0.000    1.695    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:352(_getTarget)
+   140211    0.718    0.000    1.377    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:493(execSingleMove)
+  4868339    0.650    0.000    0.650    0.000 {built-in method builtins.hash}
+   134092    0.582    0.000    7.662    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:128(_computeActualPositionalPoints)
+   197414    0.521    0.000    0.831    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:89(_checkTargetPos)
+   134092    0.480    0.000    1.261    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:159(_materialPoints)
+   536368    0.445    0.000    4.375    0.000 {built-in method builtins.sum}
+   536368    0.427    0.000    0.517    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:16(count_bits)
+   536368    0.362    0.000    5.768    0.000 C:\Users\admin\AppData\Roaming\Python\Python312\site-packages\numpy\_core\fromnumeric.py:2255(sum)
+     5889    0.350    0.000    3.357    0.001 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:259(_genValidatedMoves)
+   140211    0.327    0.000    0.720    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:573(takeback)
+  1713974    0.270    0.000    0.270    0.000 {method 'bit_length' of 'int' objects}
+   140211    0.268    0.000    0.389    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:471(checkBoardIfGameOver)
+   288459    0.210    0.000    0.210    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:584(_Board_Exec_Move)
+  1296520    0.197    0.000    0.197    0.000 {built-in method builtins.isinstance}
+   197414    0.153    0.000    0.153    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:51(_startPosBelongsToPlayer)
+     6120    0.142    0.000    0.142    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:23(hash_position)
+   288459    0.135    0.000    0.214    0.000 C:\Python312\Lib\enum.py:726(__call__)
+   110997    0.129    0.000    9.244    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:190(_evalSingleMove)
+   134092    0.115    0.000    9.039    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:166(computeEvaluationScore)
+     5889    0.091    0.000    9.477    0.002 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py:171(sortMoveList)
+    53001    0.087    0.000    0.135    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py:218(append)
+    53001    0.086    0.000    0.187    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:430(_filterPositions)
+   548504    0.085    0.000    0.085    0.000 {built-in method builtins.len}
+   5205/1    0.081    0.000   15.163   15.163 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:173(alpha_beta_max)
+   536368    0.080    0.000    0.080    0.000 C:\Users\admin\AppData\Roaming\Python\Python312\site-packages\numpy\_core\fromnumeric.py:2250(_sum_dispatcher)
+   288459    0.079    0.000    0.079    0.000 C:\Python312\Lib\enum.py:1129(__new__)
+   110997    0.043    0.000    0.080    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py:297(pop)
+   110997    0.037    0.000    0.037    0.000 {built-in method _heapq.heappop}
+     5889    0.036    0.000    0.060    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py:295(push)
+   163999    0.035    0.000    0.035    0.000 {function FilteredPositionsArray.append at 0x0000019897D4B7E0}
+   140211    0.033    0.000    0.033    0.000 {method 'append' of 'collections.deque' objects}
+ 24010/18    0.032    0.000   15.159    0.842 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:214(alpha_beta_min)
+   140211    0.027    0.000    0.027    0.000 {method 'pop' of 'collections.deque' objects}
+   110997    0.025    0.000    0.025    0.000 {built-in method _heapq.heappush}
+    29214    0.014    0.000    0.021    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:254(is_time_exceeded)
+     5889    0.011    0.000    0.011    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:407(_getAllPawns)
+     5889    0.010    0.000    3.369    0.001 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:33(genMoves)
+    24010    0.008    0.000    0.008    0.000 {built-in method builtins.max}
+    29216    0.007    0.000    0.007    0.000 {built-in method time.time}
+     5889    0.006    0.000    0.006    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:59(store)
+     6120    0.004    0.000    0.004    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:62(lookup)
+        1    0.003    0.003   15.167   15.167 C:\Python312\Lib\timeit.py:186(repeat)
+     5889    0.002    0.000    0.002    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py:422(_getAllKnights)
+     5889    0.002    0.000    0.003    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py:211(__init__)
+     5889    0.002    0.000    0.002    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py:292(__init__)
+     5204    0.002    0.000    0.002    0.000 {built-in method builtins.min}
+        4    0.001    0.000    0.001    0.000 {built-in method builtins.print}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.compile}
+        1    0.000    0.000   15.164   15.164 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:135(search)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 C:\Python312\Lib\timeit.py:104(__init__)
+        1    0.000    0.000   15.164   15.164 C:\Python312\Lib\timeit.py:166(timeit)
+        1    0.000    0.000   15.167   15.167 C:\Python312\Lib\timeit.py:240(repeat)
+        1    0.000    0.000    0.000    0.000 C:\Python312\Lib\timeit.py:81(reindent)
+        1    0.000    0.000   15.164   15.164 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\play.py:22(<lambda>)
+        1    0.000    0.000    0.000    0.000 {method 'format' of 'str' objects}
+        1    0.000    0.000   15.164   15.164 <timeit-src>:2(inner)
+        1    0.000    0.000   15.164   15.164 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\benchmark.py:132(wrapper)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.exec}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.globals}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.callable}
+        1    0.000    0.000    0.000    0.000 <timeit-src>:1(<module>)
+        2    0.000    0.000    0.000    0.000 {built-in method time.perf_counter}
+        1    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 C:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py:56(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method gc.enable}
+        1    0.000    0.000    0.000    0.000 {built-in method gc.disable}
+        1    0.000    0.000    0.000    0.000 {built-in method gc.isenabled}
+
+
+
+Mean duration over 1 repetitions: 15.164217600016855 seconds
+Output: B5-C5
+Move count: 29214

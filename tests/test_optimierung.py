@@ -35,5 +35,5 @@ if __name__ == '__main__':
     l1 = TestOptimierung_MoveList.mapfunc(testList1)
     l2 = TestOptimierung_MoveList.listcompr_flatt(testList1)
     l3 = TestOptimierung_MoveList.nested_listcompr_flatt(testList2)
-    Benchmarktest2_Func.benchPrint()
+    Benchmarktest2_Func.benchPrint("test")
     
