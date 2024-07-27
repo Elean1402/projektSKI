@@ -389,7 +389,7 @@ class MaxHeapMCTS:
     def pop(self):
         """returns Tuple[float,treelib.Node]: (score,node)"""
         mv = heapq.heappop(self._heap)
-        mv = (-mv[0],mv[1])
+        mv = mv[1]
         return mv
     def clear(self):
         self._heap = []
@@ -419,7 +419,13 @@ BC_TO_BOARD_OPS_DICT = {
 }
 
 BITMASK_MIDGAME =   np.uint64(0b0000000000000000000000001111111111111111000000000000000000000000)
-                    
+
+
+# class MCTS_GAME_CONFIG:
+#     def __init__(self, board:np.uint64, player:Player, C: float= np.sqrt(2)):
+#         self.board = board
+#         self.player = player
+#         self.C = C
 
 
 

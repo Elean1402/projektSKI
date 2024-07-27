@@ -4,13 +4,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from treelib import Node, Tree
 import numpy as np
 import threading
-from moveGenerator_sicher import MoveGenerator
-from model import DictMoveEntry,MaxHeapMCTS,Player
+from src.moveGenerator_sicher import MoveGenerator
+from src.model import DictMoveEntry,MaxHeapMCTS,Player
 from pygame import time as pgtime
 
 
 class NodeData:
-    def __init__(self, board:list[np.uint64],gameOver:DictMoveEntry ,move: tuple[np.uint64,np.int64] = (np.uint64(0),np.uint64(0))):
+    def __init__(self, board:list[np.uint64],gameOver:list[DictMoveEntry] ,move: tuple[np.uint64,np.int64] = (np.uint64(0),np.uint64(0))):
         #initializing the variables this way, gives usually a small speed up, during frequently creating nodes
         self.board, self.score, self.simulations, self.move, self.gameOver = board.copy(), 0, 0, move, gameOver
 
@@ -24,8 +24,10 @@ class MCTS:
         self.currentNode = self.root #used for navigation on tree
         self.C = C # exploration constant
         self._mv = MoveGenerator()
-        self._mv.checkBoardIfGameOver([DictMoveEntry.CONTINUE_GAME],board) #root could be already in a end state of the game
-        self.tree.create_node("root",1,data=NodeData(board,self._mv._gameover))
+        
+        data = NodeData(board,[DictMoveEntry.CONTINUE_GAME])
+        self._mv.checkBoardIfGameOver(data.gameOver,board) #root could be already in a end state of the game
+        self.tree.create_node("root",1,data=data)
         self.bestMove = (np.uint64(0),np.uint64(0))
         
     def _1chooseNode(self,currNode:Node)-> Node:
@@ -35,8 +37,8 @@ class MCTS:
         maxheap = MaxHeapMCTS()
         while not tempNode.is_leaf():
             tmpID = tempNode.identifier
-            childIDlist = self.tree.children(tmpID)
-            [maxheap.push(self._computeUCTValue(childId)) for childId in childIDlist]
+            childlist = self.tree.children(tmpID)
+            [maxheap.push((self._computeUCTValue(child),child)) for child in childlist]
             tempNode = maxheap.pop()
             maxheap.clear()
         #state: tempNode is a leaf
@@ -44,8 +46,9 @@ class MCTS:
             self.bestMove = (tempNode.data.move[0],tempNode.data.move[1])
         return tempNode
     
-    def _computeUCTValue(self,nodeId:any)->float:
+    def _computeUCTValue(self,node:Node)->float:
         """Berechnet den UCT-Wert"""
+        nodeId = node.identifier
         N = self.tree.parent(nodeId).data.simulations
         nodedata = self.tree.get_node(nodeId).data
         score = nodedata.score
