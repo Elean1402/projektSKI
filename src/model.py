@@ -374,6 +374,26 @@ class MaxHeap:
         mv = (mv[1],mv[2],mv[3],-mv[0])
         return mv
 
+class MaxHeapMCTS:
+    _heap =[]
+    def __init__(self):
+        self._heap = []
+    
+    def push(self, item):
+        """ 
+        Args:
+            item (float,treelib.Node): (score,node)
+        """
+        score, node = item
+        heapq.heappush(self._heap, (-score,node) )     
+    def pop(self):
+        """returns Tuple[float,treelib.Node]: (score,node)"""
+        mv = heapq.heappop(self._heap)
+        mv = (-mv[0],mv[1])
+        return mv
+    def clear(self):
+        self._heap = []
+
 BC_TO_BOARD_OPS_DICT = {
     BoardCommand.Hit_Red_PawnOnTarget:              [[GameState._ZARR_INDEX_R_PAWNS],True,True],
     BoardCommand.Hit_Blue_PawnOnTarget:             [[GameState._ZARR_INDEX_B_PAWNS],True,True],

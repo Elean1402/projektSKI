@@ -2,7 +2,7 @@ import os
 import sys
 
 import numpy as np
-
+import fastenum
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Füge das Verzeichnis src zum Python-Pfad hinzu
@@ -243,3 +243,5 @@ class MoveLib:
         np.uint64(4611686018427387904):    "B8",
         np.uint64(9223372036854775808):    "A8",
     }
+    
+    
