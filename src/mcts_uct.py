@@ -47,7 +47,8 @@ class MCTS:
             
         #state: tempNode is a leaf
         if(self.tree.parent(tempNode.identifier) == self.tree.root):
-            self.bestMove = (tempNode.data.move[0],tempNode.data.move[1])
+            self.bestMove = (tempNode.data.move[0],tempNode.data.move[1]) #for debug purposes
+            
         return tempNode
     
     def _getMaxUCTNode(self,nodes:list[Node],maxheap: MaxHeapMCTS):
@@ -108,6 +109,7 @@ class MCTS:
         randG = np.random.default_rng()
         
         currentNode = self.tree.get_node(nodeId)
+        print(currentNode)
         currentBoard = currentNode.data.board
         while gameOver[0] == DictMoveEntry.CONTINUE_GAME:
             moves = self._mv.genMoves(player,currentBoard,gameOver)
@@ -147,7 +149,7 @@ class MCTS:
     def _doMCTS(self):
         pass
     
-    def runMCTS_Worker(self, reqMsg, replMsg, timeOver: threading.Event, solutionFound:threading.Event, lock: threading.Lock ,testmode=False)->None:
+    def runMCTS_Worker(self, reqMsg, replMsg, timeOver: threading.Event, solutionFound:threading.Event, lock: threading.Lock ,maxiter=10000,testmode=False)->None:
         """ Startet die Suche und soll als Thread aufgerufen werden.
             Das Ergebnis soll in replMsg gespeichert werden.
             
@@ -157,30 +159,35 @@ class MCTS:
             solutionFound: threading Event
             """
         currentNode = self.tree.get_node(self.tree.root)
-        currentNodeId = currentNode.identifier
-        while not timeOver.isSet():
+        #currentNodeId = currentNode.identifier
+        while not timeOver.is_set():
             currentNode = self._1chooseNode(currentNode)
-            currentNodeId = currentNode.identifier
+            if(self.tree.parent(currentNode.identifier).identifier == 1):
+                with lock:
+                    replMsg[0] = json.dumps({"move": MoveLib.move(self.bestMove,3)})
+                    solutionFound.set()
+            #self.printTree(self.tree, str(currentNode.identifier))
+            
             if(currentNode.data.simulations == 0):
                 #rollout
-                score = self._3runSimulation(currentNodeId)
+                score = self._3runSimulation(currentNode.identifier)
                 currentNode = self._4backPropagation(currentNode,score)
             else:
-                childIdList= self._2generateNodes(currentNodeId)
-                if(childIdList):
-                    score = self._3runSimulation(childIdList[0])
-                    currentNode = self._4backPropagation(self.tree.get_node(childIdList[0]),score)
+                childIdList= self._2generateNodes(currentNode.identifier)
+                
+                score = self._3runSimulation(childIdList[0])
+                currentNode = self._4backPropagation(self.tree.get_node(childIdList[0]),score)
                 #if no children jump to root again
                 #could lead to endless loop -> but limited to timeOver Event
-                else:
-                    currentNode = self.tree.get_node(self.root)
+                # else:
+                #     currentNode = self.tree.get_node(self.root)
                 
-        best_move = self.tree.bestmove
-        if(best_move[0] == 0 or best_move[1] == 0):
-            raise Exception("mcts search: something went wrong, no move found")
-        with lock:
-            replMsg.append(json.dumps({"move": MoveLib.move(best_move,3)}))
-            solutionFound.set()
+        # best_move = self.tree.bestmove
+        # if(best_move[0] == 0 or best_move[1] == 0):
+        #     raise Exception("mcts search: something went wrong, no move found")
+        # with lock:
+        #     replMsg[0] = json.dumps({"move": MoveLib.move(best_move,3)})
+        #     solutionFound.set()
         
         return
     
@@ -198,10 +205,10 @@ class MCTS:
         dot_lines.append('}')
         dot = '\n'.join(dot_lines)
         src = Source(dot)
-        src.format = 'png'
+        src.format = 'pdf'
         path = '../data/mcts/trees'  # Ersetzen Sie diesen Pfad durch den gewünschten Ordner
         
-        src.render( filename=filename,directory=path, format='png', cleanup=False)
+        src.render( filename=filename,directory=path, format='pdf', cleanup=False)
     
     
     

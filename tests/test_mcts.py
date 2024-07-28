@@ -311,7 +311,7 @@ class MCTS(unittest.TestCase):
         root = monteC.tree.get_node(1)
         rootscore,rootn = 0,0
         tmpnode = root
-        for _ in range(10):
+        for _ in range(1000):
             tmpnode = monteC._1chooseNode(tmpnode)
             print(tmpnode.identifier)
             if(tmpnode.data.simulations == 0):
@@ -337,8 +337,30 @@ class MCTS(unittest.TestCase):
         
         
         
+    def test_total_mcts1(self):
+        fen = "b0b0b0b0b0b0/1b0b0b0b0b0b01/8/8/8/8/1r0r0r0r0r0r01/r0r0r0r0r0r0"
+        bb = GameState.createBitBoardFromFEN(fen)
+        monteC = mcts(bb,Player.Red)
+        root = monteC.tree.get_node(1)
+        rootscore,rootn = 0,0
+        tmpnode = root
+        for _ in range(10):
+            tmpnode = monteC._1chooseNode(tmpnode)
+            print(tmpnode.identifier)
+            if(tmpnode.data.simulations == 0):
+                #print("simu:",tmpnode.identifier)
+                score = monteC._3runSimulation(tmpnode.identifier)
+                if(tmpnode.identifier == 1):
+                    rootscore, rootn= score,1
+                tmpnode = monteC._4backPropagation(tmpnode,score)
+            else:
+                #print("expansion:", tmpnode.identifier)
+                
+                nodeList = monteC._2generateNodes(tmpnode.identifier)
+                score = monteC._3runSimulation(nodeList[0].identifier)
+                tmpnode = monteC._4backPropagation(nodeList[0],score)
         
-        
-        
+        monteC.printTree(monteC.tree, "total_test")
+     
     def test_runMCTS_Worker1(self):
         pass
