@@ -11,18 +11,18 @@ class TestOptimierung_MoveList():
     
     
         
-    @Benchmarktest2_Func.profile
+    @Benchmarktest2_Func.profile()
     def mapfunc(alist):
         flatList = []
         for x in range(100000):
             flatList= list( map(lambda x: (alist[0][0], x), alist[0][1]) )
         return flatList
-    @Benchmarktest2_Func.profile
+    @Benchmarktest2_Func.profile()
     def listcompr_flatt(alist):
         for x in range(100000):
             flatlist = [(alist[0][0], dest) for dest in alist[0][1] ]
         return flatlist
-    @Benchmarktest2_Func.profile
+    @Benchmarktest2_Func.profile()
     def nested_listcompr_flatt(alist):
         for x in range(100000):
             flatlist = [[(alist[0][0], dest) for dest in destL[1]] for destL in alist]

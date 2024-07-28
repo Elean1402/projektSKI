@@ -1,7 +1,0 @@
-digraph tree {
-    "1" [label="id:1
- Player.Red 
- 
- no move applied 
- score=1, n=1"];
-}

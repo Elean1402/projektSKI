@@ -23,30 +23,33 @@ class Benchmarktest2_Func:
 
 
     _S = io.StringIO()
-    sortby = SortKey.CUMULATIVE  # 'cumulative'
+    
 
     # Global profiler instance
     global_profiler = cProfile.Profile()
 
     @classmethod
-    def profile(self,func):
+    def profile(self,repeat=1):
+        def outer(func):    
+            def wrapper(*args, **kwargs):
+                if self._S.closed:
+                    self._S = io.StringIO()
+                self.global_profiler.enable()
 
-        def wrapper(*args, **kwargs):
-            if self._S.closed:
-                self._S = io.StringIO()
-            self.global_profiler.enable()
-            retval = func(*args, **kwargs)
+                retval =[ func(*args, **kwargs) for _ in range(repeat)]
 
-            self.global_profiler.disable()
-            return retval
-
-        return wrapper
+                self.global_profiler.disable()
+                return retval[0]
+        
+            return wrapper
+        return outer
+    
     @classmethod
-    def benchPrint(self, filename:str =""):
-        ps = pstats.Stats(self.global_profiler, stream=self._S).sort_stats(SortKey.CUMULATIVE)
-        ps.strip_dirs()
+    def benchPrint(self, filename:str ="", sortby:SortKey=SortKey.CUMULATIVE):
+        s = io.StringIO()
+        ps = pstats.Stats(self.global_profiler, stream=s).strip_dirs().sort_stats(sortby)
         ps.print_stats()
-        benchContent = self._S.getvalue()
+        benchContent = s.getvalue()
         print(benchContent)
     
         if filename:

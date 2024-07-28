@@ -10,6 +10,9 @@ from pygame import time as pgtime
 from src.moveLib import MoveLib
 from graphviz import Source
 import json
+from pygame import time as pygametime
+from src.gamestate import GameState
+from src.gui import Gui
 
 class NodeData:
     def __init__(self, board:list[np.uint64],gameOver:list[DictMoveEntry] ,move: tuple[np.uint64,np.int64] = (np.uint64(0),np.uint64(0))):
@@ -31,7 +34,7 @@ class MCTS:
         data = NodeData(board,[DictMoveEntry.CONTINUE_GAME])
         self._mv.checkBoardIfGameOver(data.gameOver,board) #root could be already in a end state of the game
         self.tree.create_node("root",1,data=data)
-        self.bestMove = (np.uint64(0),np.uint64(0))
+        #self.bestMove = (np.uint64(0),np.uint64(0)) 
         
         
     def _1chooseNode(self,currNode:Node)-> Node:
@@ -46,8 +49,8 @@ class MCTS:
             tempNode= self._getMaxUCTNode(childlist,maxheap)
             
         #state: tempNode is a leaf
-        if(self.tree.parent(tempNode.identifier) == self.tree.root):
-            self.bestMove = (tempNode.data.move[0],tempNode.data.move[1]) #for debug purposes
+        # if(self.tree.parent(tempNode.identifier) == self.tree.root):
+        #     self.bestMove = (tempNode.data.move[0],tempNode.data.move[1]) #for debug purposes
             
         return tempNode
     
@@ -61,7 +64,13 @@ class MCTS:
         maxNode = maxheap.pop()
         maxheap.clear()
         return maxNode
-            
+    
+    def _getBestMove(self)->tuple:
+        cl =self.tree.children(self.root)
+        maxheap = MaxHeapMCTS()
+        [maxheap.push((c.data.score,c))for c in cl if c.data.simulations]
+        maxnode = maxheap.pop()
+        return (maxnode.data.move[0],maxnode.data.move[1])
         
         
     def _computeUCTValue(self,node:Node)->float:
@@ -81,17 +90,19 @@ class MCTS:
         
         depth = self.tree.depth(currentNode)
         player =  self.player1 if np.mod(depth,2,dtype=np.uint64) == 0 else self.player2
-        if(currentNode.data.gameOver[0] == DictMoveEntry.GAME_OVER_BLUE_WINS and player == Player.Blue or
-           currentNode.data.gameOver[0] == DictMoveEntry.GAME_OVER_RED_WINS and player == Player.Red):
-            return []
+        # if(currentNode.data.gameOver[0] == DictMoveEntry.GAME_OVER_BLUE_WINS and player == Player.Blue or
+        #    currentNode.data.gameOver[0] == DictMoveEntry.GAME_OVER_RED_WINS and player == Player.Red):
+        #     return []
 
         board = currentNode.data.board
         
         gameOver = [DictMoveEntry.CONTINUE_GAME]
         movelist = self._mv.genMoves(player,board,gameOver)
-        if gameOver[0] != DictMoveEntry.CONTINUE_GAME:
-            currentNode.data.gameOver = gameOver
+        if not movelist:
             return []
+        # if gameOver[0] != DictMoveEntry.CONTINUE_GAME:
+        #     currentNode.data.gameOver = gameOver
+        #     return []
         movelistGameOvers = zip(movelist, [[DictMoveEntry.CONTINUE_GAME] for _ in movelist])
         
         resBoards = [(self._mv.execSingleMove(move,player,board,gameOver),gameOver) for move,gameOver in movelistGameOvers]
@@ -109,7 +120,7 @@ class MCTS:
         randG = np.random.default_rng()
         
         currentNode = self.tree.get_node(nodeId)
-        print(currentNode)
+        
         currentBoard = currentNode.data.board
         while gameOver[0] == DictMoveEntry.CONTINUE_GAME:
             moves = self._mv.genMoves(player,currentBoard,gameOver)
@@ -133,6 +144,7 @@ class MCTS:
     def _4backPropagation(self, currentNode:Node, score:float)-> Node:
         """ Führt die Propagation durch ausgehend von currentNode
             Returns treelib.Node: root of tree"""
+        
         data = currentNode.data
         data.simulations += 1
         data.score += score
@@ -146,60 +158,50 @@ class MCTS:
 
         return tmpNode
     
-    def _doMCTS(self):
-        pass
-    
-    def runMCTS_Worker(self, reqMsg, replMsg, timeOver: threading.Event, solutionFound:threading.Event, lock: threading.Lock ,maxiter=10000,testmode=False)->None:
-        """ Startet die Suche und soll als Thread aufgerufen werden.
-            Das Ergebnis soll in replMsg gespeichert werden.
-            
-            reqMsg:  Aufrufende Instanz -> runMCTS_Worker
-            replMsg: Aufrufende Instanz <- runMCTS_Worker
-            timeOver: threading Event
-            solutionFound: threading Event
-            """
-        currentNode = self.tree.get_node(self.tree.root)
-        #currentNodeId = currentNode.identifier
-        while not timeOver.is_set():
-            currentNode = self._1chooseNode(currentNode)
-            if(self.tree.parent(currentNode.identifier).identifier == 1):
-                with lock:
-                    replMsg[0] = json.dumps({"move": MoveLib.move(self.bestMove,3)})
-                    solutionFound.set()
-            #self.printTree(self.tree, str(currentNode.identifier))
-            
-            if(currentNode.data.simulations == 0):
-                #rollout
-                score = self._3runSimulation(currentNode.identifier)
-                currentNode = self._4backPropagation(currentNode,score)
-            else:
-                childIdList= self._2generateNodes(currentNode.identifier)
-                
-                score = self._3runSimulation(childIdList[0])
-                currentNode = self._4backPropagation(self.tree.get_node(childIdList[0]),score)
-                #if no children jump to root again
-                #could lead to endless loop -> but limited to timeOver Event
-                # else:
-                #     currentNode = self.tree.get_node(self.root)
-                
-        # best_move = self.tree.bestmove
-        # if(best_move[0] == 0 or best_move[1] == 0):
-        #     raise Exception("mcts search: something went wrong, no move found")
-        # with lock:
-        #     replMsg[0] = json.dumps({"move": MoveLib.move(best_move,3)})
-        #     solutionFound.set()
+    def doMCTS_v1(self, timeRemaining: float, timeTolerance:float= 10)->tuple:
+        clock = pygametime.Clock()
+        dt = 0.0
+        dt += clock.tick()
+        maxTimeFrame = timeRemaining
+        tolerance = timeTolerance # ms
         
-        return
+        root = self.tree.get_node(1)
+        
+        tmpnode = root
+        while maxTimeFrame > tolerance:
+            tmpnode = self._1chooseNode(tmpnode)
+            maxTimeFrame -= clock.tick()
+            if(maxTimeFrame <= tolerance):
+                break
+            if(tmpnode.data.simulations == 0):
+                #print("simu:",tmpnode.identifier)
+                score = self._3runSimulation(tmpnode.identifier)
+                
+                tmpnode = self._4backPropagation(tmpnode,score)
+                maxTimeFrame -= clock.tick()
+                if(maxTimeFrame <= tolerance):
+                    break
+            else:
+                nodeList = self._2generateNodes(tmpnode.identifier)
+                score = self._3runSimulation(nodeList[0].identifier)
+                tmpnode = self._4backPropagation(nodeList[0],score)
+                maxTimeFrame -= clock.tick()
+                if(maxTimeFrame <= tolerance):
+                    break
+        
+       
+        return self._getBestMove()    
     
-    def printTree(self,tree:Tree, filename:str, showBoard:bool = False):
+    
+    def printTree(self, filename:str, showBoard:bool = False):
         
         dot_lines = ['digraph tree {']
-        for node in tree.all_nodes():
+        for node in self.tree.all_nodes():
             label = f"id:{node.identifier}\n {self.player1  if np.mod(self.tree.depth(node.identifier),2,dtype=np.uint64) ==0 else self.player2} \n{self._mv.prettyPrintBoard2(node.data.board,node.data.gameOver) if showBoard else ""} \n {self._mv.prettyPrintMove(node.data.move) if node.data.move[0] != 0 else "no move applied"} \n score={node.data.score}, n={node.data.simulations}" if node.data else node.tag
             dot_lines.append(f'    "{node.identifier}" [label="{label}"];')
             if node.is_leaf():
                 continue
-            for child in tree.children(node.identifier):
+            for child in self.tree.children(node.identifier):
                 dot_lines.append(f'    "{node.identifier}" -> "{child.identifier}";')
         
         dot_lines.append('}')
