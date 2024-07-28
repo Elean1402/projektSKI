@@ -1,0 +1,97 @@
+digraph tree {
+    "1" [label="id:1
+ Player.Blue 
+ 
+ no move applied 
+ score=10, n=10"];
+    "1" -> "eae8c117-4ce2-11ef-b456-34cff668aa69";
+    "1" -> "eae8c118-4ce2-11ef-b7a2-34cff668aa69";
+    "eae8c117-4ce2-11ef-b456-34cff668aa69" [label="id:eae8c117-4ce2-11ef-b456-34cff668aa69
+ Player.Red 
+ 
+ B1-B2 
+ score=5, n=5"];
+    "eae8c117-4ce2-11ef-b456-34cff668aa69" -> "eae935c3-4ce2-11ef-84c3-34cff668aa69";
+    "eae8c117-4ce2-11ef-b456-34cff668aa69" -> "eae935c4-4ce2-11ef-bc76-34cff668aa69";
+    "eae8c118-4ce2-11ef-b7a2-34cff668aa69" [label="id:eae8c118-4ce2-11ef-b7a2-34cff668aa69
+ Player.Red 
+ 
+ B1-C1 
+ score=4, n=4"];
+    "eae8c118-4ce2-11ef-b7a2-34cff668aa69" -> "eae95cd4-4ce2-11ef-b9ef-34cff668aa69";
+    "eae8c118-4ce2-11ef-b7a2-34cff668aa69" -> "eae95cd5-4ce2-11ef-bf4a-34cff668aa69";
+    "eae935c3-4ce2-11ef-84c3-34cff668aa69" [label="id:eae935c3-4ce2-11ef-84c3-34cff668aa69
+ Player.Blue 
+ 
+ B8-B7 
+ score=2, n=2"];
+    "eae935c3-4ce2-11ef-84c3-34cff668aa69" -> "eaea482d-4ce2-11ef-a296-34cff668aa69";
+    "eae935c3-4ce2-11ef-84c3-34cff668aa69" -> "eaea482e-4ce2-11ef-8828-34cff668aa69";
+    "eae935c3-4ce2-11ef-84c3-34cff668aa69" -> "eaea482f-4ce2-11ef-8837-34cff668aa69";
+    "eae935c4-4ce2-11ef-bc76-34cff668aa69" [label="id:eae935c4-4ce2-11ef-bc76-34cff668aa69
+ Player.Blue 
+ 
+ B8-C8 
+ score=2, n=2"];
+    "eae935c4-4ce2-11ef-bc76-34cff668aa69" -> "eaeabd5b-4ce2-11ef-be08-34cff668aa69";
+    "eae935c4-4ce2-11ef-bc76-34cff668aa69" -> "eaeabd5c-4ce2-11ef-b1ad-34cff668aa69";
+    "eae935c4-4ce2-11ef-bc76-34cff668aa69" -> "eaeabd5d-4ce2-11ef-92b5-34cff668aa69";
+    "eae95cd4-4ce2-11ef-b9ef-34cff668aa69" [label="id:eae95cd4-4ce2-11ef-b9ef-34cff668aa69
+ Player.Blue 
+ 
+ B8-B7 
+ score=2, n=2"];
+    "eae95cd4-4ce2-11ef-b9ef-34cff668aa69" -> "eaea964a-4ce2-11ef-b315-34cff668aa69";
+    "eae95cd4-4ce2-11ef-b9ef-34cff668aa69" -> "eaea964b-4ce2-11ef-b8ee-34cff668aa69";
+    "eae95cd4-4ce2-11ef-b9ef-34cff668aa69" -> "eaea964c-4ce2-11ef-a4f1-34cff668aa69";
+    "eae95cd5-4ce2-11ef-bf4a-34cff668aa69" [label="id:eae95cd5-4ce2-11ef-bf4a-34cff668aa69
+ Player.Blue 
+ 
+ B8-C8 
+ score=1, n=1"];
+    "eaea482d-4ce2-11ef-a296-34cff668aa69" [label="id:eaea482d-4ce2-11ef-a296-34cff668aa69
+ Player.Red 
+ 
+ B2-B3 
+ score=1, n=1"];
+    "eaea482e-4ce2-11ef-8828-34cff668aa69" [label="id:eaea482e-4ce2-11ef-8828-34cff668aa69
+ Player.Red 
+ 
+ B2-A2 
+ score=0, n=0"];
+    "eaea482f-4ce2-11ef-8837-34cff668aa69" [label="id:eaea482f-4ce2-11ef-8837-34cff668aa69
+ Player.Red 
+ 
+ B2-C2 
+ score=0, n=0"];
+    "eaea964a-4ce2-11ef-b315-34cff668aa69" [label="id:eaea964a-4ce2-11ef-b315-34cff668aa69
+ Player.Red 
+ 
+ C1-C2 
+ score=1, n=1"];
+    "eaea964b-4ce2-11ef-b8ee-34cff668aa69" [label="id:eaea964b-4ce2-11ef-b8ee-34cff668aa69
+ Player.Red 
+ 
+ C1-B1 
+ score=0, n=0"];
+    "eaea964c-4ce2-11ef-a4f1-34cff668aa69" [label="id:eaea964c-4ce2-11ef-a4f1-34cff668aa69
+ Player.Red 
+ 
+ C1-D1 
+ score=0, n=0"];
+    "eaeabd5b-4ce2-11ef-be08-34cff668aa69" [label="id:eaeabd5b-4ce2-11ef-be08-34cff668aa69
+ Player.Red 
+ 
+ B2-B3 
+ score=1, n=1"];
+    "eaeabd5c-4ce2-11ef-b1ad-34cff668aa69" [label="id:eaeabd5c-4ce2-11ef-b1ad-34cff668aa69
+ Player.Red 
+ 
+ B2-A2 
+ score=0, n=0"];
+    "eaeabd5d-4ce2-11ef-92b5-34cff668aa69" [label="id:eaeabd5d-4ce2-11ef-92b5-34cff668aa69
+ Player.Red 
+ 
+ B2-C2 
+ score=0, n=0"];
+}

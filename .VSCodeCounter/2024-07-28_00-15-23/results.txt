@@ -1,0 +1,96 @@
+Date : 2024-07-28 00:15:23
+Directory : c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI
+Total : 55 files,  6561 codes, 740 comments, 1249 blanks, all 8550 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Python           |         39 |      5,971 |        740 |      1,236 |      7,947 |
+| JSON             |          6 |        449 |          0 |          0 |        449 |
+| XML              |          7 |         60 |          0 |          0 |         60 |
+| Markdown         |          2 |         58 |          0 |         12 |         70 |
+| pip requirements |          1 |         23 |          0 |          1 |         24 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                      | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                         |         55 |      6,561 |        740 |      1,249 |      8,550 |
+| . (Files)                                                                                                                 |          2 |         26 |          0 |          2 |         28 |
+| .idea                                                                                                                     |          7 |         60 |          0 |          0 |         60 |
+| .idea (Files)                                                                                                             |          4 |         37 |          0 |          0 |         37 |
+| .idea\codeStyles                                                                                                          |          1 |          5 |          0 |          0 |          5 |
+| .idea\inspectionProfiles                                                                                                  |          2 |         18 |          0 |          0 |         18 |
+| data                                                                                                                      |          4 |        229 |          0 |          0 |        229 |
+| data\benchmarks                                                                                                           |          4 |        229 |          0 |          0 |        229 |
+| gameserver                                                                                                                |          8 |        531 |         37 |        102 |        670 |
+| src                                                                                                                       |         22 |      3,891 |        645 |        824 |      5,360 |
+| src (Files)                                                                                                               |         21 |      3,873 |        645 |        824 |      5,342 |
+| src\data                                                                                                                  |          1 |         18 |          0 |          0 |         18 |
+| src\data\benchmarks                                                                                                       |          1 |         18 |          0 |          0 |         18 |
+| tests                                                                                                                     |         12 |      1,824 |         58 |        321 |      2,203 |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                                                                  | language         | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\codeStyles\codeStyleConfig.xml                  | XML              |          5 |          0 |          0 |          5 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\inspectionProfiles\Project_Default.xml          | XML              |         12 |          0 |          0 |         12 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\inspectionProfiles\profiles_settings.xml        | XML              |          6 |          0 |          0 |          6 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\misc.xml                                        | XML              |          7 |          0 |          0 |          7 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\modules.xml                                     | XML              |          8 |          0 |          0 |          8 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\projektSKI.iml                                  | XML              |         16 |          0 |          0 |         16 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\.idea\vcs.xml                                         | XML              |          6 |          0 |          0 |          6 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\README.md                                             | Markdown         |          3 |          0 |          1 |          4 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\data\benchmarks\alpha_beta_benchmark_results.json     | JSON             |        199 |          0 |          0 |        199 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\data\benchmarks\benchmark_results.json                | JSON             |         14 |          0 |          0 |         14 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\data\benchmarks\genMoves1_benchmark_results.json      | JSON             |          8 |          0 |          0 |          8 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\data\benchmarks\genMoves_benchmark_results.json       | JSON             |          8 |          0 |          0 |          8 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\README.md                                  | Markdown         |         55 |          0 |         11 |         66 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\__init__.py                                | Python           |          0 |          0 |          1 |          1 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\client.py                                  | Python           |         38 |          7 |         13 |         58 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\game.py                                    | Python           |        289 |         24 |         44 |        357 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\gameTest.py                                | Python           |         23 |          2 |          4 |         29 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\main.py                                    | Python           |          9 |          4 |          8 |         21 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\network.py                                 | Python           |         22 |          0 |          7 |         29 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\gameserver\server.py                                  | Python           |         95 |          0 |         14 |        109 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\requirements.txt                                      | pip requirements |         23 |          0 |          1 |         24 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\Benchmarktest2_func.py                            | Python           |         44 |         21 |         14 |         79 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\__init__.py                                       | Python           |          0 |          0 |          1 |          1 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\abs_for_internal_usage.py                         | Python           |        192 |         35 |         50 |        277 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta.py                                     | Python           |        109 |          1 |         18 |        128 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alpha_beta_Kopie.py                               | Python           |        202 |         16 |         38 |        256 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\alt_eval.py                                       | Python           |        170 |          6 |         30 |        206 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\benchmark.py                                      | Python           |        133 |          7 |         41 |        181 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\board_final.py                                    | Python           |        653 |        251 |        210 |      1,114 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\data\benchmarks\alpha_beta_benchmark_results.json | JSON             |         18 |          0 |          0 |         18 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\evalFunction.py                                   | Python           |        279 |         28 |         53 |        360 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\gamestate.py                                      | Python           |        134 |         19 |         29 |        182 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\gui.py                                            | Python           |        174 |         14 |         32 |        220 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\gui_main.py                                       | Python           |          8 |          0 |          3 |         11 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\mcts_uct.py                                       | Python           |        130 |          6 |         30 |        166 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\model.py                                          | Python           |        290 |         80 |         63 |        433 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator.py                                  | Python           |        338 |         16 |         56 |        410 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveGenerator_sicher.py                           | Python           |        512 |         83 |         61 |        656 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\moveLib.py                                        | Python           |        185 |         26 |         36 |        247 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\play.py                                           | Python           |         43 |          7 |         11 |         61 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\scoreConfig_evalFunc.py                           | Python           |        240 |          7 |         26 |        273 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\start_mcts_game.py                                | Python           |         32 |         22 |         18 |         72 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\src\test.py                                           | Python           |          5 |          0 |          4 |          9 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\__init__.py                                     | Python           |          0 |          0 |          1 |          1 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\init_board.py                                   | Python           |         10 |          2 |          7 |         19 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\json_test.py                                    | Python           |        123 |          0 |          8 |        131 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_bitBoardLib.py                             | Python           |        175 |          0 |         30 |        205 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_data.json                                  | JSON             |        202 |          0 |          0 |        202 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_evalFunc.py                                | Python           |        103 |          8 |         19 |        130 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_fenStringLib.py                            | Python           |        187 |          3 |         44 |        234 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_mcts.py                                    | Python           |        146 |          0 |         20 |        166 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_moveGenerator.py                           | Python           |        727 |         42 |        159 |        928 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_moveLib.py                                 | Python           |         71 |          0 |         19 |         90 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_optimierung.py                             | Python           |         28 |          2 |          9 |         39 |
+| c:\Users\admin\Uni\Module\Projekt_Symbolische_KI\Projekt\projektSKI\tests\test_scoreConfig_evalFunc.py                    | Python           |         52 |          1 |          5 |         58 |
+| Total                                                                                                                     |                  |      6,561 |        740 |      1,249 |      8,550 |
++---------------------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

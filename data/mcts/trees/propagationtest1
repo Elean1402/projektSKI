@@ -1,0 +1,31 @@
+digraph tree {
+    "1" [label="id:1
+ Player.Blue 
+ 
+ no move applied 
+ score=-1, n=1"];
+    "1" -> "eac7f225-4ce2-11ef-a8f9-34cff668aa69";
+    "1" -> "eac7f226-4ce2-11ef-b27f-34cff668aa69";
+    "eac7f225-4ce2-11ef-a8f9-34cff668aa69" [label="id:eac7f225-4ce2-11ef-a8f9-34cff668aa69
+ Player.Red 
+ 
+ B1-B2 
+ score=-1, n=1"];
+    "eac7f225-4ce2-11ef-a8f9-34cff668aa69" -> "eac7f227-4ce2-11ef-b4d9-34cff668aa69";
+    "eac7f225-4ce2-11ef-a8f9-34cff668aa69" -> "eac7f228-4ce2-11ef-8314-34cff668aa69";
+    "eac7f226-4ce2-11ef-b27f-34cff668aa69" [label="id:eac7f226-4ce2-11ef-b27f-34cff668aa69
+ Player.Red 
+ 
+ B1-C1 
+ score=0, n=0"];
+    "eac7f227-4ce2-11ef-b4d9-34cff668aa69" [label="id:eac7f227-4ce2-11ef-b4d9-34cff668aa69
+ Player.Blue 
+ 
+ B8-B7 
+ score=-1, n=1"];
+    "eac7f228-4ce2-11ef-8314-34cff668aa69" [label="id:eac7f228-4ce2-11ef-8314-34cff668aa69
+ Player.Blue 
+ 
+ B8-C8 
+ score=0, n=0"];
+}

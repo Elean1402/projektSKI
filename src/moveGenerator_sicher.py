@@ -33,7 +33,7 @@ class MoveGenerator:
 
     def genMoves(self, player: Player, board: list[np.uint64],gameOver: list[DictMoveEntry]):
         """Generates all possible Moves
-           ATTENTION IF LIST IS EMPTY GAME OVER
+           ATTENTION IF LIST IS EMPTY GAME OVER: -> sets gameOver
 
         Args:
             player (Player): use model.py
@@ -258,8 +258,8 @@ class MoveGenerator:
                     return [BoardCommand.Hit_Blue_KnightOnTarget,BoardCommand.Move_Red_Knight_no_Change,BoardCommand.Delete_Red_Knight_from_StartPos] 
 
     def _genValidatedMoves(self, player:Player,board: list[np.uint64],gameOver: list[DictMoveEntry])-> list[tuple[np.uint64,np.uint64,list[BoardCommand]]]: 
-        """Generates all unvalidated Moves of Player Blue or Red
-
+        """ Generates all unvalidated Moves of Player Blue or Red
+            
         Args:
             player (Player): Please use model.py Player class
 
@@ -298,7 +298,7 @@ class MoveGenerator:
             raise TypeError("player is not from Type Player")
         
         if(len(validatedMoves) == 0):
-            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
+            gameOver[0] = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else  DictMoveEntry.GAME_OVER_RED_WINS
             self._gameover = DictMoveEntry.GAME_OVER_BLUE_WINS if player == Player.Red else DictMoveEntry.GAME_OVER_RED_WINS
             #return validatedMoves
             
@@ -472,7 +472,7 @@ class MoveGenerator:
     @classmethod
     def checkBoardIfGameOver(self, gameOver: list[DictMoveEntry], board: list[np.uint64], printBoard=False):
         """Game is over if last Row is reached or no possible Moves
-        Returns: Boolean: True for win else loose"""
+        sets gameOver at given list and sets gameOver at class attribute"""
         if printBoard:
             self.prettyPrintBoard(self, board, gameOver)
 
@@ -643,13 +643,24 @@ class MoveGenerator:
         if len(gameOver) != 0:
             print("Game status:", gameOver[0])  # raise ValueError("stop")
         print("1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb")
+    
+    def prettyPrintBoard2(self, board: list[np.uint64], *gameOver: list[DictMoveEntry]):
+        # print("internal board", board)
+        return f"{GameState.fromBitBoardToMatrix(board, True)}\n" + f"{gameOver[0] if gameOver else []}\n" f"1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb"
 
     def prettyPrintMoves(self, moves: list):
         print("\nMoves generated from MoveGenerator:")
         if len(moves) > 0:
-            for start, target, bc in moves:
-                print((mv.move(start, target, 3), bc))
-            # print([(mv.move(start,target,3),bc) for start,target,bc in moves])
-            print("")
+            if(len(moves[0]) == 3):
+                for start, target, bc in moves:
+                    print((mv.move(start, target, 3), bc))
+                print("")
+            elif(len(moves[0]) == 2):
+                for start, target in moves:
+                    print((mv.move(start, target, 3)))
+                print("")
         else:
             print([])
+    
+    def prettyPrintMove(self, move: tuple)-> str:
+        return f"{mv.move(move[0],move[1],3)}"
