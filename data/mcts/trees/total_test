@@ -4,206 +4,206 @@ digraph tree {
  
  no move applied 
  score=10, n=10"];
-    "1" -> "75b8a378-4da0-11ef-989c-34cff668aa69";
-    "1" -> "75b8a379-4da0-11ef-9a9e-34cff668aa69";
-    "1" -> "75b8a37a-4da0-11ef-a1e1-34cff668aa69";
-    "1" -> "75b8a37b-4da0-11ef-8e2e-34cff668aa69";
-    "1" -> "75b8a37c-4da0-11ef-b787-34cff668aa69";
-    "1" -> "75b8a37d-4da0-11ef-ab34-34cff668aa69";
-    "1" -> "75b8a37e-4da0-11ef-8828-34cff668aa69";
-    "1" -> "75b8a37f-4da0-11ef-a707-34cff668aa69";
-    "1" -> "75b8a380-4da0-11ef-9854-34cff668aa69";
-    "1" -> "75b8a381-4da0-11ef-bb2c-34cff668aa69";
-    "1" -> "75b8a382-4da0-11ef-a79d-34cff668aa69";
-    "1" -> "75b8a383-4da0-11ef-979d-34cff668aa69";
-    "1" -> "75b8a384-4da0-11ef-b514-34cff668aa69";
-    "1" -> "75b8a385-4da0-11ef-a257-34cff668aa69";
-    "1" -> "75b8a386-4da0-11ef-9b65-34cff668aa69";
-    "1" -> "75b8a387-4da0-11ef-b9d7-34cff668aa69";
-    "1" -> "75b8a388-4da0-11ef-a651-34cff668aa69";
-    "1" -> "75b8a389-4da0-11ef-87ab-34cff668aa69";
-    "1" -> "75b8a38a-4da0-11ef-9cb7-34cff668aa69";
-    "1" -> "75b8a38b-4da0-11ef-aed4-34cff668aa69";
-    "1" -> "75b8a38c-4da0-11ef-92c6-34cff668aa69";
-    "1" -> "75b8ca70-4da0-11ef-aef4-34cff668aa69";
-    "1" -> "75b8ca71-4da0-11ef-a9eb-34cff668aa69";
-    "1" -> "75b8ca72-4da0-11ef-9da0-34cff668aa69";
-    "1" -> "75b8ca73-4da0-11ef-889e-34cff668aa69";
-    "1" -> "75b8ca74-4da0-11ef-82cb-34cff668aa69";
-    "1" -> "75b8ca75-4da0-11ef-a055-34cff668aa69";
-    "1" -> "75b8ca76-4da0-11ef-b3d6-34cff668aa69";
-    "1" -> "75b8ca77-4da0-11ef-8b0b-34cff668aa69";
-    "1" -> "75b8ca78-4da0-11ef-b8d0-34cff668aa69";
-    "1" -> "75b8ca79-4da0-11ef-a0e6-34cff668aa69";
-    "1" -> "75b8ca7a-4da0-11ef-8ac2-34cff668aa69";
-    "1" -> "75b8ca7b-4da0-11ef-9d1e-34cff668aa69";
-    "1" -> "75b8ca7c-4da0-11ef-9e86-34cff668aa69";
-    "75b8a378-4da0-11ef-989c-34cff668aa69" [label="id:75b8a378-4da0-11ef-989c-34cff668aa69
+    "1" -> "0d0e5120-4f5b-11ef-aeb5-34cff668aa69";
+    "1" -> "0d0e5121-4f5b-11ef-87cb-34cff668aa69";
+    "1" -> "0d0e5122-4f5b-11ef-bed7-34cff668aa69";
+    "1" -> "0d0e5123-4f5b-11ef-ba73-34cff668aa69";
+    "1" -> "0d0e5124-4f5b-11ef-8ef5-34cff668aa69";
+    "1" -> "0d0e5125-4f5b-11ef-ac83-34cff668aa69";
+    "1" -> "0d0e5126-4f5b-11ef-a5c6-34cff668aa69";
+    "1" -> "0d0e5127-4f5b-11ef-bbd6-34cff668aa69";
+    "1" -> "0d0e5128-4f5b-11ef-994e-34cff668aa69";
+    "1" -> "0d0e5129-4f5b-11ef-93b4-34cff668aa69";
+    "1" -> "0d0e512a-4f5b-11ef-9023-34cff668aa69";
+    "1" -> "0d0e512b-4f5b-11ef-aceb-34cff668aa69";
+    "1" -> "0d0e512c-4f5b-11ef-a4f7-34cff668aa69";
+    "1" -> "0d0e512d-4f5b-11ef-8c45-34cff668aa69";
+    "1" -> "0d0e512e-4f5b-11ef-97c0-34cff668aa69";
+    "1" -> "0d0e512f-4f5b-11ef-abb5-34cff668aa69";
+    "1" -> "0d0e5130-4f5b-11ef-af25-34cff668aa69";
+    "1" -> "0d0e5131-4f5b-11ef-a3b2-34cff668aa69";
+    "1" -> "0d0e5132-4f5b-11ef-ad55-34cff668aa69";
+    "1" -> "0d0e5133-4f5b-11ef-a916-34cff668aa69";
+    "1" -> "0d0e5134-4f5b-11ef-9ee9-34cff668aa69";
+    "1" -> "0d0e5135-4f5b-11ef-b628-34cff668aa69";
+    "1" -> "0d0e5136-4f5b-11ef-b0a5-34cff668aa69";
+    "1" -> "0d0e5137-4f5b-11ef-82fa-34cff668aa69";
+    "1" -> "0d0e5138-4f5b-11ef-be16-34cff668aa69";
+    "1" -> "0d0e5139-4f5b-11ef-a3d5-34cff668aa69";
+    "1" -> "0d0e513a-4f5b-11ef-a5aa-34cff668aa69";
+    "1" -> "0d0e513b-4f5b-11ef-aca0-34cff668aa69";
+    "1" -> "0d0e513c-4f5b-11ef-92e0-34cff668aa69";
+    "1" -> "0d0e513d-4f5b-11ef-82f4-34cff668aa69";
+    "1" -> "0d0e513e-4f5b-11ef-ae5d-34cff668aa69";
+    "1" -> "0d0e513f-4f5b-11ef-b266-34cff668aa69";
+    "1" -> "0d0e5140-4f5b-11ef-b1d4-34cff668aa69";
+    "1" -> "0d0e5141-4f5b-11ef-a307-34cff668aa69";
+    "0d0e5120-4f5b-11ef-aeb5-34cff668aa69" [label="id:0d0e5120-4f5b-11ef-aeb5-34cff668aa69
  Player.Blue 
  
  G7-G6 
  score=1, n=1"];
-    "75b8a379-4da0-11ef-9a9e-34cff668aa69" [label="id:75b8a379-4da0-11ef-9a9e-34cff668aa69
+    "0d0e5121-4f5b-11ef-87cb-34cff668aa69" [label="id:0d0e5121-4f5b-11ef-87cb-34cff668aa69
  Player.Blue 
  
  F7-F6 
  score=1, n=1"];
-    "75b8a37a-4da0-11ef-a1e1-34cff668aa69" [label="id:75b8a37a-4da0-11ef-a1e1-34cff668aa69
+    "0d0e5122-4f5b-11ef-bed7-34cff668aa69" [label="id:0d0e5122-4f5b-11ef-bed7-34cff668aa69
  Player.Blue 
  
  E7-E6 
  score=1, n=1"];
-    "75b8a37b-4da0-11ef-8e2e-34cff668aa69" [label="id:75b8a37b-4da0-11ef-8e2e-34cff668aa69
+    "0d0e5123-4f5b-11ef-ba73-34cff668aa69" [label="id:0d0e5123-4f5b-11ef-ba73-34cff668aa69
  Player.Blue 
  
  D7-D6 
  score=1, n=1"];
-    "75b8a37c-4da0-11ef-b787-34cff668aa69" [label="id:75b8a37c-4da0-11ef-b787-34cff668aa69
+    "0d0e5124-4f5b-11ef-8ef5-34cff668aa69" [label="id:0d0e5124-4f5b-11ef-8ef5-34cff668aa69
  Player.Blue 
  
  C7-C6 
  score=1, n=1"];
-    "75b8a37d-4da0-11ef-ab34-34cff668aa69" [label="id:75b8a37d-4da0-11ef-ab34-34cff668aa69
+    "0d0e5125-4f5b-11ef-ac83-34cff668aa69" [label="id:0d0e5125-4f5b-11ef-ac83-34cff668aa69
  Player.Blue 
  
  B7-B6 
  score=1, n=1"];
-    "75b8a37e-4da0-11ef-8828-34cff668aa69" [label="id:75b8a37e-4da0-11ef-8828-34cff668aa69
+    "0d0e5126-4f5b-11ef-a5c6-34cff668aa69" [label="id:0d0e5126-4f5b-11ef-a5c6-34cff668aa69
  Player.Blue 
  
  G8-G7 
  score=1, n=1"];
-    "75b8a37f-4da0-11ef-a707-34cff668aa69" [label="id:75b8a37f-4da0-11ef-a707-34cff668aa69
+    "0d0e5127-4f5b-11ef-bbd6-34cff668aa69" [label="id:0d0e5127-4f5b-11ef-bbd6-34cff668aa69
  Player.Blue 
  
  F8-F7 
  score=1, n=1"];
-    "75b8a380-4da0-11ef-9854-34cff668aa69" [label="id:75b8a380-4da0-11ef-9854-34cff668aa69
+    "0d0e5128-4f5b-11ef-994e-34cff668aa69" [label="id:0d0e5128-4f5b-11ef-994e-34cff668aa69
  Player.Blue 
  
  E8-E7 
  score=1, n=1"];
-    "75b8a381-4da0-11ef-bb2c-34cff668aa69" [label="id:75b8a381-4da0-11ef-bb2c-34cff668aa69
+    "0d0e5129-4f5b-11ef-93b4-34cff668aa69" [label="id:0d0e5129-4f5b-11ef-93b4-34cff668aa69
  Player.Blue 
  
  D8-D7 
  score=0, n=0"];
-    "75b8a382-4da0-11ef-a79d-34cff668aa69" [label="id:75b8a382-4da0-11ef-a79d-34cff668aa69
+    "0d0e512a-4f5b-11ef-9023-34cff668aa69" [label="id:0d0e512a-4f5b-11ef-9023-34cff668aa69
  Player.Blue 
  
  C8-C7 
  score=0, n=0"];
-    "75b8a383-4da0-11ef-979d-34cff668aa69" [label="id:75b8a383-4da0-11ef-979d-34cff668aa69
+    "0d0e512b-4f5b-11ef-aceb-34cff668aa69" [label="id:0d0e512b-4f5b-11ef-aceb-34cff668aa69
  Player.Blue 
  
  B8-B7 
  score=0, n=0"];
-    "75b8a384-4da0-11ef-b514-34cff668aa69" [label="id:75b8a384-4da0-11ef-b514-34cff668aa69
+    "0d0e512c-4f5b-11ef-a4f7-34cff668aa69" [label="id:0d0e512c-4f5b-11ef-a4f7-34cff668aa69
  Player.Blue 
  
  G7-F7 
  score=0, n=0"];
-    "75b8a385-4da0-11ef-a257-34cff668aa69" [label="id:75b8a385-4da0-11ef-a257-34cff668aa69
+    "0d0e512d-4f5b-11ef-8c45-34cff668aa69" [label="id:0d0e512d-4f5b-11ef-8c45-34cff668aa69
  Player.Blue 
  
  F7-E7 
  score=0, n=0"];
-    "75b8a386-4da0-11ef-9b65-34cff668aa69" [label="id:75b8a386-4da0-11ef-9b65-34cff668aa69
+    "0d0e512e-4f5b-11ef-97c0-34cff668aa69" [label="id:0d0e512e-4f5b-11ef-97c0-34cff668aa69
  Player.Blue 
  
  E7-D7 
  score=0, n=0"];
-    "75b8a387-4da0-11ef-b9d7-34cff668aa69" [label="id:75b8a387-4da0-11ef-b9d7-34cff668aa69
+    "0d0e512f-4f5b-11ef-abb5-34cff668aa69" [label="id:0d0e512f-4f5b-11ef-abb5-34cff668aa69
  Player.Blue 
  
  D7-C7 
  score=0, n=0"];
-    "75b8a388-4da0-11ef-a651-34cff668aa69" [label="id:75b8a388-4da0-11ef-a651-34cff668aa69
+    "0d0e5130-4f5b-11ef-af25-34cff668aa69" [label="id:0d0e5130-4f5b-11ef-af25-34cff668aa69
  Player.Blue 
  
  C7-B7 
  score=0, n=0"];
-    "75b8a389-4da0-11ef-87ab-34cff668aa69" [label="id:75b8a389-4da0-11ef-87ab-34cff668aa69
+    "0d0e5131-4f5b-11ef-a3b2-34cff668aa69" [label="id:0d0e5131-4f5b-11ef-a3b2-34cff668aa69
  Player.Blue 
  
  B7-A7 
  score=0, n=0"];
-    "75b8a38a-4da0-11ef-9cb7-34cff668aa69" [label="id:75b8a38a-4da0-11ef-9cb7-34cff668aa69
+    "0d0e5132-4f5b-11ef-ad55-34cff668aa69" [label="id:0d0e5132-4f5b-11ef-ad55-34cff668aa69
  Player.Blue 
  
  G8-F8 
  score=0, n=0"];
-    "75b8a38b-4da0-11ef-aed4-34cff668aa69" [label="id:75b8a38b-4da0-11ef-aed4-34cff668aa69
+    "0d0e5133-4f5b-11ef-a916-34cff668aa69" [label="id:0d0e5133-4f5b-11ef-a916-34cff668aa69
  Player.Blue 
  
  F8-E8 
  score=0, n=0"];
-    "75b8a38c-4da0-11ef-92c6-34cff668aa69" [label="id:75b8a38c-4da0-11ef-92c6-34cff668aa69
+    "0d0e5134-4f5b-11ef-9ee9-34cff668aa69" [label="id:0d0e5134-4f5b-11ef-9ee9-34cff668aa69
  Player.Blue 
  
  E8-D8 
  score=0, n=0"];
-    "75b8ca70-4da0-11ef-aef4-34cff668aa69" [label="id:75b8ca70-4da0-11ef-aef4-34cff668aa69
+    "0d0e5135-4f5b-11ef-b628-34cff668aa69" [label="id:0d0e5135-4f5b-11ef-b628-34cff668aa69
  Player.Blue 
  
  D8-C8 
  score=0, n=0"];
-    "75b8ca71-4da0-11ef-a9eb-34cff668aa69" [label="id:75b8ca71-4da0-11ef-a9eb-34cff668aa69
+    "0d0e5136-4f5b-11ef-b0a5-34cff668aa69" [label="id:0d0e5136-4f5b-11ef-b0a5-34cff668aa69
  Player.Blue 
  
  C8-B8 
  score=0, n=0"];
-    "75b8ca72-4da0-11ef-9da0-34cff668aa69" [label="id:75b8ca72-4da0-11ef-9da0-34cff668aa69
+    "0d0e5137-4f5b-11ef-82fa-34cff668aa69" [label="id:0d0e5137-4f5b-11ef-82fa-34cff668aa69
  Player.Blue 
  
  G7-H7 
  score=0, n=0"];
-    "75b8ca73-4da0-11ef-889e-34cff668aa69" [label="id:75b8ca73-4da0-11ef-889e-34cff668aa69
+    "0d0e5138-4f5b-11ef-be16-34cff668aa69" [label="id:0d0e5138-4f5b-11ef-be16-34cff668aa69
  Player.Blue 
  
  F7-G7 
  score=0, n=0"];
-    "75b8ca74-4da0-11ef-82cb-34cff668aa69" [label="id:75b8ca74-4da0-11ef-82cb-34cff668aa69
+    "0d0e5139-4f5b-11ef-a3d5-34cff668aa69" [label="id:0d0e5139-4f5b-11ef-a3d5-34cff668aa69
  Player.Blue 
  
  E7-F7 
  score=0, n=0"];
-    "75b8ca75-4da0-11ef-a055-34cff668aa69" [label="id:75b8ca75-4da0-11ef-a055-34cff668aa69
+    "0d0e513a-4f5b-11ef-a5aa-34cff668aa69" [label="id:0d0e513a-4f5b-11ef-a5aa-34cff668aa69
  Player.Blue 
  
  D7-E7 
  score=0, n=0"];
-    "75b8ca76-4da0-11ef-b3d6-34cff668aa69" [label="id:75b8ca76-4da0-11ef-b3d6-34cff668aa69
+    "0d0e513b-4f5b-11ef-aca0-34cff668aa69" [label="id:0d0e513b-4f5b-11ef-aca0-34cff668aa69
  Player.Blue 
  
  C7-D7 
  score=0, n=0"];
-    "75b8ca77-4da0-11ef-8b0b-34cff668aa69" [label="id:75b8ca77-4da0-11ef-8b0b-34cff668aa69
+    "0d0e513c-4f5b-11ef-92e0-34cff668aa69" [label="id:0d0e513c-4f5b-11ef-92e0-34cff668aa69
  Player.Blue 
  
  B7-C7 
  score=0, n=0"];
-    "75b8ca78-4da0-11ef-b8d0-34cff668aa69" [label="id:75b8ca78-4da0-11ef-b8d0-34cff668aa69
+    "0d0e513d-4f5b-11ef-82f4-34cff668aa69" [label="id:0d0e513d-4f5b-11ef-82f4-34cff668aa69
  Player.Blue 
  
  F8-G8 
  score=0, n=0"];
-    "75b8ca79-4da0-11ef-a0e6-34cff668aa69" [label="id:75b8ca79-4da0-11ef-a0e6-34cff668aa69
+    "0d0e513e-4f5b-11ef-ae5d-34cff668aa69" [label="id:0d0e513e-4f5b-11ef-ae5d-34cff668aa69
  Player.Blue 
  
  E8-F8 
  score=0, n=0"];
-    "75b8ca7a-4da0-11ef-8ac2-34cff668aa69" [label="id:75b8ca7a-4da0-11ef-8ac2-34cff668aa69
+    "0d0e513f-4f5b-11ef-b266-34cff668aa69" [label="id:0d0e513f-4f5b-11ef-b266-34cff668aa69
  Player.Blue 
  
  D8-E8 
  score=0, n=0"];
-    "75b8ca7b-4da0-11ef-9d1e-34cff668aa69" [label="id:75b8ca7b-4da0-11ef-9d1e-34cff668aa69
+    "0d0e5140-4f5b-11ef-b1d4-34cff668aa69" [label="id:0d0e5140-4f5b-11ef-b1d4-34cff668aa69
  Player.Blue 
  
  C8-D8 
  score=0, n=0"];
-    "75b8ca7c-4da0-11ef-9e86-34cff668aa69" [label="id:75b8ca7c-4da0-11ef-9e86-34cff668aa69
+    "0d0e5141-4f5b-11ef-a307-34cff668aa69" [label="id:0d0e5141-4f5b-11ef-a307-34cff668aa69
  Player.Blue 
  
  B8-C8 
