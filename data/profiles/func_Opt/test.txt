@@ -1,0 +1,53 @@
+         10000006 function calls in 4.485 seconds
+
+   Random listing order was used
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    1.149    1.149    1.149    1.149 test_optimierung.py:25(nested_listcompr_flatt)
+        1    1.605    1.605    2.763    2.763 test_optimierung.py:14(mapfunc)
+        1    0.573    0.573    0.573    0.573 test_optimierung.py:20(listcompr_flatt)
+ 10000000    1.157    0.000    1.157    0.000 test_optimierung.py:18(<lambda>)
+        3    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+==================================================================================================         10000006 function calls in 6.991 seconds
+
+   Random listing order was used
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    2.484    2.484    2.484    2.484 test_optimierung.py:25(nested_listcompr_flatt)
+        1    2.201    2.201    3.366    3.366 test_optimierung.py:14(mapfunc)
+        1    1.142    1.142    1.142    1.142 test_optimierung.py:20(listcompr_flatt)
+ 10000000    1.164    0.000    1.164    0.000 test_optimierung.py:18(<lambda>)
+        3    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+==================================================================================================         10000006 function calls in 4.500 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    1.618    1.618    2.777    2.777 test_optimierung.py:14(mapfunc)
+ 10000000    1.158    0.000    1.158    0.000 test_optimierung.py:18(<lambda>)
+        1    1.151    1.151    1.151    1.151 test_optimierung.py:25(nested_listcompr_flatt)
+        1    0.572    0.572    0.572    0.572 test_optimierung.py:20(listcompr_flatt)
+        3    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+==================================================================================================         10000006 function calls in 4.501 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    1.616    1.616    2.773    2.773 test_optimierung.py:14(mapfunc)
+ 10000000    1.157    0.000    1.157    0.000 test_optimierung.py:18(<lambda>)
+        1    1.155    1.155    1.155    1.155 test_optimierung.py:25(nested_listcompr_flatt)
+        1    0.573    0.573    0.573    0.573 test_optimierung.py:20(listcompr_flatt)
+        3    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+==================================================================================================

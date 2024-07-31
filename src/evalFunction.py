@@ -1,38 +1,39 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.gamestate import GameState
 from src.model import *
 from src.moveLib import MoveLib
 from collections import Counter
+from src.moveGenerator import MoveGenerator
+from src.scoreConfig_evalFunc import ScoreConfig
 import numpy as np
+
 
 
 
 class EvalFunction:
     # Score distribution (not final) of implemented features
     _TURNOPTIONS=0
-    _PLAYER = 0
-    _CONFIG_DICT = { Config.MOBILITY : -1,
+    _player = 0
+    _CONFIG_DICT = { 
                      Config.TURN_OPTIONS: -1,
-                     Config.PROTECTION_PAWNS : -1,
-                     Config.PROTECTION_KNIGHTS : -1,
-                     Config.UNPROTECTED_PAWNS : -1,
-                     Config.UNPROTECTED_KNIGHTS : -1,
-                     Config.UPGRADE_TO_KNIGHT : -1,
-                     Config.BLOCKED_FIGURES : -1,
                      Config.MAT_PAWN : -1,
                      Config.MAT_KNIGHT : -1,
-                     Config.ENDGAME_MAT_PAWN : -1,
-                     Config.ENDGAME_MAT_KNIGHT : -1,
-                     Config.PIECESQUARE_TABLE_PAWN_Blue: {},
-                     Config.PIECESQUARE_TABLE_KNIGHT_Blue: {},
-                     Config.PIECESQUARE_TABLE_PAWN_Red: {},
-                     Config.PIECESQUARE_TABLE_KNIGHT_Red: {}}
-    
+                     Config.TOTAL_SCORE_RATING_PAWN_BLUE: {},
+                     Config.TOTAL_SCORE_RATING_KNIGHT_BLUE: {},
+                     Config.TOTAL_SCORE_RATING_PAWN_RED: {},
+                     Config.TOTAL_SCORE_RATING_KNIGHT_RED: {},
+                     Config.MaxPlayer : Player.NoOne,
+                     Config.Player : Player.NoOne,
+                     Config.CONFIGVERSION: None
+                     }
+
     __RANGE = np.array([1,6,1,1],dtype=np.uint64)
     __ZERO = np.uint64(0)
     
     #NEEDED: Total Order Featurescores
     #e.g. Materials > Mobility ... and so on
-    def __init__(self,config: dict, player = Player.Red):
+    def __init__(self,config: dict):
         """Init Evalfunction with config and set Player
 
         Args:
@@ -40,7 +41,7 @@ class EvalFunction:
             player : from model.py use Player enum class. Defaults to Player.Red.
         """
         #TODO
-        self._PLAYER = player
+        
         #Bitte config nur aus scoreConfig_evalFunc.py verwenden
         if (len(self._CONFIG_DICT) != len(config)):
             raise ValueError("Configs do not have same size")
@@ -49,13 +50,17 @@ class EvalFunction:
         vals = self._CONFIG_DICT.values()
         if(len(list(filter(lambda x: x==-1, vals)))>0):
             raise ValueError("Config is not complete, you may forgot a key-value pair, value -1 means not set")
-        if(len(self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Blue]) == 0 or
-           len(self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Blue]) == 0 or
-           len(self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Red]) == 0 or
-           len(self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Red]) == 0 ):
+        if(len(self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_BLUE]) == 0 or
+           len(self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE]) == 0 or
+           len(self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_RED]) == 0 or
+           len(self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_RED]) == 0 ):
             raise ValueError("Config: PIECESQUARE_TABLE_\\{Pawn,Knight\\} Dictionary not set")
-        
-        
+        if(self._CONFIG_DICT[Config.Player] == Player.NoOne):
+            raise ValueError("Player not set")
+        if(self._CONFIG_DICT[Config.MaxPlayer] == Player.NoOne):
+            raise ValueError("MaxPlayer not set")
+        if(self._CONFIG_DICT[Config.CONFIGVERSION] == None):
+            raise ValueError("CONFIGVERSION NOT SET")
     def __mobility(self, board: list[np.uint64]):
         """Score distribution over Board
            Please see Lecture Notes Page 43.
@@ -116,7 +121,7 @@ class EvalFunction:
                 break
         return bool 
     
-    def _pieceSquareTable(self,startPos: np.uint64, targetmoves: list[np.uint64], board: list[np.uint64]):
+    def _scoreRating(self,startPos: np.uint64, targetmoves: list[np.uint64], board: list[np.uint64], boardcommands: list[BoardCommand]):
         """Score for a Figure
            e.g. Target Fields (ends the game) will have higher Score
            e.g. Good Fields get higher score ...
@@ -134,29 +139,38 @@ class EvalFunction:
         #TODO
         #determine Figure: Pawn or Knight
         scoreList = ScoreListForMerging()
-        
+        targetmoves = [targetmoves]
         targetScores = Counter({})
-        
-        if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & (~ board[GameState._ZARR_INDEX_B_KNIGHTS])):
+      
+        if(startPos & board[GameState._ZARR_INDEX_R_PAWNS] & ~( board[GameState._ZARR_INDEX_B_KNIGHTS] | board[GameState._ZARR_INDEX_R_KNIGHTS]) != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Red][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
-        elif (startPos & board[GameState._ZARR_INDEX_R_KNIGHTS]):
+                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_RED][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)} )
+        elif (startPos & board[GameState._ZARR_INDEX_R_KNIGHTS] != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Red][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
-        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & (~ board[GameState._ZARR_INDEX_R_KNIGHTS])):
+                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_KNIGHT_RED][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})  
+        elif(startPos & board[GameState._ZARR_INDEX_B_PAWNS] & 
+             ~( board[GameState._ZARR_INDEX_R_KNIGHTS]|board[GameState._ZARR_INDEX_B_KNIGHTS]) != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_PAWN_Blue][MoveLib.BitsToPosition(key)] for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
-        elif (startPos & board[GameState._ZARR_INDEX_B_KNIGHTS]):
+                {key: self._CONFIG_DICT[  Config.TOTAL_SCORE_RATING_PAWN_BLUE][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if self._moveIsNeighbourOfStartPos(startPos, key)})
+        elif (startPos & board[GameState._ZARR_INDEX_B_KNIGHTS] != 0):
             targetScores.update(
-                {key: self._CONFIG_DICT[Config.PIECESQUARE_TABLE_KNIGHT_Blue][MoveLib.BitsToPosition(key)] for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
+                {key: self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE][MoveLib.BitsToPosition(key)] 
+                 for key in targetmoves if not self._moveIsNeighbourOfStartPos(startPos, key)})
             
         if(len(targetScores) == 0):
-            raise ValueError("Error in MoveList, please check Zuggenerator")
-        scoreList.append((startPos, targetScores))
+            raise ValueError("Error in MoveList, please check Zuggenerator, move=", MoveLib.move(startPos, targetmoves[0],3))
+        scoreList.append((startPos, targetScores, boardcommands))
         self.__turnOptions(len(targetmoves))
             
                 
         return scoreList
+    
+    def _updateConfig(self,player:Player, board:list[np.uint64]):
+        updatedConf = self._CONFIG_DICT[Config.CONFIGVERSION](self._CONFIG_DICT[Config.MaxPlayer],player,board)
+        self._CONFIG_DICT = updatedConf 
     
     def __protectedFigures(self, board:list[np.uint64]):
         """Scores for protected figures
@@ -234,45 +248,113 @@ class EvalFunction:
         rp = bin(board[GameState._ZARR_INDEX_R_PAWNS] & (~board[GameState._ZARR_INDEX_B_KNIGHTS]))[2:].count("1")*self._CONFIG_DICT[Config.MAT_PAWN]
         #count Red Knights
         rk = bin(board[GameState._ZARR_INDEX_R_KNIGHTS])[2:].count("1")*self._CONFIG_DICT[Config.MAT_KNIGHT]
-        if(self._PLAYER == Player.Blue ):
-            return bp+bk-rp-rk
-        return rp+rk-bp-bk
+        print("config MaxPlayer:", self._CONFIG_DICT[Config.MaxPlayer])
+        return rp+rk-bp-bk if self._CONFIG_DICT[Config.MaxPlayer] == Player.Red else bp+bk-rp-rk
     
-    def computeOverallScore(self, moveList: list, board:list[np.uint64]):
+    def computeOverallScore(self, moveList: list, board:list[np.uint64],printList= False, returnSortedList= True )-> ScoredMoveList:
         """Computes the total Score of current State
            MoveList only read once!
         Args:
-            moveList: list((int, np.uint64,list[np.uint64]))
-                    -> list(index, figure, movelist)
+            moveList: list((np.uint64, np.uint64,list[BoardCommand]))
+                    -> list(index, figure, BoardCommandlist)
                     The list from alpha/beta-generation() from Zuggenerator 
             board (list[np.uint64]): Bitboard
             
         Returns:
-            List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int)
-            Ordering: Move with highest overall score at the end of the list.
-            use pop() to get it   
+            List(tupel()): (fromPos:np.uint64, targetPos:np.uint64, moveScore:int , Total score: int, BoardCommandlist: list[BoardCommand])
+            Ordering: Move with highest overall score at the beginning of the list.
+            If no move is possible, then return [(0,0,0,totalScore,[])]
         """
+        
+            
         scoredList = ScoredMoveList()
-        #ScoreListForMeging can be merged with other Dict -> Count(Dict)
-        # so, that values are added on same keys
-        # e.g. dictA + dictB 
-        tempScore = ScoreListForMerging()
         totalScore = 0
+        if( len(moveList) == 0):
+            totalScore += self._materialPoints(board)
+            totalScore += self._computeActualPositionalPoints(board)
+            scoredList.append((np.uint64(0),np.uint64(0),int(0),int(totalScore),[]))
+            return scoredList
+          
+        tempScore = ScoreListForMerging()
+        
+        #Update config to get new scores according to board
+        self._updateConfig(self._CONFIG_DICT[Config.Player],board)
+        
         for index in moveList:
-            tempScore.append(self._pieceSquareTable(index[0],index[1], board))
+            tempScore.append(self._scoreRating(index[0],index[1], board,index[2]))
             #TODO add some more Features
             
         #TODO
-        totalScore += self._computeTurnOptions()
+        #totalScore += self._computeTurnOptions()
         totalScore += self._materialPoints(board)
-        
-        print("tempscore:\n", tempScore)
+        totalScore += self._computeActualPositionalPoints(board)
+        #print("totalscore :", totalScore)
+        #print("tempscore:\n", tempScore)
         #TODO Last processing
-        for (startpos,adict) in tempScore:
-            scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos]) for targetPos in adict])
-        scoredList.sort()
-        return scoredList
         
+        for (startpos,adict,bc) in tempScore:
+            scoredList.append([(startpos,targetPos, adict[targetPos],totalScore+adict[targetPos],bc) for targetPos in adict])
+        
+        if(returnSortedList):
+            scoredList.sort()
+        
+        
+        
+        if(printList):
+            self.prettyPrintScorelist(scoredList)
+            #print(scoredList)
+        return scoredList
+    
+    def _computeActualPositionalPoints(self, board: list[np.uint64]):
+        positionPointsMax = 0
+        positionPointsMin = 0
+        positionPoints = 0
+        
+        maxPlayer =self._CONFIG_DICT[Config.MaxPlayer]
+        
+        maxPawnPos      = board[GameState._ZARR_INDEX_R_PAWNS   if maxPlayer == Player.Red else GameState._ZARR_INDEX_B_PAWNS]
+        maxKnightsPos   = board[GameState._ZARR_INDEX_R_KNIGHTS if maxPlayer == Player.Red else GameState._ZARR_INDEX_B_KNIGHTS]
+        
+        minPawnsPos     = board[GameState._ZARR_INDEX_B_PAWNS   if maxPlayer == Player.Red else GameState._ZARR_INDEX_R_PAWNS]
+        minKnightsPos   = board[GameState._ZARR_INDEX_B_KNIGHTS if maxPlayer == Player.Red else GameState._ZARR_INDEX_R_KNIGHTS]
+        
+        if(maxPawnPos):
+            maxPawnsBits   = MoveGenerator.getBitPositions(maxPawnPos)
+            FigPosStrings = [MoveLib.BitsToPosition(bits) for bits in maxPawnsBits]
+            for figPos in FigPosStrings:
+                positionPointsMax += self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_RED if maxPlayer == Player.Red else   Config.TOTAL_SCORE_RATING_PAWN_BLUE][figPos]
+        
+        if(maxKnightsPos):
+            maxKnightBits  = MoveGenerator.getBitPositions(maxKnightsPos)
+            FigPosStrings = [MoveLib.BitsToPosition(bits) for bits in maxKnightBits]
+            for figPos in FigPosStrings:
+                positionPointsMax += self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_RED if maxPlayer == Player.Red else Config.TOTAL_SCORE_RATING_KNIGHT_BLUE][figPos]
+        
+        if(minPawnsPos):
+            minPawnsBits   = MoveGenerator.getBitPositions(minPawnsPos)
+            FigPosStrings = [MoveLib.BitsToPosition(bits) for bits in minPawnsBits]
+            for figPos in FigPosStrings:
+                positionPointsMin += self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_PAWN_BLUE if maxPlayer == Player.Red else   Config.TOTAL_SCORE_RATING_PAWN_RED][figPos]
+        if(minKnightsPos):
+            minKnightBits  = MoveGenerator.getBitPositions(minKnightsPos)
+            FigPosStrings = [MoveLib.BitsToPosition(bits) for bits in minKnightBits]
+            for figPos in FigPosStrings:
+                positionPointsMin += self._CONFIG_DICT[Config.TOTAL_SCORE_RATING_KNIGHT_BLUE if maxPlayer == Player.Red else   Config.TOTAL_SCORE_RATING_KNIGHT_RED][figPos]
+        
+        positionPoints = positionPointsMax - positionPointsMin
+        
+        return positionPoints
+    
+    def prettyPrintScorelist(self,list:ScoredMoveList):
+        if(len(list) != 0):
+            print("Scorelist:")
+            for s,t,v,u,z in list:
+                print((MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z))
+            #print([(MoveLib.move(s,t,3),"movescore=",v,"totalscore=",u,z)for s,t,v,u,z in list])
+            print("")
+            
+    
 
     
+            
         

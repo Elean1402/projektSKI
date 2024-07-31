@@ -1,0 +1,967 @@
+
+FEN: b0b0b01b01/2b03b01/8/3b01b02/1b01r01r02/2br1r03/b01r02r02/2r0r0r01
+Board init:
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 3. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 4. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 4. 0. 4. 0. 0.]]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('C6-D4', [<BoardCommand.Hit_Blue_PawnOnTarget: 1>, <BoardCommand.Degrade_Red_KnightOnTarget: 7>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 4. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 11)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('D1-E1', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('C7-B7', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('F4-G4', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('D5-E5', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 1. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('G4-F4', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 1. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E6-D6', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 1. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 4. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('E1-F1', [<BoardCommand.Upgrade_Blue_KnightOnTarget: 4>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 1. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 10)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E5-F4', [<BoardCommand.Hit_Blue_PawnOnTarget: 1>, <BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 10)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('C1-C2', [<BoardCommand.Upgrade_Blue_KnightOnTarget: 4>])
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 8. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E8-F8', [<BoardCommand.Upgrade_Red_KnightOnTarget: 5>])
+
+current Board
+ [[0. 0. 0. 1. 0. 2. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 8. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('C2-B4', [<BoardCommand.Degrade_Blue_KnightOnTarget: 6>])
+
+current Board
+ [[0. 0. 0. 1. 0. 2. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F8-E6', [<BoardCommand.Degrade_Red_KnightOnTarget: 7>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 8. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('F1-G3', [<BoardCommand.Degrade_Blue_KnightOnTarget: 6>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 1. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('B7-C7', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('A7-B7', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F4-F3', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 1. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B1-B2', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 1. 4. 0.]
+ [0. 4. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F8-G8', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 1. 4. 0.]
+ [0. 4. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B5-A5', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 1. 0. 0. 0.]
+ [4. 0. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 1. 4. 0.]
+ [0. 4. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E6-F6', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 1. 4. 0.]
+ [0. 4. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B2-B3', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 1. 0. 0.]
+ [0. 4. 0. 1. 0. 0. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F5-F4', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 1. 4. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('G3-G4', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F3-E3', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [0. 4. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 1. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B7-A7', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 1. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E3-E2', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('A5-B5', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('D8-D7', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B4-A4', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E2-F2', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 1. 4. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('G4-G5', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F2-E2', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B3-A3', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('D4-E4', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [0. 4. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 0. 1. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('B5-A5', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 0. 1. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E4-D4', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('F1-E1', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 1. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F7-F6', [<BoardCommand.Upgrade_Red_KnightOnTarget: 5>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 0. 0. 0.]
+ [0. 0. 4. 1. 0. 2. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 4. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (9, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('G5-F6', [<BoardCommand.Hit_Red_KnightOnTarget: 2>, <BoardCommand.Move_Blue_Knight_no_Change: 8>, <BoardCommand.Delete_Blue_Pawn_from_StartPos: 14>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 0. 0. 0.]
+ [0. 0. 4. 1. 0. 5. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (9, 9)
+Figure count r and b after move exec: (8, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('F4-G4', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 1. 0. 0. 0. 0.]
+ [0. 0. 4. 1. 0. 5. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (8, 9)
+Figure count r and b after move exec: (8, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('F6-D7', [<BoardCommand.Hit_Red_PawnOnTarget: 0>, <BoardCommand.Degrade_Blue_KnightOnTarget: 6>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 4. 0. 0. 0. 0.]
+ [0. 0. 4. 1. 0. 1. 0. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (8, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('D6-D5', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 4. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('C6-D6', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 0. 1. 4. 0. 0. 0. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('C7-B7', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 1. 0. 4. 0. 0. 0. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('D7-E7', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 1. 0. 0. 4. 0. 0. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 1. 0. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('E2-F2', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 1. 0. 0. 4. 0. 0. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('E7-F7', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 1. 0.]
+ [4. 1. 0. 0. 0. 4. 0. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Red
+
+Moves generated from MoveGenerator:
+('G8-G7', [<BoardCommand.Move_Red_Pawn_no_Change: 11>])
+
+current Board
+ [[0. 0. 0. 0. 0. 0. 0. 0.]
+ [4. 1. 0. 0. 0. 4. 1. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+Players turn:  Player.Blue
+
+Moves generated from MoveGenerator:
+('F7-F8', [<BoardCommand.Move_Blue_Pawn_no_Change: 10>])
+
+current Board
+ [[0. 0. 0. 0. 0. 4. 0. 0.]
+ [4. 1. 0. 0. 0. 0. 1. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.GAME_OVER_BLUE_WINS: 16>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Figure count r and b before move exec: (7, 9)
+Figure count r and b after move exec: (7, 9)
+end status:
+
+current Board
+ [[0. 0. 0. 0. 0. 4. 0. 0.]
+ [4. 1. 0. 0. 0. 0. 1. 0.]
+ [0. 0. 0. 4. 0. 1. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 0. 0.]
+ [4. 0. 0. 1. 0. 0. 1. 0.]
+ [4. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 1. 4. 0.]
+ [0. 0. 0. 0. 4. 0. 0. 0.]]
+Game status: [<DictMoveEntry.GAME_OVER_BLUE_WINS: 16>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+unmaking all moves..
+ initial Board is:
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 3. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 4. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 4. 0. 4. 0. 0.]]
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+reconstructed board is:
+
+current Board
+ [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 3. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 4. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 4. 0. 4. 0. 0.]]
+
+  [[0. 0. 0. 1. 1. 1. 0. 0.]
+ [4. 0. 1. 0. 0. 1. 0. 0.]
+ [0. 0. 3. 0. 1. 0. 0. 0.]
+ [0. 4. 0. 1. 0. 1. 0. 0.]
+ [0. 0. 0. 4. 0. 4. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 4. 0. 0. 0. 4. 0.]
+ [0. 4. 4. 4. 0. 4. 0. 0.]]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+Players turn:  Player.Red
+
+Game status: [<DictMoveEntry.CONTINUE_GAME: 18>]
+1 = red, 4 = blue, 2 = rr, 3 = br, 5= rb, 8= bb
+=========================== short test summary info ===========================
+FAILED test_moveGenerator.py::moveGenerator::test_TOTAL_ISIS_gameplay2_unmakeMove
+=================== 1 failed, 43 passed, 5 skipped in 2.31s ===================
